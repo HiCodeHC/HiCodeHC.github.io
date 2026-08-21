@@ -8,208 +8,245 @@
 <link rel="icon" href="assets/hicode-logo.jpg" type="image/jpeg" />
 <style>
   :root {
-    --bg: #14100b;
-    --bg-2: #1e1711;
-    --glass: rgba(255, 246, 230, 0.07);
-    --glass-brd: rgba(255, 232, 200, 0.18);
-    --glass-hi: rgba(255, 255, 255, 0.05);
+    --bg: #15110c;
+    --bg-2: #1f1810;
+    --glass: rgba(255, 246, 230, 0.06);
+    --glass-brd: rgba(255, 230, 190, 0.16);
     --accent: #d9ae6b;
     --accent-2: #c98b6f;
-    --accent-grad: linear-gradient(135deg, #d9ae6b 0%, #d09a72 55%, #c98b6f 100%);
-    --gold-line: linear-gradient(135deg, rgba(217,174,107,.45), rgba(201,139,111,.16));
+    --accent-grad: linear-gradient(120deg, #e6c07f 0%, #d09a72 48%, #b97963 100%);
     --text: #f5ecdd;
     --muted: #bfae90;
     --dim: #8d7d62;
-    --radius: 24px;
+    --r: 26px 10px 26px 10px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", Georgia, "Songti SC", serif;
     line-height: 1.75;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    position: relative;
   }
   a { color: inherit; text-decoration: none; }
 
-  /* ---- warm glowing background ---- */
-  .bg-wrap { position: fixed; inset: 0; z-index: -2; overflow: hidden;
-    background: linear-gradient(160deg, #1d1509 0%, var(--bg) 40%, #1c120b 100%); }
-  .bg-wrap .orb { position: absolute; border-radius: 50%; filter: blur(110px); mix-blend-mode: screen; }
-  .bg-wrap .orb.a { width: 520px; height: 520px; background: #c8a26b; opacity: .28; top: -180px; left: -140px; }
-  .bg-wrap .orb.b { width: 460px; height: 460px; background: #b9896c; opacity: .26; bottom: -160px; right: -120px; }
-  .bg-wrap .orb.c { width: 300px; height: 300px; background: #d3ba8a; opacity: .24; top: 38%; left: 58%; }
-  .grain { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .5;
-    background-image: radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px); background-size: 3px 3px; }
+  /* ===== 有机背景：错位光斑 + 流体曲线 + 网格 ===== */
+  .bg-wrap { position: fixed; inset: 0; z-index: -3; overflow: hidden;
+    background: radial-gradient(120% 90% at 12% -5%, #221806 0%, var(--bg) 45%, #170f09 100%); }
+  .bg-wrap .orb { position: absolute; border-radius: 50%; filter: blur(130px); mix-blend-mode: screen; }
+  .bg-wrap .orb.a { width: 620px; height: 620px; background: #cf9e5c; opacity: .26; top: -200px; left: -30px; }
+  .bg-wrap .orb.b { width: 540px; height: 540px; background: #b46f55; opacity: .22; bottom: -120px; right: 6%; }
+  .bg-wrap .orb.c { width: 300px; height: 300px; background: #e3c37f; opacity: .2; top: 44%; left: 52%; }
+  .bg-lines { position: fixed; inset: 0; z-index: -2; opacity: .5; pointer-events: none;
+    background-image: repeating-linear-gradient(90deg, rgba(217,174,107,.05) 0 1px, transparent 1px 56px),
+                      repeating-linear-gradient(0deg, rgba(217,174,107,.04) 0 1px, transparent 1px 56px); }
+  .curve { position: fixed; z-index: -2; pointer-events: none; opacity: .35; }
+
+  /* 浮动装饰 */
+  .float { animation: floaty 8s ease-in-out infinite; }
+  .float.d2 { animation-duration: 11s; animation-delay: -2s; }
+  .float.d3 { animation-duration: 9s; animation-delay: -4s; }
+  .float.d4 { animation-duration: 13s; animation-delay: -1s; }
+  .float.d5 { animation-duration: 10s; animation-delay: -6s; }
+  @keyframes floaty { 0%,100%{ transform: translateY(0) rotate(0deg);} 50%{ transform: translateY(-16px) rotate(2deg);} }
 
   .container { width: min(1120px, 92%); margin: 0 auto; position: relative; z-index: 2; }
 
-  /* ---- liquid glass panel ---- */
   .glass {
     background: var(--glass);
-    border-radius: var(--radius);
+    border-radius: var(--r);
     -webkit-backdrop-filter: blur(16px) saturate(150%);
     backdrop-filter: blur(16px) saturate(150%);
     border: 1px solid var(--glass-brd);
-    box-shadow: 0 18px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12);
+    box-shadow: 0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.1);
   }
 
-  /* ---- header ---- */
-  header { position: sticky; top: 0; z-index: 30; padding: 14px 0; margin-top: 12px; }
+  /* ===== 头部 ===== */
+  header { position: sticky; top: 0; z-index: 30; padding: 12px 0; }
   .nav { display: flex; align-items: center; justify-content: space-between; gap: 20px;
     padding: 10px 14px 10px 12px; border-radius: 999px; }
-  .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 19px; letter-spacing: .5px; }
-  .brand img { width: 40px; height: 40px; border-radius: 16px; object-fit: cover;
-    box-shadow: 0 6px 20px rgba(217,174,107,.35); border: 1px solid var(--glass-brd); }
-  .nav-links { display: flex; gap: 28px; color: var(--muted); font-size: 15px; }
-  .nav-links a { opacity: .85; transition: opacity .25s, transform .25s; }
-  .nav-links a:hover { opacity: 1; transform: translateY(-1px); color: var(--text); }
-  .nav-cta { background: var(--accent-grad); padding: 11px 24px; border-radius: 999px; font-size: 14px; font-weight: 700; color: #3a2a15;
-    box-shadow: 0 10px 28px rgba(160,110,60,.35); transition: transform .25s, box-shadow .25s; }
-  .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(160,110,60,.45); }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 19px; letter-spacing: .5px; font-style: italic; }
+  .brand img { width: 40px; height: 40px; border-radius: 14px 6px 14px 6px; object-fit: cover;
+    box-shadow: 0 8px 22px rgba(217,174,107,.35); border: 1px solid var(--glass-brd); transform: rotate(-3deg); }
+  .nav-links { display: flex; gap: 26px; color: var(--muted); font-size: 15px; }
+  .nav-links a { position: relative; transition: color .25s, transform .25s; }
+  .nav-links a::after { content:""; position:absolute; left:12%; right:12%; bottom:-4px; height:2px;
+    background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform .35s; border-radius:2px; }
+  .nav-links a:hover { color: var(--text); transform: translateY(-1px); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta { background: var(--accent-grad); padding: 11px 24px; border-radius: 999px 12px 999px 999px; font-size: 14px; font-weight: 700; color: #3a2a15;
+    box-shadow: 0 12px 30px rgba(160,110,60,.4); transition: transform .25s, box-shadow .25s; }
+  .nav-cta:hover { transform: translateY(-2px) rotate(-1deg); }
 
-  /* ---- hero ---- */
-  .hero { text-align: center; padding: 96px 0 70px; }
-  .hero .logo-glass { width: 108px; height: 108px; margin: 0 auto 30px; border-radius: 32px; overflow: hidden;
-    padding: 8px; }
-  .hero .logo-glass img { width: 100%; height: 100%; border-radius: 24px; object-fit: cover; display: block; }
-  .hero .badge { display: inline-flex; align-items: center; gap: 8px; color: #e6cfa0;
-    background: var(--glass); border: 1px solid var(--glass-brd); padding: 7px 18px; border-radius: 999px; font-size: 13px;
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); margin-bottom: 26px; }
+  /* ===== Hero：非对称布局 ===== */
+  .hero { position: relative; padding: 84px 0 110px; overflow: hidden; }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: center; }
+  .hero .deco { position: absolute; }
+  .hero .deco.d1 { top: 40px; right: 4%; width: 210px; height: 210px; border: 1.5px dashed rgba(217,174,107,.35);
+    border-radius: 50% 58% 48% 52% / 55% 48% 60% 44%; animation: spin 30s linear infinite; }
+  .hero .deco.d2 { top: 130px; right: 2%; width: 90px; height: 90px; border-radius: 50%;
+    border: 1px solid rgba(217,174,107,.3); }
+  .hero .deco.d3 { bottom: 60px; right: 30%; width: 54px; height: 54px; border-radius: 12px;
+    border: 1.5px solid rgba(217,174,107,.4); transform: rotate(24deg); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .hero .badge { display: inline-flex; align-items: center; gap: 9px; color: #e6cfa0;
+    background: var(--glass); border: 1px solid var(--glass-brd); padding: 7px 18px; border-radius: 999px 8px 999px 999px; font-size: 13px;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transform: rotate(-1.5deg); }
   .hero .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #e2b877; box-shadow: 0 0 12px #e2b877; }
-  .hero h1 { font-size: clamp(44px, 8vw, 84px); line-height: 1.06; font-weight: 900; letter-spacing: 1px;
+  .hero .eyebrow { font-style: italic; font-size: 22px; letter-spacing: 1px; color: var(--accent); margin: 26px 0 6px; opacity: .9; }
+  .hero h1 { font-size: clamp(46px, 7.4vw, 92px); line-height: 1.02; font-weight: 900; letter-spacing: 1px;
     background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
-    filter: drop-shadow(0 6px 22px rgba(180,135,85,.3)); }
-  .hero .sub { margin: 24px auto 0; max-width: 680px; color: var(--muted); font-size: 18px; }
+    filter: drop-shadow(0 8px 24px rgba(180,135,85,.3)); }
+  .hero h1 em { font-style: italic; -webkit-text-stroke: 0; }
+  .hero .sub { margin-top: 26px; max-width: 520px; color: var(--muted); font-size: 17.5px; }
   .hero .sub b { color: #e6cfa0; font-weight: 600; }
-  .hero .ctas { margin-top: 40px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .btn { padding: 15px 36px; border-radius: 999px; font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;
-    transition: transform .25s, box-shadow .25s, background .25s; }
-  .btn.primary { background: var(--accent-grad); color: #3a2a15; box-shadow: 0 12px 32px rgba(160,110,60,.4); }
-  .btn:not(.primary) { background: var(--glass); color: var(--text); border: 1px solid var(--glass-brd);
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-  .btn:hover { transform: translateY(-3px); }
-  .hero .hint { margin-top: 28px; font-size: 13px; color: var(--dim); }
+  .hero .ctas { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn { padding: 15px 36px; border-radius: 999px 14px 999px 999px; font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .25s, box-shadow .25s; }
+  .btn.primary { background: var(--accent-grad); color: #3a2a15; box-shadow: 0 14px 34px rgba(160,110,60,.45); transform: rotate(-1deg); }
+  .btn.primary:hover { transform: rotate(-1deg) translateY(-3px); }
+  .btn.ghostive { background: var(--glass); color: var(--text); border: 1px solid var(--glass-brd); transform: rotate(.8deg); }
+  .btn.ghostive:hover { transform: rotate(.8deg) translateY(-3px); }
+  .hero .side { position: relative; display: grid; place-items: center; }
+  .hero .side .sphere { width: 260px; height: 260px; border-radius: 52% 48% 46% 54% / 56% 44% 56% 44%;
+    background: radial-gradient(circle at 32% 28%, #ffefd2, #cf9e5c 45%, #9c6a48 100%);
+    box-shadow: 0 30px 70px rgba(0,0,0,.5), inset -26px -26px 60px rgba(0,0,0,.35), inset 8px 10px 24px rgba(255,255,255,.32); }
+  .hero .side .tagchip { position: absolute; padding: 10px 16px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    color: #3a2a15; background: var(--accent-grad); box-shadow: 0 12px 26px rgba(160,110,60,.4); }
+  .hero .side .tagchip.t1 { top: 12%; left: -6%; transform: rotate(-8deg); }
+  .hero .side .tagchip.t2 { bottom: 16%; right: -10%; transform: rotate(6deg); }
+  .hero .side .tagchip.t3 { bottom: 4%; left: 6%; transform: rotate(-3deg); }
+  .hero .hint { margin-top: 34px; font-size: 13px; color: var(--dim); }
   .hero .hint a { color: #dcc39a; border-bottom: 1px dashed currentColor; }
 
-  /* ---- sections ---- */
-  section { padding: 78px 0; }
-  .sec-head { text-align: center; max-width: 680px; margin: 0 auto 54px; }
-  .sec-head .eyebrow { letter-spacing: 4px; font-size: 13px; font-weight: 700; text-transform: uppercase;
-    background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .sec-head h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin: 12px 0 14px; }
-  .sec-head p { color: var(--muted); font-size: 16px; }
+  /* ===== 分节斜切分隔 ===== */
+  .divider { position: relative; height: 0; z-index: 1; }
+  .divider svg { position: absolute; width: 100%; height: 60px; top: -30px; left: 0; }
 
-  /* features (一级) */
-  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 22px; }
-  .feat { padding: 32px 28px; } /* glass */
-  .feat .ico { width: 54px; height: 54px; border-radius: 18px; background: var(--accent-grad);
-    display: grid; place-items: center; font-size: 24px; margin-bottom: 20px;
-    box-shadow: 0 10px 26px rgba(160,110,60,.35); }
+  /* ===== 板块公共 ===== */
+  section { position: relative; padding: 90px 0; }
+  .sec-head { max-width: 640px; margin: 0 0 56px; }
+  .sec-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+  .sec-head .eyebrow { font-style: italic; letter-spacing: 2px; font-size: 26px; font-weight: 800;
+    background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; opacity: .9; }
+  .sec-head h2 { font-size: clamp(27px, 3.6vw, 40px); font-weight: 900; margin: 6px 0 14px; letter-spacing: .5px; }
+  .sec-head p { color: var(--muted); font-size: 16px; }
+  .sec-head .lh { display: inline-block; width: 56px; height: 3px; background: var(--accent-grad); border-radius: 3px; transform: skewX(-24deg); }
+
+  /* features：错落卡片 */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 26px; }
+  .feat { padding: 34px 30px; position: relative; transition: transform .35s cubic-bezier(.2,.7,.3,1); }
+  .feat:nth-child(odd) { transform: translateY(14px) rotate(-.6deg); }
+  .feat:nth-child(even) { transform: translateY(-4px) rotate(.6deg); }
+  .feat:hover { transform: translateY(-8px) rotate(0); }
+  .feat .n { position: absolute; top: 14px; right: 20px; font-size: 44px; font-weight: 900; color: transparent;
+    -webkit-text-stroke: 1px rgba(217,174,107,.4); font-style: italic; font-family: ui-monospace, Consolas, monospace; }
+  .feat .ico { width: 56px; height: 56px; border-radius: 20px 8px 20px 8px; background: var(--accent-grad);
+    display: grid; place-items: center; font-size: 25px; margin-bottom: 20px; box-shadow: 0 12px 26px rgba(160,110,60,.35);
+    transform: rotate(-4deg); }
   .feat h3 { font-size: 20px; margin-bottom: 10px; }
   .feat p { color: var(--muted); font-size: 15px; }
 
-  /* advantages (二级) */
-  .adv { text-align: center; }
-  .adv-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
-  .adv-item { padding: 36px 30px; } /* glass */
-  .adv-item .num { font-family: ui-monospace, Consolas, monospace; font-size: 30px; font-weight: 900;
-    background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .adv-item h3 { font-size: 20px; margin: 8px 0 10px; }
-  .adv-item p { color: var(--muted); font-size: 15px; }
-
-  .trio { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 40px; }
-  .trio-el { padding: 24px; display: flex; gap: 14px; align-items: flex-start; text-align: left; border-radius: 20px; } /* glass */
-  .trio-el .tick { color: #e2b877; font-size: 22px; line-height: 1; }
-  .trio-el .t-title { font-weight: 700; }
-  .trio-el .t-desc { color: var(--muted); font-size: 13px; }
-
-  /* audience (适用人群) */
-  .people { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 22px; }
-  .person { text-align: left; padding: 30px 26px; position: relative; overflow: hidden; }
+  /* people：错位 */
+  .people { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px; }
+  .person { padding: 30px 26px; position: relative; transition: transform .35s; }
+  .person:nth-child(odd) { transform: translateY(10px); }
+  .person:nth-child(even) { transform: translateY(-6px); }
+  .person:hover { transform: translateY(-8px); }
   .person .em { font-size: 30px; }
   .person h3 { font-size: 19px; margin: 14px 0 8px; }
   .person p { color: var(--muted); font-size: 14.5px; }
 
-  /* motto bar */
-  .quote { max-width: 820px; margin: 0 auto; text-align: center; padding: 44px 40px; }
-  .quote p { font-size: clamp(20px, 3vw, 27px); font-weight: 600; line-height: 1.6; color: var(--text); }
-  .quote .who { margin-top: 18px; color: var(--muted); font-size: 15px; }
+  .quote { max-width: 760px; margin: 44px auto 0; text-align: center; padding: 48px 42px; position: relative; }
+  .quote::before { content: "“"; position: absolute; top: -8px; left: 34px; font-size: 90px; color: rgba(217,174,107,.35); font-family: Georgia, serif; }
+  .quote p { font-size: clamp(21px, 3vw, 28px); font-weight: 700; font-style: italic; line-height: 1.6; }
+  .quote .who { margin-top: 20px; color: var(--dim); font-size: 15px; letter-spacing: 2px; }
 
-  /* tech preview (技术预览) */
-  .tech { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 22px; }
-  .tech-item { padding: 30px 28px; text-align: left; position: relative; }
-  .tech-item .tag { position: absolute; top: 18px; right: 20px; font-size: 11.5px; letter-spacing: 1px; color: var(--dim);
-    border: 1px solid var(--glass-brd); border-radius: 999px; padding: 3px 10px; background: rgba(0,0,0,.15); }
-  .tech-item .ico { width: 52px; height: 52px; border-radius: 16px; background: var(--accent-grad);
-    display: grid; place-items: center; font-size: 23px; margin-bottom: 18px; }
+  /* tech */
+  .tech { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 26px; }
+  .tech-item { padding: 32px 28px; position: relative; transform: rotate(-.8deg); transition: transform .35s; }
+  .tech-item:nth-child(even) { transform: rotate(.8deg) translateY(8px); }
+  .tech-item:hover { transform: rotate(0) translateY(-6px); }
+  .tech-item .tag { position: absolute; top: 18px; right: 18px; font-size: 11px; letter-spacing: 1px; color: var(--dim);
+    border: 1px dashed var(--glass-brd); border-radius: 999px; padding: 3px 10px; transform: rotate(4deg); }
+  .tech-item .ico { width: 54px; height: 54px; border-radius: 18px 8px 18px 8px; background: var(--accent-grad);
+    display: grid; place-items: center; font-size: 24px; margin-bottom: 18px; }
   .tech-item h3 { font-size: 19px; margin-bottom: 8px; }
   .tech-item p { color: var(--muted); font-size: 14.5px; }
 
-  /* roadmap (路线图) */
+  /* roadmap：波浪时间线 */
   .roadmap { max-width: 720px; margin: 0 auto; }
-  .phase { display: flex; gap: 22px; padding: 6px 0 34px; position: relative; text-align: left; }
-  .phase:last-child { padding-bottom: 6px; }
-  .phase::before { content: ""; position: absolute; left: 27px; top: 62px; bottom: 0; width: 2px;
-    background: linear-gradient(180deg, rgba(217,174,107,.5), rgba(217,174,107,.08)); }
-  .phase:last-child::before { display: none; }
-  .phase .node { width: 56px; height: 56px; flex: 0 0 56px; border-radius: 18px; background: var(--accent-grad);
-    display: grid; place-items: center; font-size: 20px; font-weight: 800; color: #3a2a15;
-    box-shadow: 0 10px 26px rgba(160,110,60,.35); z-index: 1; }
-  .phase .meta { flex: 1; padding-top: 4px; }
-  .phase .step-tag { font-size: 12.5px; letter-spacing: 2px; color: var(--dim); text-transform: uppercase; }
-  .phase h3 { font-size: 20px; margin: 6px 0 6px; }
+  .phase { display: flex; gap: 24px; padding: 4px 0 40px; position: relative; }
+  .phase:last-child { padding-bottom: 4px; }
+  .phase .node { width: 60px; height: 60px; flex: 0 0 60px; border-radius: 50% 42% 46% 52% / 46% 54% 44% 56%;
+    background: var(--accent-grad); display: grid; place-items: center; font-size: 21px; font-weight: 900; color: #3a2a15;
+    box-shadow: 0 12px 28px rgba(160,110,60,.4); position: relative; z-index: 1; transform: rotate(-6deg); }
+  .phase:nth-child(even) .node { transform: rotate(6deg); }
+  .phase .meta { flex: 1; padding-top: 6px; }
+  .phase .step-tag { font-size: 12px; letter-spacing: 3px; color: var(--dim); text-transform: uppercase; font-style: italic; }
+  .phase h3 { font-size: 21px; margin: 4px 0 6px; }
   .phase p { color: var(--muted); font-size: 15px; }
 
-  /* FAQ */
-  .faq-list { max-width: 780px; margin: 0 auto; display: grid; gap: 16px; text-align: left; }
+  /* faq */
+  .faq-list { max-width: 800px; margin: 0 auto; display: grid; gap: 16px; }
   details.faq { padding: 0; }
   details.faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center;
-    padding: 20px 26px; font-size: 16.5px; font-weight: 600; }
+    gap: 16px; padding: 22px 28px; font-size: 16.5px; font-weight: 600; }
   details.faq summary::-webkit-details-marker { display: none; }
-  details.faq summary .pl { font-size: 22px; color: var(--accent); transition: transform .3s; }
+  details.faq summary .pl { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 20px; line-height: 1; color: #3a2a15; background: var(--accent-grad); transform: rotate(6deg); transition: transform .3s; }
   details.faq[open] summary .pl { transform: rotate(45deg); }
-  details.faq .a { padding: 0 26px 22px; color: var(--muted); font-size: 15px; }
+  details.faq .a { padding: 0 28px 24px; color: var(--muted); font-size: 15px; }
 
-  /* ---- footer (三级) ---- */
-  footer { padding: 60px 0 40px; margin-top: 20px; }
-  .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 34px; padding: 40px; }
+  /* ===== 页脚 ===== */
+  footer { position: relative; padding: 90px 0 44px; }
+  .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 34px; padding: 46px 44px; }
   @media (max-width: 900px) { .foot { grid-template-columns: 1fr 1fr; } }
-  .foot h4 { font-size: 15px; color: var(--text); margin-bottom: 16px; }
+  .foot h4 { font-size: 15px; margin-bottom: 16px; font-style: italic; color: var(--text); }
   .foot ul { list-style: none; }
   .foot li, .foot p { color: var(--muted); font-size: 14px; margin-bottom: 11px; }
   .foot a:hover { color: #dcc39a; }
   .foot .email { color: #e6cfa0; }
-
-  .disclaim { margin-top: 34px; padding: 26px 30px; color: var(--dim); font-size: 12.5px; line-height: 1.9; }
+  .disclaim { margin-top: 34px; padding: 30px 34px; color: var(--dim); font-size: 12.5px; line-height: 1.9; }
   .disclaim b { color: var(--muted); }
 
-  /* ---- reveal on scroll ---- */
-  [data-reveal] { opacity: 0; transform: translateY(30px); transition: opacity .9s cubic-bezier(.22,.68,.28,1), transform .9s cubic-bezier(.22,.68,.28,1); }
-  [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
-  [data-reveal="up"] { transform: translateY(40px); }
-  [data-reveal].is-visible[data-reveal="up"] { transform: translateY(0); }
-  .stagger > * { opacity: 0; transform: translateY(26px); transition: opacity .8s cubic-bezier(.22,.68,.28,1), transform .8s cubic-bezier(.22,.68,.28,1); }
-  .stagger.is-visible > * { opacity: 1; transform: translateY(0); }
-  .stagger.is-visible > *:nth-child(1){ transition-delay:.05s }
-  .stagger.is-visible > *:nth-child(2){ transition-delay:.14s }
-  .stagger.is-visible > *:nth-child(3){ transition-delay:.23s }
-  .stagger.is-visible > *:nth-child(4){ transition-delay:.32s }
-  .stagger.is-visible > *:nth-child(5){ transition-delay:.41s }
-  .stagger.is-visible > *:nth-child(6){ transition-delay:.50s }
+  /* ===== 渐显 ===== */
+  [data-reveal] { opacity: 0; transform: translateY(34px); transition: opacity 1s cubic-bezier(.22,.68,.28,1), transform 1s cubic-bezier(.22,.68,.28,1); }
+  [data-reveal].is-visible { opacity: 1; transform: translateY(0) !important; }
+  [data-reveal="fade"] { transform: translateY(0) scale(.96); }
+  .stagger > * { opacity: 0; transform: translateY(28px); transition: opacity .9s cubic-bezier(.22,.68,.28,1), transform .9s cubic-bezier(.22,.68,.28,1); }
+  .stagger.is-visible > * { opacity: 1; transform: translateY(0) !important; }
+  .stagger.is-visible > *:nth-child(1){ transition-delay:.06s }
+  .stagger.is-visible > *:nth-child(2){ transition-delay:.16s }
+  .stagger.is-visible > *:nth-child(3){ transition-delay:.26s }
+  .stagger.is-visible > *:nth-child(4){ transition-delay:.36s }
+  .stagger.is-visible > *:nth-child(5){ transition-delay:.46s }
+  .stagger.is-visible > *:nth-child(6){ transition-delay:.56s }
 
-  @media (max-width: 640px) {
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero .side { display: none; }
+    .sec-head { text-align: left; }
     .nav-links { display: none; }
-    .hero { padding: 60px 0 48px; }
-    section { padding: 56px 0; }
   }
 </style>
 </head>
 <body>
 <div class="bg-wrap"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
-<div class="grain"></div>
+<div class="bg-lines"></div>
+
+<!-- 流体装饰曲线 -->
+<svg class="curve" style="top:8%; left:-4%; width:420px;" viewBox="0 0 420 220" fill="none"><path d="M20 200 C 80 60, 180 40, 260 150 S 380 190, 400 40" stroke="rgba(217,174,107,.5)" stroke-width="2" stroke-dasharray="2 10" stroke-linecap="round"/></svg>
+<svg class="curve" style="bottom:6%; right:-3%; width:360px;" viewBox="0 0 360 200" fill="none"><path d="M10 20 C 120 180, 240 160, 352 60" stroke="rgba(201,139,111,.4)" stroke-width="2" stroke-dasharray="1 8" stroke-linecap="round"/></svg>
+<div class="curve float d3" style="top:22%; left:6%; width:18px;height:18px; border:1.5px solid rgba(217,174,107,.5); transform:rotate(18deg);"></div>
+<div class="curve float d4" style="top:70%; left:12%; width:11px;height:11px; border-radius:50%; background:rgba(217,174,107,.5);"></div>
+<div class="curve float d2" style="top:58%; right:8%; width:14px;height:14px; border-radius:50%; background:rgba(201,139,111,.45);"></div>
+<div class="curve float d5" style="bottom:18%; left:5%; width:26px;height:26px; border:1.5px solid rgba(217,174,107,.4); border-radius:50% 44% 52% 46%;"></div>
+<div class="curve float" style="top:12%; right:10%; font-size:34px; color:rgba(230,192,127,.5);">✦</div>
 
 <header>
   <div class="container nav glass">
@@ -227,71 +264,65 @@
 </header>
 
 <main>
-  <!-- 一级：标题、初心 -->
+  <!-- ===== Hero ===== -->
   <section class="hero" id="mission">
+    <div class="deco d1 float"></div>
+    <div class="deco d2"></div>
+    <div class="deco d3 float d2"></div>
     <div class="container">
-      <div class="logo-glass glass" data-reveal><img src="assets/hicode-logo.jpg" alt="HiCode 标志" /></div>
-      <div class="badge" data-reveal><span class="dot"></span> HiCode · 前后端一体化编程语言</div>
-      <h1 data-reveal="up">打造属于每个人的<br />一站式编程语言</h1>
-      <p class="sub" data-reveal="up">
-        HiCode（简称 HC）让前端与后端在同一套语言中协同开发，用图形界面搭建前端、用接近自然的简易代码编写后端。
-        告别复杂的工程配置，<b>小白也能轻松上手</b>，把想法变成真正的应用。
-      </p>
-      <div class="ctas" data-reveal="up">
-        <a class="btn primary" href="#" id="download">↓ 下载 HiCode</a>
-        <a class="btn" href="#">网页端体验</a>
-        <a class="btn" href="#" id="learn">学习中心</a>
+      <div class="hero-grid">
+        <div>
+          <div class="badge" data-reveal><span class="dot"></span> HiCode · 前后端一体化编程语言</div>
+          <div class="eyebrow" data-reveal>make creativity, not complexity.</div>
+          <h1 data-reveal="fade">打造属于每个人的<br /><em>一站式编程语言</em></h1>
+          <p class="sub" data-reveal>
+            HiCode（简称 HC）让前端与后端在同一套语言中协同开发，用图形界面搭建前端、用接近自然的简易代码编写后端。
+            告别复杂的工程配置，<b>小白也能轻松上手</b>，把想法变成真正的应用。
+          </p>
+          <div class="ctas" data-reveal>
+            <a class="btn primary" href="#" id="download">↓ 下载 HiCode</a>
+            <a class="btn ghostive" href="#">网页端体验</a>
+            <a class="btn ghostive" href="#" id="learn">学习中心</a>
+          </div>
+          <div class="hint" data-reveal>下载、网页端与学习中心即将上线，敬请期待 · 项目开源可用</div>
+        </div>
+        <div class="side" data-reveal="fade">
+          <div class="sphere float"><img src="assets/hicode-logo.jpg" alt="HiCode" style="width:100%;height:100%;object-fit:cover;opacity:.05;"/></div>
+          <div class="tagchip t1 float d2">🎨 拖拽即得</div>
+          <div class="tagchip t2 float d4">💬 简单语法</div>
+          <div class="tagchip t3 float d5">📱 多端运行</div>
+        </div>
       </div>
-      <div class="hint" data-reveal>下载、网页端与学习中心即将上线，敬请期待 · 项目开源可用</div>
     </div>
   </section>
 
-  <!-- 一级：产品特点 -->
+  <!-- ===== 产品特点 ===== -->
   <section id="features">
     <div class="container">
       <div class="sec-head" data-reveal>
         <div class="eyebrow">Core Features</div>
         <h2>产品特点</h2>
+        <span class="lh"></span>
         <p>让编程回归简单 —— 前后端一起写，跨端一起跑。</p>
       </div>
       <div class="features stagger" data-reveal>
-        <div class="feat glass"><div class="ico">🧩</div><h3>前后端同时开发</h3><p>一套语言打通前后端，数据交换与逻辑复用不再繁琐，开发节奏大幅提速。</p></div>
-        <div class="feat glass"><div class="ico">🎨</div><h3>图形化界面建前端</h3><p>拖拽、点选即可搭建前端界面，所见即所得，摆脱手写样式的门槛。</p></div>
-        <div class="feat glass"><div class="ico">💬</div><h3>简易语言写后端</h3><p>使用接近自然语言的简易代码描述业务逻辑，小白也能读懂并写出后端。</p></div>
-        <div class="feat glass"><div class="ico">📱</div><h3>多平台可开发</h3><p>支持网页、安卓与 Windows 平台，一次编写，多端运行。</p></div>
-        <div class="feat glass"><div class="ico">🧭</div><h3>零基础易上手</h3><p>为新手量身设计，无需复杂环境配置，从第一行代码到第一个应用快速起步。</p></div>
-        <div class="feat glass"><div class="ico">🚀</div><h3>解释型语言</h3><p>即时运行、即时反馈，让学习与调试真正变得轻松而顺畅。</p></div>
+        <div class="feat glass"><span class="n">01</span><div class="ico">🧩</div><h3>前后端同时开发</h3><p>一套语言打通前后端，数据交换与逻辑复用不再繁琐，开发节奏大幅提速。</p></div>
+        <div class="feat glass"><span class="n">02</span><div class="ico">🎨</div><h3>图形化界面建前端</h3><p>拖拽、点选即可搭建前端界面，所见即所得，摆脱手写样式的门槛。</p></div>
+        <div class="feat glass"><span class="n">03</span><div class="ico">💬</div><h3>简易语言写后端</h3><p>使用接近自然语言的简易代码描述业务逻辑，小白也能读懂并写出后端。</p></div>
+        <div class="feat glass"><span class="n">04</span><div class="ico">📱</div><h3>多平台可开发</h3><p>支持网页、安卓与 Windows 平台，一次编写，多端运行。</p></div>
+        <div class="feat glass"><span class="n">05</span><div class="ico">🧭</div><h3>零基础易上手</h3><p>为新手量身设计，无需复杂环境配置，从第一行代码到第一个应用快速起步。</p></div>
+        <div class="feat glass"><span class="n">06</span><div class="ico">🚀</div><h3>解释型语言</h3><p>即时运行、即时反馈，让学习与调试真正变得轻松而顺畅。</p></div>
       </div>
     </div>
   </section>
 
-  <!-- 二级：产品优点 / 开源 / 多端 -->
-  <section class="adv" id="advantages">
-    <div class="container">
-      <div class="sec-head" data-reveal>
-        <div class="eyebrow">Why HiCode</div>
-        <h2>产品优点</h2>
-        <p>开放、自由、简单 —— 一个面向所有人的开发方式。</p>
-      </div>
-      <div class="adv-list stagger" data-reveal>
-        <div class="adv-item glass"><div class="num">01</div><h3>完整（Front & Back Together）</h3><p>前端与后端统一于一个语言生态，减少上下文切换，协作更高效。</p></div>
-        <div class="adv-item glass"><div class="num">02</div><h3>简单（Designed for Everyone）</h3><p>图形界面与简易代码双管齐下，让编程小白也能独立完成自己的项目。</p></div>
-        <div class="adv-item glass"><div class="num">03</div><h3>跨界（One Code, Many Platforms）</h3><p>面向多端开放，网页、安卓、Windows 自由覆盖，想象力无可阻挡。</p></div>
-      </div>
-      <div class="trio stagger" data-reveal>
-        <div class="trio-el glass"><span class="tick">✔</span><div><div class="t-title">开源可用</div><div class="t-desc">完全开放源代码，遵循开源许可，自由使用与二次开发。</div></div></div>
-        <div class="trio-el glass"><span class="tick">✔</span><div><div class="t-title">多端开放</div><div class="t-desc">网页、安卓、Windows 三大平台同时支持开发与运行。</div></div></div>
-        <div class="trio-el glass"><span class="tick">✔</span><div><div class="t-title">社区共建</div><div class="t-desc">开放共建，共同让 HiCode 变得更好、更容易上手。</div></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 适用人群 -->
+  <!-- ===== 适用人群 ===== -->
   <section id="people">
     <div class="container">
-      <div class="sec-head" data-reveal>
+      <div class="sec-head center" data-reveal>
         <div class="eyebrow">Who It's For</div>
         <h2>HiCode 适合谁</h2>
+        <span class="lh"></span>
         <p>无论你是编程新人，还是资深开发者，都能从 HiCode 中受益。</p>
       </div>
       <div class="people stagger" data-reveal>
@@ -301,18 +332,19 @@
         <div class="person glass"><div class="em">🧑‍💻</div><h3>资深开发者</h3><p>了解、参与一款新语言的建造成长，贡献开源，共建新一代开发方式。</p></div>
       </div>
       <div class="quote glass" data-reveal>
-        <p>“让创造应用的能力，不再只属于少数掌握复杂技术的人。”</p>
+        <p>让创造应用的能力，不再只属于少数掌握复杂技术的人。</p>
         <div class="who">—— HiCode 团队的初心</div>
       </div>
     </div>
   </section>
 
-  <!-- 技术预览 -->
+  <!-- ===== 技术预览 ===== -->
   <section id="tech">
     <div class="container">
       <div class="sec-head" data-reveal>
         <div class="eyebrow">Technical Preview</div>
         <h2>技术预览（规划中）</h2>
+        <span class="lh"></span>
         <p>以下是 HiCode 正在规划的核心技术方向，具体以最终发布为准。</p>
       </div>
       <div class="tech stagger" data-reveal>
@@ -324,29 +356,31 @@
     </div>
   </section>
 
-  <!-- 开发路线图 -->
+  <!-- ===== 路线图 ===== -->
   <section id="roadmap">
     <div class="container">
-      <div class="sec-head" data-reveal>
+      <div class="sec-head center" data-reveal>
         <div class="eyebrow">Roadmap</div>
         <h2>开发路线图</h2>
+        <span class="lh"></span>
         <p>HiCode 将分阶段逐步推进，欢迎关注与参与。</p>
       </div>
       <div class="roadmap" data-reveal>
-        <div class="phase"><div class="node">01</div><div class="meta"><div class="step-tag">Phase 1 · 定义</div><h3>语言与愿景</h3><p>确立产品理念、语言核心设计思路与图形化开发方向，搭建官网与社区。</p></div></div>
-        <div class="phase"><div class="node">02</div><div class="meta"><div class="step-tag">Phase 2 · 原型</div><h3>核心原型</h3><p>实现图形化前端设计器与后端解释器的早期可运行原型，打通基础开发流程。</p></div></div>
-        <div class="phase"><div class="node">03</div><div class="meta"><div class="step-tag">Phase 3 · 多端</div><h3>多端适配</h3><p>完善网页端，并逐步支持安卓（WebView）与 Windows 平台。</p></div></div>
-        <div class="phase"><div class="node">04</div><div class="meta"><div class="step-tag">Phase 4 · 开源</div><h3>对外开放与共建</h3><p>正式开放源代码、文档与学习中心，邀请社区共同参与迭代成长。</p></div></div>
+        <div class="phase"><div class="node">01</div><div class="meta"><div class="step-tag">Phase 1 · Define</div><h3>语言与愿景</h3><p>确立产品理念、语言核心设计思路与图形化开发方向，搭建官网与社区。</p></div></div>
+        <div class="phase"><div class="node">02</div><div class="meta"><div class="step-tag">Phase 2 · Prototype</div><h3>核心原型</h3><p>实现图形化前端设计器与后端解释器的早期可运行原型，打通基础开发流程。</p></div></div>
+        <div class="phase"><div class="node">03</div><div class="meta"><div class="step-tag">Phase 3 · Multi-end</div><h3>多端适配</h3><p>完善网页端，并逐步支持安卓（WebView）与 Windows 平台。</p></div></div>
+        <div class="phase"><div class="node">04</div><div class="meta"><div class="step-tag">Phase 4 · Open Source</div><h3>对外开放与共建</h3><p>正式开放源代码、文档与学习中心，邀请社区共同参与迭代成长。</p></div></div>
       </div>
     </div>
   </section>
 
-  <!-- 常见问题 -->
+  <!-- ===== 常见问题 ===== -->
   <section id="faq">
     <div class="container">
-      <div class="sec-head" data-reveal>
+      <div class="sec-head center" data-reveal>
         <div class="eyebrow">FAQ</div>
         <h2>常见问题</h2>
+        <span class="lh"></span>
         <p>关于 HiCode 你可能有这些疑问。</p>
       </div>
       <div class="faq-list" data-reveal>
@@ -360,13 +394,13 @@
   </section>
 </main>
 
-<!-- 三级：联系 / 免责 / 许可 -->
+<!-- ===== 页脚（三级） ===== -->
 <footer id="footer">
   <div class="container">
     <div class="foot glass" data-reveal>
       <div>
         <div class="brand" style="margin-bottom:14px;"><img src="assets/hicode-logo.jpg" alt="HiCode 标志" /><span>HiCode</span></div>
-        <p style="margin-top:6px;">前后端一体化、多端可开发的编程语言。<br/>让编程回归简单。</p>
+        <p style="margin-top:6px; font-style:italic;">前后端一体化、多端可开发的编程语言。<br/>让编程回归简单。</p>
       </div>
       <div>
         <h4>资源</h4>
@@ -404,7 +438,6 @@
 
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
-  // 滑动进入视口时渐显
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) { e.target.classList.add("is-visible"); io.unobserve(e.target); }

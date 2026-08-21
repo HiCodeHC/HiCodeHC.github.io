@@ -8,10 +8,11 @@
 <link rel="icon" href="assets/hicode-logo.jpg" type="image/jpeg" />
 <style>
   :root {
-    --bg: #16120d;
-    --card: rgba(255, 246, 230, 0.045);
-    --line: rgba(255, 230, 190, 0.12);
+    --bg: #171310;
+    --card: rgba(255, 248, 235, 0.06);
+    --line: rgba(255, 230, 190, 0.16);
     --accent: #d9ae6b;
+    --accent-soft: rgba(217, 174, 107, .16);
     --text: #f5ecdd;
     --muted: #b4a488;
     --dim: #86775d;
@@ -21,7 +22,10 @@
   html { scroll-behavior: smooth; }
   body {
     background: var(--bg);
-    background-image: radial-gradient(120% 80% at 50% 0%, #241a0d 0%, var(--bg) 60%);
+    background-image:
+      radial-gradient(72% 54% at 16% 12%, rgba(217, 174, 107, .20), transparent 62%),
+      radial-gradient(62% 48% at 86% 72%, rgba(201, 139, 111, .15), transparent 60%),
+      radial-gradient(120% 80% at 50% 0%, #251a0c 0%, transparent 62%);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
     line-height: 1.8;
@@ -34,11 +38,18 @@
   .container { width: min(980px, 90%); margin: 0 auto; }
 
   .glass {
-    background: var(--card);
+    position: relative;
+    background: linear-gradient(140deg, rgba(255, 248, 235, .10), rgba(255, 248, 235, .035));
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    -webkit-backdrop-filter: blur(14px) saturate(120%);
-    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+    backdrop-filter: blur(18px) saturate(170%);
+    box-shadow: 0 12px 44px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .20), inset 0 -16px 30px rgba(255, 255, 255, .03);
+  }
+  .glass::before {
+    content: "";
+    position: absolute; left: 14%; right: 14%; top: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .6), transparent);
   }
 
   /* ===== 导航 ===== */
@@ -142,9 +153,11 @@
     color: var(--dim); font-size: 12.5px; line-height: 2; }
   .disclaim b { color: var(--muted); }
 
-  /* ===== 淡入 ===== */
-  [data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .9s ease, transform .9s ease; }
+  /* ===== 渐显 ===== */
+  [data-reveal] { opacity: 0; transform: translateY(26px) scale(.995); transition: opacity 1.1s cubic-bezier(.22,.68,.28,1), transform 1.1s cubic-bezier(.22,.68,.28,1); }
   [data-reveal].is-visible { opacity: 1; transform: none; }
+  .stagger-box > * { opacity: 0; transform: translateY(30px); transition: opacity .95s cubic-bezier(.22,.68,.28,1), transform .95s cubic-bezier(.22,.68,.28,1); }
+  .stagger-box > *.is-visible { opacity: 1; transform: none; }
 
   @media (max-width: 820px) {
     .nav-links { display: none; }
@@ -196,13 +209,13 @@
         <h2>产品特点</h2>
         <p>让编程回归简单 —— 前后端一起写，跨端一起跑。</p>
       </div>
-      <div class="features">
-        <div class="feat glass" data-reveal><div class="ico">🧩</div><h3>前后端同时开发</h3><p>一套语言打通前后端，数据交换与逻辑复用不再繁琐，开发节奏大幅提速。</p></div>
-        <div class="feat glass" data-reveal><div class="ico">🎨</div><h3>图形化界面建前端</h3><p>拖拽、点选即可搭建前端界面，所见即所得，摆脱手写样式的门槛。</p></div>
-        <div class="feat glass" data-reveal><div class="ico">💬</div><h3>简易语言写后端</h3><p>使用接近自然语言的简易代码描述业务逻辑，小白也能读懂并写出后端。</p></div>
-        <div class="feat glass" data-reveal><div class="ico">📱</div><h3>多平台可开发</h3><p>支持网页、安卓与 Windows 平台，一次编写，多端运行。</p></div>
-        <div class="feat glass" data-reveal><div class="ico">🧭</div><h3>零基础易上手</h3><p>为新手量身设计，无需复杂环境配置，从第一行代码到第一个应用快速起步。</p></div>
-        <div class="feat glass" data-reveal><div class="ico">🚀</div><h3>解释型语言</h3><p>即时运行、即时反馈，让学习与调试真正变得轻松而顺畅。</p></div>
+      <div class="features stagger-box">
+        <div class="feat glass"><div class="ico">🧩</div><h3>前后端同时开发</h3><p>一套语言打通前后端，数据交换与逻辑复用不再繁琐，开发节奏大幅提速。</p></div>
+        <div class="feat glass"><div class="ico">🎨</div><h3>图形化界面建前端</h3><p>拖拽、点选即可搭建前端界面，所见即所得，摆脱手写样式的门槛。</p></div>
+        <div class="feat glass"><div class="ico">💬</div><h3>简易语言写后端</h3><p>使用接近自然语言的简易代码描述业务逻辑，小白也能读懂并写出后端。</p></div>
+        <div class="feat glass"><div class="ico">📱</div><h3>多平台可开发</h3><p>支持网页、安卓与 Windows 平台，一次编写，多端运行。</p></div>
+        <div class="feat glass"><div class="ico">🧭</div><h3>零基础易上手</h3><p>为新手量身设计，无需复杂环境配置，从第一行代码到第一个应用快速起步。</p></div>
+        <div class="feat glass"><div class="ico">🚀</div><h3>解释型语言</h3><p>即时运行、即时反馈，让学习与调试真正变得轻松而顺畅。</p></div>
       </div>
     </div>
   </section>
@@ -215,11 +228,11 @@
         <h2>HiCode 适合谁</h2>
         <p>无论你是编程新人，还是资深开发者，都能从 HiCode 中受益。</p>
       </div>
-      <div class="people">
-        <div class="person glass" data-reveal><div class="em">🎓</div><h3>编程小白 / 学生</h3><p>零基础也能靠图形界面 + 简易代码起步，把课堂所学落到真实项目。</p></div>
-        <div class="person glass" data-reveal><div class="em">💼</div><h3>职场人 / 业务人员</h3><p>不懂技术也想提效？用 HiCode 快速搭建内部工具与原型，解决手头难题。</p></div>
-        <div class="person glass" data-reveal><div class="em">👥</div><h3>小团队 / 独立开发者</h3><p>前端后端一人搞定，降低协作成本，更快验证想法、迭代产品。</p></div>
-        <div class="person glass" data-reveal><div class="em">🧑‍💻</div><h3>资深开发者</h3><p>了解、参与一款新语言的建造成长，贡献开源，共建新一代开发方式。</p></div>
+      <div class="people stagger-box">
+        <div class="person glass"><div class="em">🎓</div><h3>编程小白 / 学生</h3><p>零基础也能靠图形界面 + 简易代码起步，把课堂所学落到真实项目。</p></div>
+        <div class="person glass"><div class="em">💼</div><h3>职场人 / 业务人员</h3><p>不懂技术也想提效？用 HiCode 快速搭建内部工具与原型，解决手头难题。</p></div>
+        <div class="person glass"><div class="em">👥</div><h3>小团队 / 独立开发者</h3><p>前端后端一人搞定，降低协作成本，更快验证想法、迭代产品。</p></div>
+        <div class="person glass"><div class="em">🧑‍💻</div><h3>资深开发者</h3><p>了解、参与一款新语言的建造成长，贡献开源，共建新一代开发方式。</p></div>
       </div>
       <div class="quote" data-reveal>
         <p>“让创造应用的能力，不再只属于少数掌握复杂技术的人。”</p>
@@ -236,11 +249,11 @@
         <h2>技术预览（规划中）</h2>
         <p>以下是 HiCode 正在规划的核心技术方向，具体以最终发布为准。</p>
       </div>
-      <div class="tech">
-        <div class="tech-item glass" data-reveal><span class="tag">规划中</span><div class="ico">🖱️</div><h3>图形化前端设计器</h3><p>拖拽组件、点选配置生成前端界面与布局，所见即所得。</p></div>
-        <div class="tech-item glass" data-reveal><span class="tag">规划中</span><div class="ico">⚙️</div><h3>解释型后端运行时</h3><p>面向业务逻辑的简易语法，即时解释执行，快速反馈与迭代。</p></div>
-        <div class="tech-item glass" data-reveal><span class="tag">规划中</span><div class="ico">🔩</div><h3>统一前后端数据桥</h3><p>用同一套语言与数据模型连接界面与逻辑，数据交换更顺畅。</p></div>
-        <div class="tech-item glass" data-reveal><span class="tag">规划中</span><div class="ico">🧱</div><h3>多端运行时</h3><p>面向网页、安卓（WebView）与 Windows 的运行与打包方案。</p></div>
+      <div class="tech stagger-box">
+        <div class="tech-item glass"><span class="tag">规划中</span><div class="ico">🖱️</div><h3>图形化前端设计器</h3><p>拖拽组件、点选配置生成前端界面与布局，所见即所得。</p></div>
+        <div class="tech-item glass"><span class="tag">规划中</span><div class="ico">⚙️</div><h3>解释型后端运行时</h3><p>面向业务逻辑的简易语法，即时解释执行，快速反馈与迭代。</p></div>
+        <div class="tech-item glass"><span class="tag">规划中</span><div class="ico">🔩</div><h3>统一前后端数据桥</h3><p>用同一套语言与数据模型连接界面与逻辑，数据交换更顺畅。</p></div>
+        <div class="tech-item glass"><span class="tag">规划中</span><div class="ico">🧱</div><h3>多端运行时</h3><p>面向网页、安卓（WebView）与 Windows 的运行与打包方案。</p></div>
       </div>
     </div>
   </section>
@@ -270,12 +283,12 @@
         <h2>常见问题</h2>
         <p>关于 HiCode 你可能有这些疑问。</p>
       </div>
-      <div class="faq-list">
-        <details class="faq glass" data-reveal><summary>HiCode 现在可以下载使用吗？<span class="pl">+</span></summary><div class="a">HiCode 目前仍处于设计与规划阶段，下载渠道与网页端尚未开放。你可以在本页了解产品愿景与路线图，后续正式版本发布后我们会第一时间公布。</div></details>
-        <details class="faq glass" data-reveal><summary>完全没有编程基础，真的能上手吗？<span class="pl">+</span></summary><div class="a">这正是 HiCode 的设计目标：用图形化界面创建前端、用接近自然的简易代码编写后端，尽量降低技术门槛，让小白也能迈出第一步。</div></details>
-        <details class="faq glass" data-reveal><summary>HiCode 是免费使用的吗？是否开源？<span class="pl">+</span></summary><div class="a">是的，HiCode 以开源方式发布，遵循相应的开源许可协议。我们会坚持开放、可自由使用与二次开发的原则。</div></details>
-        <details class="faq glass" data-reveal><summary>支持哪些开发平台？<span class="pl">+</span></summary><div class="a">我们规划支持网页、安卓（WebView）与 Windows 三大平台，一次编写、多端运行。具体支持程度以最终发布为准。</div></details>
-        <details class="faq glass" data-reveal><summary>我可以如何参与 HiCode 的成长？<span class="pl">+</span></summary><div class="a">欢迎通过产品建议邮箱 hicodehc@outlook.com 提出想法与建议，后续开源后也可通过社区贡献代码、文档与案例。</div></details>
+      <div class="faq-list stagger-box">
+        <details class="faq glass"><summary>HiCode 现在可以下载使用吗？<span class="pl">+</span></summary><div class="a">HiCode 目前仍处于设计与规划阶段，下载渠道与网页端尚未开放。你可以在本页了解产品愿景与路线图，后续正式版本发布后我们会第一时间公布。</div></details>
+        <details class="faq glass"><summary>完全没有编程基础，真的能上手吗？<span class="pl">+</span></summary><div class="a">这正是 HiCode 的设计目标：用图形化界面创建前端、用接近自然的简易代码编写后端，尽量降低技术门槛，让小白也能迈出第一步。</div></details>
+        <details class="faq glass"><summary>HiCode 是免费使用的吗？是否开源？<span class="pl">+</span></summary><div class="a">是的，HiCode 以开源方式发布，遵循相应的开源许可协议。我们会坚持开放、可自由使用与二次开发的原则。</div></details>
+        <details class="faq glass"><summary>支持哪些开发平台？<span class="pl">+</span></summary><div class="a">我们规划支持网页、安卓（WebView）与 Windows 三大平台，一次编写、多端运行。具体支持程度以最终发布为准。</div></details>
+        <details class="faq glass"><summary>我可以如何参与 HiCode 的成长？<span class="pl">+</span></summary><div class="a">欢迎通过产品建议邮箱 hicodehc@outlook.com 提出想法与建议，后续开源后也可通过社区贡献代码、文档与案例。</div></details>
       </div>
     </div>
   </section>
@@ -331,6 +344,20 @@
     });
   }, { threshold: 0.1 });
   document.querySelectorAll("[data-reveal]").forEach(el => io.observe(el));
+
+  /* 卡片组错峰渐显（液态玻璃质感进入） */
+  document.querySelectorAll(".stagger-box").forEach(box => {
+    const kids = Array.prototype.slice.call(box.children);
+    const ob = new IntersectionObserver((entries, self) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          kids.forEach((k, i) => { k.style.transitionDelay = (i * 70) + "ms"; k.classList.add("is-visible"); });
+          self.disconnect();
+        }
+      });
+    }, { threshold: 0.12 });
+    ob.observe(box);
+  });
 </script>
 </body>
 </html>

@@ -5,18 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="description" content="HiCode (HC) —— 前后端一体化、多端可开发的解释型编程语言，让小白也能轻松上手。" />
 <title>HiCode · 人人都能开发的编程语言</title>
+<link rel="icon" href="assets/hicode-logo.jpg" type="image/jpeg" />
 <style>
   :root {
-    --bg: #0b1026;
-    --bg-soft: #111737;
-    --card: #161d42;
-    --line: #2a3366;
-    --accent: #5b8cff;
-    --accent-2: #7c5bff;
-    --accent-grad: linear-gradient(135deg, #5b8cff 0%, #7c5bff 100%);
-    --text: #e7ecff;
-    --muted: #9aa5d0;
-    --radius: 16px;
+    --bg: #14100b;
+    --bg-2: #1e1711;
+    --glass: rgba(255, 246, 230, 0.07);
+    --glass-brd: rgba(255, 232, 200, 0.18);
+    --glass-hi: rgba(255, 255, 255, 0.05);
+    --accent: #f6a823;
+    --accent-2: #ff6a3d;
+    --accent-grad: linear-gradient(135deg, #f6a823 0%, #ff7b3a 55%, #ff6a3d 100%);
+    --gold-line: linear-gradient(135deg, rgba(246,168,35,.55), rgba(255,106,61,.18));
+    --text: #f7efe0;
+    --muted: #cbb997;
+    --dim: #8f7f5f;
+    --radius: 18px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -24,90 +28,129 @@
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.7;
+    line-height: 1.75;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
   a { color: inherit; text-decoration: none; }
 
-  /* ---- background decoration ---- */
-  .bg-wrap { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: var(--bg); }
-  .bg-wrap .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .45; }
-  .bg-wrap .orb.a { width: 480px; height: 480px; background: #2d4bd6; top: -160px; left: -120px; }
-  .bg-wrap .orb.b { width: 420px; height: 420px; background: #6a3fd6; bottom: -140px; right: -100px; }
+  /* ---- warm glowing background ---- */
+  .bg-wrap { position: fixed; inset: 0; z-index: -2; overflow: hidden;
+    background: linear-gradient(160deg, #1d1509 0%, var(--bg) 40%, #1c120b 100%); }
+  .bg-wrap .orb { position: absolute; border-radius: 50%; filter: blur(110px); mix-blend-mode: screen; }
+  .bg-wrap .orb.a { width: 520px; height: 520px; background: #ff9a3c; opacity: .34; top: -180px; left: -140px; }
+  .bg-wrap .orb.b { width: 460px; height: 460px; background: #ff5e3a; opacity: .30; bottom: -160px; right: -120px; }
+  .bg-wrap .orb.c { width: 300px; height: 300px; background: #f0c96a; opacity: .28; top: 38%; left: 58%; }
+  .grain { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .5;
+    background-image: radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px); background-size: 3px 3px; }
 
-  .container { width: min(1120px, 92%); margin: 0 auto; }
+  .container { width: min(1120px, 92%); margin: 0 auto; position: relative; z-index: 2; }
+
+  /* ---- liquid glass panel ---- */
+  .glass {
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--glass-brd);
+    box-shadow: 0 18px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12);
+  }
 
   /* ---- header ---- */
-  header { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); background: rgba(11,16,38,.72); border-bottom: 1px solid var(--line); }
-  .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: .5px; }
-  .brand .logo {
-    width: 34px; height: 34px; border-radius: 10px; background: var(--accent-grad);
-    display: grid; place-items: center; color: #fff; font-family: ui-monospace, Consolas, monospace; font-weight: 900;
-    box-shadow: 0 4px 18px rgba(91,140,255,.45);
-  }
-  .nav-links { display: flex; gap: 26px; color: var(--muted); font-size: 15px; }
-  .nav-links a { transition: color .2s; }
-  .nav-links a:hover { color: var(--text); }
-  .nav-cta { background: var(--accent-grad); padding: 9px 20px; border-radius: 999px; font-size: 14px; font-weight: 700; color: #fff; box-shadow: 0 6px 20px rgba(91,140,255,.35); transition: transform .2s; }
-  .nav-cta:hover { transform: translateY(-2px); }
+  header { position: sticky; top: 0; z-index: 30; padding: 14px 0; margin-top: 12px; }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    padding: 10px 14px 10px 12px; border-radius: 999px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 19px; letter-spacing: .5px; }
+  .brand img { width: 40px; height: 40px; border-radius: 12px; object-fit: cover;
+    box-shadow: 0 6px 20px rgba(246,168,35,.4); border: 1px solid var(--glass-brd); }
+  .nav-links { display: flex; gap: 28px; color: var(--muted); font-size: 15px; }
+  .nav-links a { opacity: .85; transition: opacity .25s, transform .25s; }
+  .nav-links a:hover { opacity: 1; transform: translateY(-1px); color: var(--text); }
+  .nav-cta { background: var(--accent-grad); padding: 11px 24px; border-radius: 999px; font-size: 14px; font-weight: 700; color: #241505;
+    box-shadow: 0 10px 28px rgba(246,140,50,.45); transition: transform .25s, box-shadow .25s; }
+  .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(246,140,50,.55); }
 
   /* ---- hero ---- */
-  .hero { text-align: center; padding: 90px 0 70px; position: relative; }
-  .hero .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(91,140,255,.14); border: 1px solid rgba(91,140,255,.4); color: #9fbeff; padding: 6px 16px; border-radius: 999px; font-size: 13px; margin-bottom: 26px; }
-  .hero .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #5bffb0; box-shadow: 0 0 10px #5bffb0; }
-  .hero h1 { font-size: clamp(44px, 8vw, 84px); line-height: 1.05; font-weight: 900; letter-spacing: 1px; }
-  .hero h1 .grad { background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hero .sub { margin: 22px auto 0; max-width: 660px; color: var(--muted); font-size: 18px; }
-  .hero .ctas { margin-top: 38px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .btn { padding: 14px 34px; border-radius: 999px; font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; transition: transform .2s, box-shadow .2s; }
-  .btn.primary { background: var(--accent-grad); color: #fff; box-shadow: 0 10px 30px rgba(91,140,255,.4); }
-  .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+  .hero { text-align: center; padding: 96px 0 70px; }
+  .hero .logo-glass { width: 108px; height: 108px; margin: 0 auto 30px; border-radius: 28px; overflow: hidden;
+    padding: 8px; }
+  .hero .logo-glass img { width: 100%; height: 100%; border-radius: 20px; object-fit: cover; display: block; }
+  .hero .badge { display: inline-flex; align-items: center; gap: 8px; color: #f3cf8a;
+    background: var(--glass); border: 1px solid var(--glass-brd); padding: 7px 18px; border-radius: 999px; font-size: 13px;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); margin-bottom: 26px; }
+  .hero .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #ffb84d; box-shadow: 0 0 12px #ffb84d; }
+  .hero h1 { font-size: clamp(44px, 8vw, 84px); line-height: 1.06; font-weight: 900; letter-spacing: 1px;
+    background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 6px 22px rgba(246,140,50,.35)); }
+  .hero .sub { margin: 24px auto 0; max-width: 680px; color: var(--muted); font-size: 18px; }
+  .hero .sub b { color: #f0cd9a; font-weight: 600; }
+  .hero .ctas { margin-top: 40px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn { padding: 15px 36px; border-radius: 999px; font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .25s, box-shadow .25s, background .25s; }
+  .btn.primary { background: var(--accent-grad); color: #241505; box-shadow: 0 12px 32px rgba(246,140,50,.45); }
+  .btn:not(.primary) { background: var(--glass); color: var(--text); border: 1px solid var(--glass-brd);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
   .btn:hover { transform: translateY(-3px); }
-  .hero .hint { margin-top: 26px; font-size: 13px; color: #6773a5; }
-  .hero .hint a { color: #8fa3ff; border-bottom: 1px dashed currentColor; }
+  .hero .hint { margin-top: 28px; font-size: 13px; color: var(--dim); }
+  .hero .hint a { color: #f0c47f; border-bottom: 1px dashed currentColor; }
 
   /* ---- sections ---- */
   section { padding: 78px 0; }
-  .sec-head { text-align: center; max-width: 680px; margin: 0 auto 52px; }
-  .sec-head .eyebrow { color: var(--accent); letter-spacing: 3px; font-size: 13px; font-weight: 700; text-transform: uppercase; }
-  .sec-head h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin: 10px 0 14px; }
+  .sec-head { text-align: center; max-width: 680px; margin: 0 auto 54px; }
+  .sec-head .eyebrow { letter-spacing: 4px; font-size: 13px; font-weight: 700; text-transform: uppercase;
+    background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sec-head h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin: 12px 0 14px; }
   .sec-head p { color: var(--muted); font-size: 16px; }
 
   /* features (一级) */
   .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 22px; }
-  .feat { background: linear-gradient(180deg, var(--card), var(--bg-soft)); border: 1px solid var(--line); border-radius: var(--radius); padding: 30px 26px; transition: transform .25s, border-color .25s; }
-  .feat:hover { transform: translateY(-6px); border-color: var(--accent); }
-  .feat .ico { width: 52px; height: 52px; border-radius: 14px; background: var(--accent-grad); display: grid; place-items: center; font-size: 24px; margin-bottom: 18px; box-shadow: 0 8px 22px rgba(91,140,255,.35); }
+  .feat { padding: 32px 28px; } /* glass */
+  .feat .ico { width: 54px; height: 54px; border-radius: 16px; background: var(--accent-grad);
+    display: grid; place-items: center; font-size: 24px; margin-bottom: 20px;
+    box-shadow: 0 10px 26px rgba(246,140,50,.4); }
   .feat h3 { font-size: 20px; margin-bottom: 10px; }
   .feat p { color: var(--muted); font-size: 15px; }
 
   /* advantages (二级) */
   .adv { text-align: center; }
   .adv-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
-  .adv-item { background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 34px 28px; }
-  .adv-item .num { font-family: ui-monospace, Consolas, monospace; font-size: 30px; font-weight: 900; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .adv-item { padding: 36px 30px; } /* glass */
+  .adv-item .num { font-family: ui-monospace, Consolas, monospace; font-size: 30px; font-weight: 900;
+    background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .adv-item h3 { font-size: 20px; margin: 8px 0 10px; }
   .adv-item p { color: var(--muted); font-size: 15px; }
 
   .trio { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 40px; }
-  .trio-el { background: rgba(22,29,66,.6); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: flex; gap: 14px; align-items: flex-start; text-align: left; }
-  .trio-el .tick { color: #5bffb0; font-size: 22px; line-height: 1; }
+  .trio-el { padding: 24px; display: flex; gap: 14px; align-items: flex-start; text-align: left; border-radius: 16px; } /* glass */
+  .trio-el .tick { color: #ffb84d; font-size: 22px; line-height: 1; }
   .trio-el .t-title { font-weight: 700; }
   .trio-el .t-desc { color: var(--muted); font-size: 13px; }
 
   /* ---- footer (三级) ---- */
-  footer { border-top: 1px solid var(--line); background: rgba(11,16,38,.6); padding: 52px 0 40px; }
-  .foot { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; }
-  .foot h4 { font-size: 15px; color: var(--text); margin-bottom: 14px; }
+  footer { padding: 60px 0 40px; margin-top: 20px; }
+  .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 34px; padding: 40px; }
+  @media (max-width: 900px) { .foot { grid-template-columns: 1fr 1fr; } }
+  .foot h4 { font-size: 15px; color: var(--text); margin-bottom: 16px; }
   .foot ul { list-style: none; }
-  .foot li, .foot p { color: var(--muted); font-size: 14px; margin-bottom: 10px; }
-  .foot a:hover { color: #8fa3ff; }
-  .foot .email { color: #9fbeff; }
-  .foot small { color: #6773a5; }
+  .foot li, .foot p { color: var(--muted); font-size: 14px; margin-bottom: 11px; }
+  .foot a:hover { color: #f0c47f; }
+  .foot .email { color: #f3cf8a; }
 
-  .disclaim { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); color: #6773a5; font-size: 12.5px; line-height: 1.8; }
-  .disclaim b { color: #9aa5d0; }
+  .disclaim { margin-top: 34px; padding: 26px 30px; color: var(--dim); font-size: 12.5px; line-height: 1.9; }
+  .disclaim b { color: var(--muted); }
+
+  /* ---- reveal on scroll ---- */
+  [data-reveal] { opacity: 0; transform: translateY(30px); transition: opacity .9s cubic-bezier(.22,.68,.28,1), transform .9s cubic-bezier(.22,.68,.28,1); }
+  [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+  [data-reveal="up"] { transform: translateY(40px); }
+  [data-reveal].is-visible[data-reveal="up"] { transform: translateY(0); }
+  .stagger > * { opacity: 0; transform: translateY(26px); transition: opacity .8s cubic-bezier(.22,.68,.28,1), transform .8s cubic-bezier(.22,.68,.28,1); }
+  .stagger.is-visible > * { opacity: 1; transform: translateY(0); }
+  .stagger.is-visible > *:nth-child(1){ transition-delay:.05s }
+  .stagger.is-visible > *:nth-child(2){ transition-delay:.14s }
+  .stagger.is-visible > *:nth-child(3){ transition-delay:.23s }
+  .stagger.is-visible > *:nth-child(4){ transition-delay:.32s }
+  .stagger.is-visible > *:nth-child(5){ transition-delay:.41s }
+  .stagger.is-visible > *:nth-child(6){ transition-delay:.50s }
 
   @media (max-width: 640px) {
     .nav-links { display: none; }
@@ -117,11 +160,12 @@
 </style>
 </head>
 <body>
-<div class="bg-wrap"><div class="orb a"></div><div class="orb b"></div></div>
+<div class="bg-wrap"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
+<div class="grain"></div>
 
 <header>
-  <div class="container nav">
-    <div class="brand"><span class="logo">&lt;/&gt;</span> HiCode</div>
+  <div class="container nav glass">
+    <div class="brand"><img src="assets/hicode-logo.jpg" alt="HiCode 标志" /> <span>HiCode</span></div>
     <nav class="nav-links">
       <a href="#features">产品特点</a>
       <a href="#mission">项目初心</a>
@@ -137,60 +181,37 @@
   <!-- 一级：标题、初心 -->
   <section class="hero" id="mission">
     <div class="container">
-      <div class="badge"><span class="dot"></span> HiCode · 前后端一体化编程语言</div>
-      <h1>打造属于每个人的<br /><span class="grad">一站式编程语言</span></h1>
-      <p class="sub">
+      <div class="logo-glass glass" data-reveal><img src="assets/hicode-logo.jpg" alt="HiCode 标志" /></div>
+      <div class="badge" data-reveal><span class="dot"></span> HiCode · 前后端一体化编程语言</div>
+      <h1 data-reveal="up">打造属于每个人的<br />一站式编程语言</h1>
+      <p class="sub" data-reveal="up">
         HiCode（简称 HC）让前端与后端在同一套语言中协同开发，用图形界面搭建前端、用接近自然的简易代码编写后端。
-        告别复杂的工程配置，小白也能轻松上手，把想法变成真正的应用。
+        告别复杂的工程配置，<b>小白也能轻松上手</b>，把想法变成真正的应用。
       </p>
-      <div class="ctas">
+      <div class="ctas" data-reveal="up">
         <a class="btn primary" href="#" id="download">↓ 下载 HiCode</a>
-        <a class="btn ghost" href="#">网页端体验</a>
-        <a class="btn ghost" href="#" id="learn">学习中心</a>
+        <a class="btn" href="#">网页端体验</a>
+        <a class="btn" href="#" id="learn">学习中心</a>
       </div>
-      <div class="hint">下载、网页端与学习中心即将上线，敬请期待 · 项目开源可用</div>
+      <div class="hint" data-reveal>下载、网页端与学习中心即将上线，敬请期待 · 项目开源可用</div>
     </div>
   </section>
 
   <!-- 一级：产品特点 -->
   <section id="features">
     <div class="container">
-      <div class="sec-head">
+      <div class="sec-head" data-reveal>
         <div class="eyebrow">Core Features</div>
         <h2>产品特点</h2>
         <p>让编程回归简单 —— 前后端一起写，跨端一起跑。</p>
       </div>
-      <div class="features">
-        <div class="feat">
-          <div class="ico">🧩</div>
-          <h3>前后端同时开发</h3>
-          <p>一套语言打通前后端，数据交换与逻辑复用不再繁琐，开发节奏大幅提速。</p>
-        </div>
-        <div class="feat">
-          <div class="ico">🎨</div>
-          <h3>图形化界面建前端</h3>
-          <p>拖拽、点选即可搭建前端界面，所见即所得，摆脱手写样式的门槛。</p>
-        </div>
-        <div class="feat">
-          <div class="ico">💬</div>
-          <h3>简易语言写后端</h3>
-          <p>使用接近自然语言的简易代码描述业务逻辑，小白也能读懂并写出后端。</p>
-        </div>
-        <div class="feat">
-          <div class="ico">📱</div>
-          <h3>多平台可开发</h3>
-          <p>支持网页、安卓与 Windows 平台，一次编写，多端运行。</p>
-        </div>
-        <div class="feat">
-          <div class="ico">🧭</div>
-          <h3>零基础易上手</h3>
-          <p>为新手量身设计，无需复杂环境配置，从第一行代码到第一个应用快速起步。</p>
-        </div>
-        <div class="feat">
-          <div class="ico">🚀</div>
-          <h3>解释型语言</h3>
-          <p>即时运行、即时反馈，让学习与调试真正变得轻松而顺畅。</p>
-        </div>
+      <div class="features stagger" data-reveal>
+        <div class="feat glass"><div class="ico">🧩</div><h3>前后端同时开发</h3><p>一套语言打通前后端，数据交换与逻辑复用不再繁琐，开发节奏大幅提速。</p></div>
+        <div class="feat glass"><div class="ico">🎨</div><h3>图形化界面建前端</h3><p>拖拽、点选即可搭建前端界面，所见即所得，摆脱手写样式的门槛。</p></div>
+        <div class="feat glass"><div class="ico">💬</div><h3>简易语言写后端</h3><p>使用接近自然语言的简易代码描述业务逻辑，小白也能读懂并写出后端。</p></div>
+        <div class="feat glass"><div class="ico">📱</div><h3>多平台可开发</h3><p>支持网页、安卓与 Windows 平台，一次编写，多端运行。</p></div>
+        <div class="feat glass"><div class="ico">🧭</div><h3>零基础易上手</h3><p>为新手量身设计，无需复杂环境配置，从第一行代码到第一个应用快速起步。</p></div>
+        <div class="feat glass"><div class="ico">🚀</div><h3>解释型语言</h3><p>即时运行、即时反馈，让学习与调试真正变得轻松而顺畅。</p></div>
       </div>
     </div>
   </section>
@@ -198,32 +219,20 @@
   <!-- 二级：产品优点 / 开源 / 多端 -->
   <section class="adv" id="advantages">
     <div class="container">
-      <div class="sec-head">
+      <div class="sec-head" data-reveal>
         <div class="eyebrow">Why HiCode</div>
         <h2>产品优点</h2>
         <p>开放、自由、简单 —— 一个面向所有人的开发方式。</p>
       </div>
-      <div class="adv-list">
-        <div class="adv-item">
-          <div class="num">01</div>
-          <h3>完整（Front & Back Together）</h3>
-          <p>前端与后端统一于一个语言生态，减少上下文切换，协作更高效。</p>
-        </div>
-        <div class="adv-item">
-          <div class="num">02</div>
-          <h3>简单（Designed for Everyone）</h3>
-          <p>图形界面与简易代码双管齐下，让编程小白也能独立完成自己的项目。</p>
-        </div>
-        <div class="adv-item">
-          <div class="num">03</div>
-          <h3>跨界（One Code, Many Platforms）</h3>
-          <p>面向多端开放，网页、安卓、Windows 自由覆盖，想象力无可阻挡。</p>
-        </div>
+      <div class="adv-list stagger" data-reveal>
+        <div class="adv-item glass"><div class="num">01</div><h3>完整（Front & Back Together）</h3><p>前端与后端统一于一个语言生态，减少上下文切换，协作更高效。</p></div>
+        <div class="adv-item glass"><div class="num">02</div><h3>简单（Designed for Everyone）</h3><p>图形界面与简易代码双管齐下，让编程小白也能独立完成自己的项目。</p></div>
+        <div class="adv-item glass"><div class="num">03</div><h3>跨界（One Code, Many Platforms）</h3><p>面向多端开放，网页、安卓、Windows 自由覆盖，想象力无可阻挡。</p></div>
       </div>
-      <div class="trio">
-        <div class="trio-el"><span class="tick">✔</span><div><div class="t-title">开源可用</div><div class="t-desc">完全开放源代码，遵循开源许可，自由使用与二次开发。</div></div></div>
-        <div class="trio-el"><span class="tick">✔</span><div><div class="t-title">多端开放</div><div class="t-desc">网页、安卓、Windows 三大平台同时支持开发与运行。</div></div></div>
-        <div class="trio-el"><span class="tick">✔</span><div><div class="t-title">社区共建</div><div class="t-desc">开放共建，共同让 HiCode 变得更好、更容易上手。</div></div></div>
+      <div class="trio stagger" data-reveal>
+        <div class="trio-el glass"><span class="tick">✔</span><div><div class="t-title">开源可用</div><div class="t-desc">完全开放源代码，遵循开源许可，自由使用与二次开发。</div></div></div>
+        <div class="trio-el glass"><span class="tick">✔</span><div><div class="t-title">多端开放</div><div class="t-desc">网页、安卓、Windows 三大平台同时支持开发与运行。</div></div></div>
+        <div class="trio-el glass"><span class="tick">✔</span><div><div class="t-title">社区共建</div><div class="t-desc">开放共建，共同让 HiCode 变得更好、更容易上手。</div></div></div>
       </div>
     </div>
   </section>
@@ -232,10 +241,10 @@
 <!-- 三级：联系 / 免责 / 许可 -->
 <footer id="footer">
   <div class="container">
-    <div class="foot">
+    <div class="foot glass" data-reveal>
       <div>
-        <div class="brand" style="margin-bottom:14px;"><span class="logo">&lt;/&gt;</span> HiCode</div>
-        <p>前后端一体化、多端可开发的编程语言。<br/>让编程回归简单。</p>
+        <div class="brand" style="margin-bottom:14px;"><img src="assets/hicode-logo.jpg" alt="HiCode 标志" /><span>HiCode</span></div>
+        <p style="margin-top:6px;">前后端一体化、多端可开发的编程语言。<br/>让编程回归简单。</p>
       </div>
       <div>
         <h4>资源</h4>
@@ -263,14 +272,23 @@
       </div>
     </div>
 
-    <div class="disclaim">
-      <b>免责声明：</b> HiCode 目前仍处于持续开发与完善阶段。本站所展示的功能、特性、下载入口及文档链接中，尚未上线的内容仅用于产品愿景展示，不代表最终形态。HiCode 按“现状”提供，本项目及其贡献者不对因使用本站或相关软件所造成的任何直接或间接损失承担责任。<br/>
+    <div class="disclaim glass" data-reveal>
+      <b>免责声明：</b> HiCode 目前仍处于持续开发与完善阶段。本站所展示的功能、特性、下载入口及文档链接中，尚未上线的内容仅用于产品愿景展示，不代表最终形态。HiCode 按"现状"提供，本项目及其贡献者不对因使用本站或相关软件所造成的任何直接或间接损失承担责任。<br/>
       <b>开源许可：</b> HiCode 项目以开源方式发布，遵循相应的开源许可协议（具体以仓库内 LICENSE 文件为准）。<br/>
       <b>版权信息：</b> © <span id="year"></span> HiCode（HC）项目团队 · 保留相关权利。
     </div>
   </div>
 </footer>
 
-<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+  // 滑动进入视口时渐显
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add("is-visible"); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+  document.querySelectorAll("[data-reveal]").forEach(el => io.observe(el));
+</script>
 </body>
 </html>

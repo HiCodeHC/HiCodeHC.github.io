@@ -17,15 +17,20 @@
     --muted: #b4a488;
     --dim: #86775d;
     --radius: 16px;
+    --glass-bg: linear-gradient(140deg, rgba(255, 252, 244, .62), rgba(255, 249, 240, .30));
+    --glass-line: rgba(255, 246, 230, .8);
+    --glass-text: #3a2f1e;
+    --glass-muted: #5b4f38;
+    --glass-dim: #7f7054;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     background: var(--bg);
     background-image:
-      radial-gradient(72% 54% at 16% 12%, rgba(217, 174, 107, .20), transparent 62%),
-      radial-gradient(62% 48% at 86% 72%, rgba(201, 139, 111, .15), transparent 60%),
-      radial-gradient(120% 80% at 50% 0%, #251a0c 0%, transparent 62%);
+      radial-gradient(72% 54% at 16% 12%, rgba(228, 186, 116, .32), transparent 62%),
+      radial-gradient(62% 48% at 86% 72%, rgba(211, 150, 120, .26), transparent 60%),
+      radial-gradient(120% 80% at 50% 0%, #2a1d0d 0%, transparent 62%);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
     line-height: 1.8;
@@ -39,22 +44,25 @@
 
   .glass {
     position: relative;
-    background: linear-gradient(140deg, rgba(255, 248, 235, .10), rgba(255, 248, 235, .035));
-    border: 1px solid var(--line);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-line);
     border-radius: var(--radius);
-    -webkit-backdrop-filter: blur(18px) saturate(170%);
-    backdrop-filter: blur(18px) saturate(170%);
-    box-shadow: 0 12px 44px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .20), inset 0 -16px 30px rgba(255, 255, 255, .03);
+    -webkit-backdrop-filter: blur(24px) saturate(200%) brightness(1.12);
+    backdrop-filter: blur(24px) saturate(200%) brightness(1.12);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(255, 255, 255, .7), inset 0 -16px 32px rgba(255, 255, 255, .3);
+    color: var(--glass-text);
   }
   .glass::before {
     content: "";
-    position: absolute; left: 14%; right: 14%; top: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .6), transparent);
+    position: absolute; left: 10%; right: 10%; top: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .9), transparent);
   }
 
   /* ===== 导航 ===== */
   header { position: sticky; top: 0; z-index: 30; padding: 14px 0;
-    background: rgba(22, 18, 13, .72); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+    background: linear-gradient(180deg, rgba(255, 252, 244, .78), rgba(255, 252, 244, .4));
+    -webkit-backdrop-filter: blur(22px) saturate(190%); backdrop-filter: blur(22px) saturate(190%);
+    border-bottom: 1px solid var(--glass-line); }
   .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 6px 0; }
   .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; letter-spacing: .5px; }
   .brand img { width: 34px; height: 34px; border-radius: 10px; object-fit: cover; }
@@ -158,6 +166,17 @@
   [data-reveal].is-visible { opacity: 1; transform: none; }
   .stagger-box > * { opacity: 0; transform: translateY(30px); transition: opacity .95s cubic-bezier(.22,.68,.28,1), transform .95s cubic-bezier(.22,.68,.28,1); }
   .stagger-box > *.is-visible { opacity: 1; transform: none; }
+
+  /* ===== 浅色玻璃内容文字（深色字体保证可读） ===== */
+  header .brand { color: var(--glass-text); }
+  header .nav-links a { color: rgba(70, 56, 36, .78); }
+  header .nav-links a:hover { color: var(--glass-text); }
+  .glass h3 { color: var(--glass-text); }
+  .glass p { color: var(--glass-muted); }
+  .glass summary { color: var(--glass-text); }
+  .glass .a { color: var(--glass-muted); }
+  .glass .tag { color: var(--glass-dim); }
+  .glass .feat p, .glass .person p, .glass .tech-item p { color: var(--glass-muted); }
 
   @media (max-width: 820px) {
     .nav-links { display: none; }

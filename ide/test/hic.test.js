@@ -1,4 +1,4 @@
-const HC = require("./js/hic.js");
+const HC = require("../js/hic.js");
 
 let pass = 0, fail = 0;
 function ok(cond, label) { if (cond) { pass++; } else { fail++; console.log("  ✗ " + label); } }

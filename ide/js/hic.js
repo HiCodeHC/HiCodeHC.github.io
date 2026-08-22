@@ -472,7 +472,7 @@
       Object.values(proj.pages).forEach(function (pg) {
         const { items } = processPage(pg, {});
         const ctx = { mode: "zip", projSlug: slugify(proj.name), projName: proj.name, pageName: pg.name, projectsMap: {} };
-        const inner = '<div class="hic-page" data-page="' + esc(esc(pg.name)) + '">\n' + renderItems(items, ctx) + "\n</div>";
+        const inner = '<div class="hic-page" data-page="' + esc(pg.name) + '">\n' + renderItems(items, ctx) + "\n</div>";
         const navBar = ['<div class="hic-bar"><span class="t">', esc(proj.name + " · " + pg.name), "</span></div>"].join("");
         arr.push({ name: slugify(proj.name) + "-" + slugify(pg.name) + ".html", html: pageShell(navBar + inner, { title: proj.name + " - " + pg.name }) });
       });

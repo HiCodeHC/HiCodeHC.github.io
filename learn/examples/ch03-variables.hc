@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.026",
+  "version": "v1.00",
   "project": {
     "id": "ch03-variables.hc",
     "name": "第03章 变量 it",

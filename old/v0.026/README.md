@@ -30,22 +30,12 @@ HiCode（简称 **HC**）的诞生源于一个朴素的愿望：**让编程真�
 
 ## 当前版本
 
-- **v1.00（正式版本）**：HiCode 正式版本，面向「真正可用、可信赖」的完整开发体验。在 v0.026 已有能力（`it` 变量含中文名、`in t/s/b/link/p` 分级展示、`if/orif/noif` 条件、四则/比较/逻辑表达式、`to/fr` 页面跳转、单等号比较、全角/数学运算符、`#` 注释、实时转译与 `.hc/.html/.zip` 导出）的基础上，正式版新增：
-  - 🖱️ **图形化编程界面**：内置画布，点击即可确定「点」的运作定位坐标，一键生成 `变量名 in point x y` 代码，所见即所得。
-  - 🖼️ **图片上传修复**：修复使用定义变量时 `p` 图片无法上传的问题，图片上传 / 更换 / 删除更加稳定。
-  - 📚 **教学中心升级**：课程扩充至 14 章，新增「图形化定位」章节，配套可下载的 `.hc` 练习文件。
-  - 📦 **多平台打包**：提供 **安卓端（.apk）与 Windows 电脑端（.exe）** 的本地运行形态，并保留网页端在线体验。下载页可选安卓端 / 电脑端 / 网页端。
-- **历史版本**：v0.01、v0.02、v0.026 均已归档至 `old/`，可在 [历史版本索引](https://HiCodeHC.github.io/old/) 中集中访问。
-
-## 下载
-
-- 下载页：**[https://HiCodeHC.github.io/download/](https://HiCodeHC.github.io/download/)**
-- 可选 **安卓端（.apk）**、**Windows 电脑端（.exe）** 与 **网页端（在线）** 三种形态；本地端基于网页端 IDE 封装的离线运行时，编译更快、体验一致。
+- **v0.026（网页端在线开发）**：支持 `it` 变量（含中文名）、`in` 分级展示（`t / s / b / link / p`）、`if / orif / noif` 条件、四则运算表达式、`to / fr` 页面跳转，可实时转译为网页并导出 `.hc` / `.html` / `.zip`。v0.026 在支持单等号 `=` 比较与全角/数学运算符（＋ － × ÷ ≥ ≤ ≠ 等）的基础上，新增代码备注功能（支持 `#` 整行/行尾注释），并修复导入后确认弹窗"空跨项目跳转误判"与"确定按钮无响应"问题。
+- **历史版本**：v0.01、v0.02 均已归档至 `old/`，可在 [历史版本索引](https://HiCodeHC.github.io/old/) 中集中访问。
 
 ## 官网
 
 - 官网地址：**[https://HiCodeHC.github.io](https://HiCodeHC.github.io)**
-- 下载页：**[https://HiCodeHC.github.io/download/](https://HiCodeHC.github.io/download/)**
 - 网页端体验：**[https://HiCodeHC.github.io/ide/](https://HiCodeHC.github.io/ide/)**
 - 学习中心：**[https://HiCodeHC.github.io/learn/](https://HiCodeHC.github.io/learn/)**
 - 历史版本索引：**[https://HiCodeHC.github.io/old/](https://HiCodeHC.github.io/old/)**

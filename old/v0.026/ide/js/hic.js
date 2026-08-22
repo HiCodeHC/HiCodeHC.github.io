@@ -1,5 +1,5 @@
 /* ============================================================
- * HC v1.00 —— HIC 语言引擎
+ * HC v0.026 —— HIC 语言引擎
  * 负责：HIC 词法/语法解析、HIC→HTML 转译、轻量 ZIP 写入、下载
  * 说明：本文件为纯逻辑，不依赖 DOM(localStorage/document)，
  *       唯一例外是 download()（仅浏览器调用）；可用 Node 单元测试。
@@ -11,7 +11,7 @@
 })(typeof self !== 'undefined' ? self : null, function () {
   "use strict";
 
-  const APP = { version: "v1.00", name: "HiCode", lang: "HIC" };
+  const APP = { version: "v0.026", name: "HiCode", lang: "HIC" };
 
   /* ---------------- 工具 ---------------- */
   function esc(s) {
@@ -185,9 +185,6 @@
       const map = { t: "text", text: "text", p: "img", img: "img", s: "sub", sub: "sub", b: "body", body: "body", link: "link" };
       return { kind: "in", name: inm[1], mode: map[mode] || "text" };
     }
-    // in point x y：图形化定位（绝对坐标像素，配合图形画布确定点位）
-    const ptm = line.match(/^([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s+in\s+point\s+([A-Za-z0-9_\u4e00-\u9fff.+-]+)\s+([A-Za-z0-9_\u4e00-\u9fff.+-]+)\s*$/i);
-    if (ptm) return { kind: "in", name: ptm[1], mode: "point", x: ptm[2], y: ptm[3] };
     const cond = parseCondHeader(line);
     if (cond) return { kind: "cond", ...cond };
     // 导向 to / fr
@@ -306,18 +303,6 @@
     return vars;
   }
 
-  function resolveCoord(raw, vars) {
-    const s = String(raw == null ? "" : raw).trim();
-    if (s === "") return 0;
-    const num = Number(s);
-    if (!isNaN(num)) return num;
-    if (vars[s] && typeof vars[s].value !== "undefined") {
-      const nv = Number(vars[s].value);
-      return isNaN(nv) ? 0 : nv;
-    }
-    return 0;
-  }
-
   function renderNodes(nodes, vars, ctx, out) {
     nodes.forEach(function (n) {
       if (n.kind === "it") {
@@ -325,12 +310,7 @@
       } else if (n.kind === "in") {
         const v = vars[n.name];
         if (!v) return;
-        const item = { kind: "display", name: n.name, mode: n.mode, value: v.value };
-        if (n.mode === "point") {
-          item.x = resolveCoord(n.x, vars);
-          item.y = resolveCoord(n.y, vars);
-        }
-        out.push(item);
+        out.push({ kind: "display", name: n.name, mode: n.mode, value: v.value });
       } else if (n.kind === "nav") {
         out.push({ kind: "nav", ...n });
       } else if (n.kind === "cond") {
@@ -370,7 +350,7 @@
   const PAGE_CSS = [
     "*{box-sizing:border-box;margin:0;padding:0;}",
     "body{font-family:-apple-system,'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif;background:#1a1510;color:#f2e9da;line-height:1.7;}",
-    ".hic-page{min-height:100vh;position:relative;}",
+    ".hic-page{min-height:100vh;}",
     ".hic-bar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 18px;",
     " background:rgba(255,252,244,.08);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,230,190,.16);}",
     ".hic-bar .t{font-weight:700;margin-right:auto;color:#d9ae6b;}",
@@ -390,10 +370,6 @@
     ".hic-img{max-width:100%;max-height:70vh;border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.4);}",
     ".hic-void{opacity:.4;}",
     ".hic-navrow{margin-top:34px;}",
-    ".hic-point{position:absolute;transform:translate(-50%,-50%);z-index:10;}",
-    ".hic-point-text{display:inline-block;padding:8px 16px;border-radius:10px;background:rgba(217,174,107,.16);color:#f2e9da;font-size:15px;white-space:nowrap;}",
-    ".hic-point-img{display:block;max-width:220px;max-height:220px;border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,.42);}",
-    ".hic-point-img.hic-void{opacity:.35;}",
     "@media(max-width:700px){.hic-text{font-size:32px;}}"
   ].join("\n");
 
@@ -420,15 +396,6 @@
         const src = it.value ? esc(it.value) : "";
         return '<div class="hic-item hic-imgwrap"><img class="hic-img' + (src ? "" : " hic-void") + '" src="' + src +
           '" alt="' + esc(it.name) + '"' + (src ? "" : " onerror=\"this.classList.add('hic-void')\"") + "></div>";
-      }
-      if (it.kind === "display" && it.mode === "point") {
-        const x = Number(it.x) || 0, y = Number(it.y) || 0;
-        const src = it.value ? String(it.value) : "";
-        const isImg = src.indexOf("data:image") === 0;
-        const inner = isImg
-          ? '<img class="hic-point-img' + (src ? "" : " hic-void") + '" src="' + esc(src) + '" alt="' + esc(it.name) + '">'
-          : '<span class="hic-point-text">' + esc(it.value) + "</span>";
-        return '<div class="hic-point" data-name="' + esc(it.name) + '" style="left:' + x + 'px;top:' + y + 'px;">' + inner + "</div>";
       }
       if (it.kind === "nav") {
         const href = navHref(it, ctx);

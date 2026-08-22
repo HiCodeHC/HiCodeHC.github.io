@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v1.00",
+  "version": "v0.026",
   "project": {
     "id": "ch05-conditions.hc",
     "name": "第05章 条件判断",

@@ -2,17 +2,17 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v1.00",
+  "version": "v0.026",
   "project": {
-    "id": "ch10-export.hc",
-    "name": "第10章 转译与导出",
+    "id": "ch03-variables.hc",
+    "name": "第03章 变量 it",
     "createdAt": 0,
     "updatedAt": 0,
     "pages": {
       "p1": {
         "id": "p1",
         "name": "页面1",
-        "code": "it 标题 t 综合演示\nit 副标题 t 展示变量、样式、判断与跳转\n\n标题 in t\n副标题 in s",
+        "code": "it 备注\nit 年龄 int 18\nit 名字 t 张三\nit 头像 p\n\n名字 in t\n头像 in p",
         "images": {}
       }
     }

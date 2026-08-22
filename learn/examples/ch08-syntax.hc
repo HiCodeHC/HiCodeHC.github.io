@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.026",
+  "version": "v1.00",
   "project": {
     "id": "ch08-syntax.hc",
     "name": "第08章 语法规范",

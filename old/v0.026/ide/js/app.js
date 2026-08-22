@@ -1,14 +1,14 @@
 /* ============================================================
- * HC v1.00 在线 IDE —— 界面逻辑 app.js
+ * HC v0.026 在线 IDE —— 界面逻辑 app.js
  * 依赖：Store (store.js) + HC (hic.js)
  * 职责：首页引导、项目/页面 CRUD、代码编辑、实时转译预览、
- *       变量面板（含 p 图片上传）、图形化画布定位、导出菜单。
+ *       变量面板（含 p 图片上传）、导出菜单。
  * ============================================================ */
 (function () {
   "use strict";
 
   /* ---- 状态 ---- */
-  let state = { projId: null, pageId: null, pendingImgVar: null, saveTimer: null, graph: { x: null, y: null } };
+  let state = { projId: null, pageId: null, pendingImgVar: null, saveTimer: null };
   let _importFileCb = null;
 
   const $ = function (id) { return document.getElementById(id); };
@@ -37,15 +37,7 @@
     btnExport: $("btnExport"),
     fileImg: $("fileImg"),
     fileHc: $("fileHc"),
-    openPreview: $("openPreview"),
-    graphCanvas: $("graphCanvas"),
-    graphCoord: $("graphCoord"),
-    graphVarName: $("graphVarName"),
-    graphContent: $("graphContent"),
-    graphType: $("graphType"),
-    graphDot: $("graphDot"),
-    btnInsertPoint: $("btnInsertPoint"),
-    btnClearGraph: $("btnClearGraph")
+    openPreview: $("openPreview")
   };
 
   /* ---- 工具 ---- */
@@ -235,6 +227,7 @@
   /* ---- 变量面板 ---- */
   function renderVars() {
     const proj = currentProj(); const pg = currentPage();
+    const needThumb = function (v) { return v.isImg; };
     if (!proj || !pg) { el.varList.innerHTML = ""; el.varEmpty.hidden = false; return; }
     let vars = {};
     try { vars = HC.processPage({ name: pg.name, code: el.code.value, images: Store.getPageImages(proj.id, pg.id) }, {}).vars; } catch (e) {}
@@ -252,12 +245,25 @@
         '<div><div class="vn">', esc(k), '</div><div class="vt">', typeLabel, '</div></div>',
         '<span class="val">', esc(String(v.value == null ? "" : v.value).slice(0, 40) || (uploaded ? "已上传图片" : "空")), '</span>',
         img ? ['<span class="img-actions">',
-            '<button type="button" class="primary" data-act="up">', uploaded ? "更换" : "上传", '</button>',
-            uploaded ? '<button type="button" class="danger" data-act="del">删除</button>' : '',
+            '<button class="primary" data-act="up">', uploaded ? "更换" : "上传", '</button>',
+            uploaded ? '<button class="danger" data-act="del">删除</button>' : '',
             '</span>'].join("")
           : '<span class="vt">$</span>',
         "</div>"].join("");
     }).join("");
+    Array.prototype.forEach.call(el.varList.querySelectorAll(".var-row"), function (row) {
+      const imgBtns = row.querySelectorAll("[data-act]");
+      Array.prototype.forEach.call(imgBtns, function (b) {
+        b.onclick = function (e) {
+          e.stopPropagation();
+          const k = row.getAttribute("data-vk");
+          if (b.getAttribute("data-act") === "up") pickImage(k);
+          else if (b.getAttribute("data-act") === "del") {
+            Store.setPageImage(state.projId, state.pageId, k, null); doLive();
+          }
+        };
+      });
+    });
   }
   function pickImage(varName) {
     state.pendingImgVar = varName;
@@ -274,57 +280,6 @@
       doLive();
     };
     reader.readAsDataURL(file);
-  }
-
-  /* ---- 图形化画布：点击定位坐标 ---- */
-  function onGraphClick(evt) {
-    if (!el.graphCanvas) return;
-    const rect = el.graphCanvas.getBoundingClientRect();
-    const x = Math.max(0, Math.min(rect.width, Math.round(evt.clientX - rect.left)));
-    const y = Math.max(0, Math.min(rect.height, Math.round(evt.clientY - rect.top)));
-    state.graph.x = x; state.graph.y = y;
-    if (el.graphCoord) el.graphCoord.textContent = "坐标：( " + x + " , " + y + " ) px";
-    if (el.graphDot) {
-      el.graphDot.hidden = false;
-      el.graphDot.style.left = x + "px";
-      el.graphDot.style.top = y + "px";
-    }
-  }
-  function clearGraph() {
-    state.graph.x = null; state.graph.y = null;
-    if (el.graphCoord) el.graphCoord.textContent = "坐标：未选择（请在画布上点击）";
-    if (el.graphDot) el.graphDot.hidden = true;
-  }
-  function insertAtCursor(text) {
-    const ta = el.code;
-    if (ta.selectionStart == null) { ta.value += text; return; }
-    const s = ta.selectionStart, en = ta.selectionEnd;
-    const before = ta.value.slice(0, s);
-    const after = ta.value.slice(en);
-    // 在光标处整齐换行插入
-    const lead = before && !/\n$/.test(before) ? "\n" : "";
-    const trail = after && !/^\n/.test(after) ? "\n" : "";
-    const ins = lead + text + trail;
-    ta.value = before + ins + after;
-    const pos = s + lead.length + text.length;
-    ta.selectionStart = ta.selectionEnd = pos;
-    ta.focus();
-  }
-  function insertPointCode() {
-    if (!state.projId || !state.pageId) { setStatus("请先打开一个页面"); return; }
-    const name = (el.graphVarName && el.graphVarName.value ? el.graphVarName.value.trim() : "点A").trim();
-    if (!HC.isName(name)) { setStatus("变量名不合法：需以字母/下划线/中文开头"); return; }
-    if (state.graph.x == null || state.graph.y == null) { setStatus("请先在画布上点击确定坐标"); return; }
-    const type = (el.graphType && el.graphType.value) || "text";
-    const content = (el.graphContent && el.graphContent.value ? el.graphContent.value.trim() : "");
-    const code = el.code.value || "";
-    const lines = [];
-    const hasDecl = new RegExp("(^|\\n)\\s*it\\s+" + name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b").test(code);
-    if (!hasDecl) lines.push(type === "img" ? "it " + name + " p" : "it " + name + " t" + (content ? " " + content : ""));
-    lines.push(name + " in point " + Math.round(state.graph.x) + " " + Math.round(state.graph.y));
-    insertAtCursor(lines.join("\n"));
-    doLive(); debounceSave();
-    setStatus("已插入坐标点 " + name + " → (" + Math.round(state.graph.x) + ", " + Math.round(state.graph.y) + ")");
   }
 
   /* ---- 新建/重命名/删除 ---- */
@@ -514,22 +469,6 @@
     el.fileImg.onchange = onFileImg;
     el.fileHc.onchange = onFileHc;
     el.openPreview.onclick = openPreviewNew;
-    // 变量面板：事件委托处理图片上传/删除（保证每次重渲染后按钮始终可用）
-    el.varList.addEventListener("click", function (e) {
-      const btn = e.target.closest("[data-act]");
-      if (!btn) return;
-      e.preventDefault(); e.stopPropagation();
-      const row = btn.closest(".var-row");
-      if (!row) return;
-      const k = row.getAttribute("data-vk");
-      const act = btn.getAttribute("data-act");
-      if (act === "up") pickImage(k);
-      else if (act === "del") { Store.setPageImage(state.projId, state.pageId, k, null); doLive(); }
-    });
-    // 图形化画布
-    if (el.graphCanvas) el.graphCanvas.addEventListener("click", onGraphClick);
-    if (el.btnInsertPoint) el.btnInsertPoint.onclick = insertPointCode;
-    if (el.btnClearGraph) el.btnClearGraph.onclick = clearGraph;
   }
 
   /* ---- 启动 ---- */

@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v1.00",
+  "version": "v0.026",
   "project": {
     "id": "ch12-cheatsheet.hc",
     "name": "第12章 语法速查表",

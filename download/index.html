@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="下载 HiCode（HC）v1.00 —— 可选安卓端（.apk）、电脑端（.exe）与网页端（在线）三种形态。" />
+<title>下载 HiCode · v1.00</title>
+<link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --surface: rgba(255, 255, 255, .035);
+    --surface-strong: rgba(255, 255, 255, .06);
+    --line: rgba(255, 255, 255, .08);
+    --line-strong: rgba(255, 255, 255, .16);
+    --text: #f5f5f7;
+    --muted: #a1a1a6;
+    --dim: #6e6e73;
+    --accent: #c7a56b;
+    --accent-ink: #171309;
+    --good: #7ec99b;
+    --radius: 16px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    background-image: radial-gradient(80% 50% at 50% 0%, rgba(255,255,255,.05), transparent 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    line-height: 1.8;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: rgba(199,165,107,.28); }
+  .container { width: min(1000px, 90%); margin: 0 auto; }
+
+  header { position: sticky; top: 0; z-index: 30; padding: 14px 0;
+    background: rgba(10,10,12,.72);
+    -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--line); }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; letter-spacing: .5px; }
+  .brand img { width: 32px; height: 32px; border-radius: 9px; object-fit: cover; }
+  .brand .ver { font-size: 12.5px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+  .nav-links { display: flex; gap: 26px; color: var(--muted); font-size: 14px; }
+  .nav-links a { transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+
+  .hero { padding: 90px 0 40px; text-align: center; }
+  .hero .badge { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13.5px;
+    padding: 6px 15px; border: 1px solid var(--line); border-radius: 999px; }
+  .hero .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .hero h1 { margin: 26px auto 0; font-size: clamp(34px, 5vw, 56px); font-weight: 800; letter-spacing: .5px; }
+  .hero h1 .accent { color: var(--accent); }
+  .hero p { margin: 18px auto 0; max-width: 620px; color: var(--muted); font-size: 16px; }
+  .hero p b { color: var(--text); font-weight: 600; }
+
+  /* ===== 平台选择 ===== */
+  .picker { display: flex; justify-content: center; gap: 8px; margin: 40px auto 0; padding: 6px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px; width: fit-content; }
+  .picker button { border: none; background: transparent; color: var(--muted); font-size: 14.5px; font-weight: 600;
+    padding: 11px 26px; border-radius: 999px; cursor: pointer; transition: color .2s, background .2s; }
+  .picker button.on { background: var(--accent); color: var(--accent-ink); }
+
+  /* ===== 平台卡片 ===== */
+  .panel { padding: 56px 0 0; }
+  .card {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 44px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 20px 50px rgba(0,0,0,.3);
+  }
+  @media (max-width: 780px) { .card { grid-template-columns: 1fr; } }
+  .card .ico { font-size: 56px; line-height: 1; }
+  .card h2 { font-size: 26px; font-weight: 800; margin: 14px 0 6px; }
+  .card .tag { display: inline-block; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--line); border-radius: 999px; padding: 2px 12px; margin-bottom: 14px; }
+  .card p { color: var(--muted); font-size: 15px; }
+  .card ul { margin: 16px 0 0; padding-left: 2px; list-style: none; }
+  .card li { color: var(--muted); font-size: 14px; margin: 7px 0; padding-left: 22px; position: relative; }
+  .card li::before { content: "✓"; position: absolute; left: 0; color: var(--good); font-weight: 700; }
+  .card .cta { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 30px; border-radius: 999px;
+    font-size: 15px; font-weight: 700; transition: opacity .2s, transform .2s, border-color .2s; cursor: pointer; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); }
+  .btn.primary:hover { opacity: .9; transform: translateY(-1px); }
+  .btn.ghost { border: 1px solid var(--line-strong); color: var(--text); }
+  .btn.ghost:hover { border-color: rgba(255,255,255,.34); }
+  .card .dim { font-size: 12.5px; color: var(--dim); margin-top: 14px; }
+
+  /* ===== 说明 / 打包 ===== */
+  section.note { padding: 70px 0 0; }
+  .note h3 { font-size: 20px; font-weight: 700; margin-bottom: 14px; }
+  .note h3 .no { color: var(--accent); margin-right: 8px; }
+  .note p { color: var(--muted); font-size: 15px; }
+  .note pre { background: rgba(0,0,0,.38); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 20px; overflow-x: auto; margin: 16px 0; font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 13.5px; line-height: 1.7; color: #e8ddc8; }
+  .note code { background: rgba(120,90,50,.2); padding: 1px 7px; border-radius: 6px; font-size: .9em; color: var(--accent);
+    font-family: "Cascadia Code", Consolas, monospace; }
+
+  footer { margin-top: 90px; border-top: 1px solid var(--line); padding: 40px 0 46px; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; color: var(--dim); font-size: 13px; }
+  .foot a { color: var(--muted); }
+  .foot a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a class="brand" href="../"><img src="../assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span><span class="ver">v1.00</span></a>
+    <nav class="nav-links">
+      <a href="../">官网首页</a>
+      <a href="../ide/">网页端体验</a>
+      <a href="../learn/">学习中心</a>
+      <a href="../old/">历史版本</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero container">
+    <div class="badge"><span class="dot"></span> HiCode · 多端下载</div>
+    <h1>下载 <span class="accent">HiCode</span> v1.00</h1>
+    <p>选择你的平台。安卓端与电脑端均以<b>离线单文件版</b>为运行内核，<b>断网也能编译</b>；网页端可直接在线体验。</p>
+  </div>
+
+  <div class="container">
+    <div class="picker" role="tablist">
+      <button class="on" data-plat="android">安卓端</button>
+      <button data-plat="windows">电脑端</button>
+      <button data-plat="web">网页端</button>
+    </div>
+  </div>
+
+  <div class="panel container">
+    <!-- 安卓端 -->
+    <div class="card" data-panel="android">
+      <div><div class="ico">📱</div><h2>安卓端 <span style="color:var(--dim)">· .apk</span></h2>
+        <span class="tag">Android · WebView</span>
+        <p>面向 Android 手机的本地运行形态。以下载的离线单文件为内核，用 WebView 壳打包后即可离线运行、断网编译，体验与网页端一致。</p>
+        <ul><li>离线运行，无需网络</li><li>本地编译更快</li><li>一次编写，手机 / 平板通用</li></ul>
+        <div class="cta">
+          <a class="btn primary" href="HiCode-ide-offline.html" download="HiCode-安卓端内核.html">下载安卓端内核</a>
+        </div>
+        <div class="dim">原生 .apk 安装包需用下方「打包说明」中的 Capacitor 壳一键打包生成。</div>
+      </div>
+      <div style="text-align:center;color:var(--dim);font-size:52px;opacity:.5;">📱</div>
+    </div>
+
+    <!-- 电脑端 -->
+    <div class="card" data-panel="windows" hidden>
+      <div><div class="ico">🖥️</div><h2>电脑端 <span style="color:var(--dim)">· .exe</span></h2>
+        <span class="tag">Windows · 壳</span>
+        <p>面向 Windows 电脑的本地运行形态。以下载的离线单文件为内核，用 Tauri / Electron 壳打包后即可双击运行、离线编译，体验与网页端一致。</p>
+        <ul><li>双击即用，无需安装浏览器环境</li><li>本地编译更快</li><li>文件与项目保存在本地</li></ul>
+        <div class="cta">
+          <a class="btn primary" href="HiCode-ide-offline.html" download="HiCode-电脑端内核.html">下载电脑端内核</a>
+        </div>
+        <div class="dim">原生 .exe 安装包需用下方「打包说明」中的 Tauri 壳一键打包生成。</div>
+      </div>
+      <div style="text-align:center;color:var(--dim);font-size:52px;opacity:.5;">🖥️</div>
+    </div>
+
+    <!-- 网页端 -->
+    <div class="card" data-panel="web" hidden>
+      <div><div class="ico">🌐</div><h2>网页端 <span style="color:var(--dim)">· 在线</span></h2>
+        <span class="tag">Browser · Online</span>
+        <p>无需下载，打开浏览器即可编写 HIC 代码并实时转译为网页。支持项目 / 页面管理、图形化定位、图片上传与多种导出。</p>
+        <ul><li>零安装，即开即用</li><li>实时转译预览</li><li>导出 .hc / .html / .zip</li></ul>
+        <div class="cta">
+          <a class="btn primary" href="../ide/">进入网页端体验</a>
+          <a class="btn ghost" href="HiCode-ide-offline.html" download="HiCode-ide-offline.html">下载离线单文件版</a>
+        </div>
+        <div class="dim">离线单文件版 = 把网页端整个搬到本地，双击即可断网使用。</div>
+      </div>
+      <div style="text-align:center;color:var(--dim);font-size:52px;opacity:.5;">🌐</div>
+    </div>
+  </div>
+
+  <section class="note container">
+    <h3><span class="no">01</span>离线单文件版</h3>
+    <p>「离线单文件版」是把网页端 IDE 的 HTML、CSS 与全部脚本（语言引擎、数据层、界面逻辑）打包成一个自包含的 <code>.html</code> 文件。双击即可在浏览器（或 WebView）中运行，<b>无需网络、编译更快</b>，是安卓端与电脑端安装包的运行内核。</p>
+
+    <h3><span class="no">02</span>打包为 .apk（安卓端）</h3>
+    <p>用 <b>Capacitor</b> 把离线单文件封装为原生 Android 应用（WebView 壳）：</p>
+<pre><code>npm i -g @capacitor/cli
+mkdir hicode-android &amp;&amp; cd hicode-android
+npm init -y &amp;&amp; npm i @capacitor/core @capacitor/android
+cp 下载的离线单文件.html www/index.html
+npx cap add android
+npx cap copy &amp;&amp; npx cap open android   # 用 Android Studio 构建签名 APK</code></pre>
+
+    <h3><span class="no">03</span>打包为 .exe（电脑端）</h3>
+    <p>用 <b>Tauri</b> 或 <b>Electron</b> 把离线单文件封装为 Windows 桌面应用：</p>
+<pre><code># 方式一：Electron（最简单）
+npm i -g electron
+mkdir hicode-win &amp;&amp; cd hicode-win &amp;&amp; npm init -y
+npm i electron --save-dev
+# 写 main.js 加载本地 index.html，再：
+npx electron-packager . HiCode --platform=win32 --arch=x64</code></pre>
+  </section>
+</main>
+
+<footer>
+  <div class="container foot">
+    <span>© <span id="year"></span> HiCode（HC）项目团队 · 多端通用</span>
+    <span><a href="../">官网首页</a> · <a href="../learn/">学习中心</a> · <a href="../old/">历史版本</a> · <a href="mailto:hicodehc@outlook.com">hicodehc@outlook.com</a></span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+  var btns = Array.prototype.slice.call(document.querySelectorAll(".picker button"));
+  var panels = {
+    android: document.querySelector('[data-panel="android"]'),
+    windows: document.querySelector('[data-panel="windows"]'),
+    web: document.querySelector('[data-panel="web"]')
+  };
+  btns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      btns.forEach(function (x) { x.classList.remove("on"); });
+      b.classList.add("on");
+      Object.keys(panels).forEach(function (k) { panels[k].hidden = (k !== b.getAttribute("data-plat")); });
+    });
+  });
+</script>
+</body>
+</html>

@@ -135,7 +135,7 @@ const built = HC.buildSinglePageHtml({ name: "demo" }, p2);
 ok(built.indexOf('class="hic-href"') >= 0, "链接渲染含 hic-href");
 ok(built.indexOf("hic-sub") >= 0, "副标题渲染含 hic-sub");
 
-// ---- 12. v1.00 人性化编译：单等号 + 全角/数学运算符 ----
+// ---- 12. v0.026 人性化编译：单等号 + 全角/数学运算符 ----
 ok(HC.evalExpr("age = 18", { age: { value: 18 } }) === true, "单等号 = 当作 == 比较");
 ok(HC.evalExpr("age = 19", { age: { value: 18 } }) === false, "单等号 = 比较为假");
 ok(HC.evalExpr("2 \uFF0B 3", {}) === 5, "全角加 ＋");
@@ -150,7 +150,7 @@ ok(HC.evalExpr("2 \u2260 3", {}) === true, "≠ 当作 !=");
 ok(HC.evalExpr("\uFF082 \uFF0B 3\uFF09\u00D7 4", {}) === 20, "全角括号与混合运算符");
 ok(HC.evalExpr("年龄 = 18", { "年龄": { value: 18 } }) === true, "中文变量 + 单等号");
 
-// ---- 13. v1.00 代码备注（# 整行 / 行尾注释）----
+// ---- 13. v0.026 代码备注（# 整行 / 行尾注释）----
 const p3 = HC.processPage({
   name: "note",
   code: [
@@ -169,21 +169,6 @@ ok(p3.items.some(function (it) { return it.kind === "display" && it.value === "�
 // URL 片段中的 # 不应被当作备注
 const p4 = HC.processPage({ name: "link", code: "it 链接 t https://example.com/#/home\n链接 in link", images: {} }, {});
 ok(p4.vars["链接"].value === "https://example.com/#/home", "URL 中的 # 不被当作备注");
-
-// ---- 14. v1.00 图形化定位 in point x y ----
-const rpt = HC.classify("点A in point 100 200");
-ok(rpt.kind === "in" && rpt.mode === "point" && rpt.x === "100" && rpt.y === "200", "in point 解析坐标");
-const pp = HC.processPage({ name: "graph", code: "it 点A t 你好\n点A in point 100 200", images: {} }, {});
-const ptItem = pp.items.find(function (x) { return x.kind === "display" && x.mode === "point"; });
-ok(!!ptItem && ptItem.x === 100 && ptItem.y === 200 && ptItem.value === "你好", "坐标渲染为数值 px");
-// 坐标值可引用数值变量
-const pp2 = HC.processPage({ name: "graph2", code: "it 点A t 你好\nit 横坐标 int 120\n点A in point 横坐标 80", images: {} }, {});
-const pt2 = pp2.items.find(function (x) { return x.kind === "display" && x.mode === "point"; });
-ok(!!pt2 && pt2.x === 120 && pt2.y === 80, "坐标引用变量解析");
-// 图片点：在坐标处显示图片
-const pp3 = HC.processPage({ name: "graph3", code: "it 头像 p\n头像 in point 30 40", images: { "头像": "data:image/png;base64,AAAA" } }, {});
-const pt3 = pp3.items.find(function (x) { return x.kind === "display" && x.mode === "point"; });
-ok(!!pt3 && pt3.value.indexOf("data:image") === 0, "图片点在坐标处显示");
 
 console.log("\n通过 " + pass + " 项，失败 " + fail + " 项");
 process.exit(fail ? 1 : 0);

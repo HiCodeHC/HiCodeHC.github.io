@@ -1,5 +1,5 @@
 /* ============================================================
- * HC v0.021 —— 数据层 store.js
+ * HC v0.026 —— 数据层 store.js
  * 职责：
  *   1) 项目 / 页面 CRUD，localStorage 本地持久化
  *   2) 首次零项目引导判定（hasAnyProject / lastActive）
@@ -21,7 +21,7 @@
   "use strict";
 
   const KEY = "HICODE_DATA";
-  const STORE_VERSION = "v0.021";
+  const STORE_VERSION = "v0.026";
 
   function uuid() {
     return "h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);

@@ -1,5 +1,5 @@
 /* ============================================================
- * HC v0.021 —— HIC 语言引擎
+ * HC v0.026 —— HIC 语言引擎
  * 负责：HIC 词法/语法解析、HIC→HTML 转译、轻量 ZIP 写入、下载
  * 说明：本文件为纯逻辑，不依赖 DOM(localStorage/document)，
  *       唯一例外是 download()（仅浏览器调用）；可用 Node 单元测试。
@@ -11,7 +11,7 @@
 })(typeof self !== 'undefined' ? self : null, function () {
   "use strict";
 
-  const APP = { version: "v0.021", name: "HiCode", lang: "HIC" };
+  const APP = { version: "v0.026", name: "HiCode", lang: "HIC" };
 
   /* ---------------- 工具 ---------------- */
   function esc(s) {
@@ -225,8 +225,11 @@
   function parse(code) {
     const ls = String(code || "").split("\n").map(function (raw) {
       const mt = raw.match(/^[ \t]*/)[0];
-      return { indent: mt.replace(/\t/g, "  ").length, line: raw.slice(mt.length).trim() };
-    }).filter(function (x) { return x.line && !x.line.startsWith("#"); });
+      const indent = mt.replace(/\t/g, "  ").length;
+      // 代码备注：# 整行注释，或行内空白后的 # 到行尾为注释（Python 风格）
+      const line = raw.replace(/(^|[ \t])#.*$/, "").trim();
+      return { indent, line };
+    }).filter(function (x) { return x.line; });
 
     // 取 [start,end) 范围内行缩进的最小值（子块的实际根缩进）
     function minIndent(start, end) {

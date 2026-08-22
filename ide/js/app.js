@@ -1,5 +1,5 @@
 /* ============================================================
- * HC v0.021 在线 IDE —— 界面逻辑 app.js
+ * HC v0.026 在线 IDE —— 界面逻辑 app.js
  * 依赖：Store (store.js) + HC (hic.js)
  * 职责：首页引导、项目/页面 CRUD、代码编辑、实时转译预览、
  *       变量面板（含 p 图片上传）、导出菜单。
@@ -388,7 +388,7 @@
       // 跨项目提示
       const proj = Store.getProject(r.projectId);
       const refs = collectCrossRefs(proj);
-      if (refs.missing) {
+      if (refs.missing && refs.missing.length) {
         toastOn("已导入 · 注意", "项目「" + esc(r.name) + "」已导入。<br/>检测到跨项目跳转指向：<b>" + esc(refs.missing.join("、")) + "</b>。请在同样导入相应项目后再导出，以保证跳转可点击。");
       } else {
         toastOn("导入成功", "项目「" + esc(r.name) + "」已导入并开始开发。");

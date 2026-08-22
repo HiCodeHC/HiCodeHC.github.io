@@ -135,7 +135,7 @@ const built = HC.buildSinglePageHtml({ name: "demo" }, p2);
 ok(built.indexOf('class="hic-href"') >= 0, "链接渲染含 hic-href");
 ok(built.indexOf("hic-sub") >= 0, "副标题渲染含 hic-sub");
 
-// ---- 12. v0.021 人性化编译：单等号 + 全角/数学运算符 ----
+// ---- 12. v0.026 人性化编译：单等号 + 全角/数学运算符 ----
 ok(HC.evalExpr("age = 18", { age: { value: 18 } }) === true, "单等号 = 当作 == 比较");
 ok(HC.evalExpr("age = 19", { age: { value: 18 } }) === false, "单等号 = 比较为假");
 ok(HC.evalExpr("2 \uFF0B 3", {}) === 5, "全角加 ＋");
@@ -149,6 +149,26 @@ ok(HC.evalExpr("2 \u2264 3", {}) === true, "≤ 当作 <=");
 ok(HC.evalExpr("2 \u2260 3", {}) === true, "≠ 当作 !=");
 ok(HC.evalExpr("\uFF082 \uFF0B 3\uFF09\u00D7 4", {}) === 20, "全角括号与混合运算符");
 ok(HC.evalExpr("年龄 = 18", { "年龄": { value: 18 } }) === true, "中文变量 + 单等号");
+
+// ---- 13. v0.026 代码备注（# 整行 / 行尾注释）----
+const p3 = HC.processPage({
+  name: "note",
+  code: [
+    "# 这是整行备注",
+    "it 标题 t 你好世界",
+    "it 简介 t 这是简介 # 行尾备注",
+    "标题 in t # 这里的备注被忽略",
+    "简介 in s"
+  ].join("\n"),
+  images: {}
+}, {});
+ok(Object.keys(p3.vars).length === 2, "备注行被忽略，只收集 2 个变量");
+ok(p3.vars["简介"].value === "这是简介", "行尾备注不影响取值");
+ok(p3.items.some(function (it) { return it.kind === "display" && it.value === "你好世界"; }), "带行尾备注的 in 语句仍正常渲染");
+ok(p3.items.some(function (it) { return it.kind === "display" && it.value === "这是简介"; }), "行尾备注不影响展示值");
+// URL 片段中的 # 不应被当作备注
+const p4 = HC.processPage({ name: "link", code: "it 链接 t https://example.com/#/home\n链接 in link", images: {} }, {});
+ok(p4.vars["链接"].value === "https://example.com/#/home", "URL 中的 # 不被当作备注");
 
 console.log("\n通过 " + pass + " 项，失败 " + fail + " 项");
 process.exit(fail ? 1 : 0);

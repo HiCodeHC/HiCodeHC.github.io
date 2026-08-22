@@ -139,12 +139,13 @@
     <div class="card" data-panel="android">
       <div><div class="ico">📱</div><h2>安卓端 <span style="color:var(--dim)">· .apk</span></h2>
         <span class="tag">Android · WebView</span>
-        <p>面向 Android 手机的本地运行形态。以下载的离线单文件为内核，用 WebView 壳打包后即可离线运行、断网编译，体验与网页端一致。</p>
+        <p>面向 Android 手机的本地运行形态。用 Capacitor + WebView 壳打包，离线运行、断网编译，体验与网页端一致。</p>
         <ul><li>离线运行，无需网络</li><li>本地编译更快</li><li>一次编写，手机 / 平板通用</li></ul>
         <div class="cta">
-          <a class="btn primary" href="HiCode-ide-offline.html" download="HiCode-安卓端内核.html">下载安卓端内核</a>
+          <a class="btn primary" href="HiCode-v1.00.apk" download="HiCode-v1.00.apk">下载 .apk（4.2 MB）</a>
+          <a class="btn ghost" href="HiCode-ide-offline.html" download="HiCode-安卓端内核.html">内核 HTML</a>
         </div>
-        <div class="dim">原生 .apk 安装包需用下方「打包说明」中的 Capacitor 壳一键打包生成。</div>
+        <div class="dim">debug 签名 APK，可直接安装测试。正式发布签名请用 Android Studio 重新签名。</div>
       </div>
       <div style="text-align:center;color:var(--dim);font-size:52px;opacity:.5;">📱</div>
     </div>
@@ -152,13 +153,14 @@
     <!-- 电脑端 -->
     <div class="card" data-panel="windows" hidden>
       <div><div class="ico">🖥️</div><h2>电脑端 <span style="color:var(--dim)">· .exe</span></h2>
-        <span class="tag">Windows · 壳</span>
-        <p>面向 Windows 电脑的本地运行形态。以下载的离线单文件为内核，用 Tauri / Electron 壳打包后即可双击运行、离线编译，体验与网页端一致。</p>
-        <ul><li>双击即用，无需安装浏览器环境</li><li>本地编译更快</li><li>文件与项目保存在本地</li></ul>
+        <span class="tag">Windows · Electron</span>
+        <p>面向 Windows 电脑的本地运行形态。Electron 壳打包，双击即可运行、离线编译，体验与网页端一致。</p>
+        <ul><li>双击即用，无需安装浏览器环境</li><li>本地编译速度更快</li><li>文件与项目保存在本地</li></ul>
         <div class="cta">
-          <a class="btn primary" href="HiCode-ide-offline.html" download="HiCode-电脑端内核.html">下载电脑端内核</a>
+          <a class="btn primary" href="HiCode-v1.00.exe" download="HiCode-v1.00.exe">下载 .exe（89 MB）</a>
+          <a class="btn ghost" href="HiCode-ide-offline.html" download="HiCode-电脑端内核.html">内核 HTML</a>
         </div>
-        <div class="dim">原生 .exe 安装包需用下方「打包说明」中的 Tauri 壳一键打包生成。</div>
+        <div class="dim">便携版 .exe，无需安装直接运行。基于 Electron 43，含完整 Chromium 内核。</div>
       </div>
       <div style="text-align:center;color:var(--dim);font-size:52px;opacity:.5;">🖥️</div>
     </div>
@@ -185,21 +187,18 @@
 
     <h3><span class="no">02</span>打包为 .apk（安卓端）</h3>
     <p>用 <b>Capacitor</b> 把离线单文件封装为原生 Android 应用（WebView 壳）：</p>
-<pre><code>npm i -g @capacitor/cli
-mkdir hicode-android &amp;&amp; cd hicode-android
-npm init -y &amp;&amp; npm i @capacitor/core @capacitor/android
+<pre><code>npm init -y &amp;&amp; npm i @capacitor/core @capacitor/android @capacitor/cli
 cp 下载的离线单文件.html www/index.html
+npx cap init HiCode com.hicode.ide
 npx cap add android
-npx cap copy &amp;&amp; npx cap open android   # 用 Android Studio 构建签名 APK</code></pre>
+cd android &amp;&amp; ANDROID_HOME=/path/to/sdk ./gradlew assembleDebug  # 产出 app-debug.apk</code></pre>
 
     <h3><span class="no">03</span>打包为 .exe（电脑端）</h3>
-    <p>用 <b>Tauri</b> 或 <b>Electron</b> 把离线单文件封装为 Windows 桌面应用：</p>
-<pre><code># 方式一：Electron（最简单）
-npm i -g electron
-mkdir hicode-win &amp;&amp; cd hicode-win &amp;&amp; npm init -y
-npm i electron --save-dev
-# 写 main.js 加载本地 index.html，再：
-npx electron-packager . HiCode --platform=win32 --arch=x64</code></pre>
+    <p>用 <b>Electron</b> + <b>electron-builder</b> 打包为 Windows 便携版：</p>
+<pre><code>npm init -y &amp;&amp; npm i electron electron-builder --save-dev
+# 写 main.js 加载本地 index.html
+# 配置 package.json 的 "build" 字段
+npx electron-builder --win portable --x64  # 产出 HiCode.exe</code></pre>
   </section>
 </main>
 

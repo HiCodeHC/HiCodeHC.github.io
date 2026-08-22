@@ -2,17 +2,17 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.02",
+  "version": "v0.01",
   "project": {
-    "id": "ch02-quickstart.hc",
-    "name": "第02章 快速上手：第一个程序",
+    "id": "ch09-project-image.hc",
+    "name": "第09章 项目与图片管理",
     "createdAt": 0,
     "updatedAt": 0,
     "pages": {
       "p1": {
         "id": "p1",
         "name": "页面1",
-        "code": "it 标题 t 你好，HiCode\nit 副标题 t 恭喜你完成了第一个程序\n\n标题 in t\n副标题 in s",
+        "code": "it 风光 p\nit 说明 t 请在变量面板上传图片\n\n说明 in t\n风光 in p",
         "images": {}
       }
     }

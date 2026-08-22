@@ -85,54 +85,5 @@ ok(z instanceof Uint8Array && z.length > 30, "zip字节生成");
 // 校验 PK 头
 ok(z[0] === 0x50 && z[1] === 0x4b, "zip魔数PK");
 
-// ---- 9. v0.02 中文变量名 ----
-r = HC.classify("it 标题 t 你好世界");
-ok(r.kind === "it" && r.name === "标题" && r.vtype === "text" && r.value === "你好世界", "中文变量名 it");
-r = HC.classify("标题 in t");
-ok(r.kind === "in" && r.name === "标题" && r.mode === "text", "中文变量名 in t");
-r = HC.classify("it 用户年龄 int 18");
-ok(r.kind === "it" && r.name === "用户年龄" && r.vtype === "ordinary", "中文变量名 it int");
-
-// ---- 10. v0.02 四则运算 / 优先级 / 一元负号 ----
-ok(HC.evalExpr("2 + 3 * 4", {}) === 14, "乘法优先级高于加法");
-ok(HC.evalExpr("(2 + 3) * 4", {}) === 20, "括号改变优先级");
-ok(HC.evalExpr("10 % 3", {}) === 1, "取模 %");
-ok(HC.evalExpr("2.5 * 2", {}) === 5, "浮点乘法");
-ok(HC.evalExpr("-5 + 3", {}) === -2, "一元负号");
-ok(HC.evalExpr("10 - 2 - 3", {}) === 5, "连续减法");
-ok(HC.evalExpr("x + 2 == 20", { x: { value: 18 } }) === true, "变量参与算术");
-ok(HC.evalExpr("x > 10", { x: { value: 3 } }) === false, "数值比较(多位)");
-ok(HC.evalExpr("x > 10", { x: { value: 30 } }) === true, "数值比较(多位)2");
-
-// ---- 11. v0.02 展示样式分级 + 链接 + 数值变量 ----
-const p2 = {
-  name: "demo",
-  code: [
-    "it 标题 t 你好世界",
-    "it 副标题 t 这是副标题",
-    "it 正文 t 这是一段正文内容",
-    "it 链接 t https://example.com",
-    "it 数量 int 18",
-    "标题 in t",
-    "副标题 in s",
-    "正文 in b",
-    "链接 in link",
-    "if 数量 + 2 == 20:",
-    "    标题 in t"
-  ].join("\n"),
-  images: {}
-};
-const r2 = HC.processPage(p2, {});
-ok(Object.keys(r2.vars).length === 5, "中文变量收集到5个");
-ok(r2.vars["标题"].value === "你好世界", "中文变量名取值");
-ok(typeof r2.vars["数量"].value === "number" && r2.vars["数量"].value === 18, "数值变量存为 number");
-const displayModes = r2.items.filter(x => x.kind === "display").map(x => x.mode);
-ok(displayModes.indexOf("sub") >= 0, "sub 副标题模式");
-ok(displayModes.indexOf("body") >= 0, "body 正文模式");
-ok(displayModes.indexOf("link") >= 0, "link 链接模式");
-const built = HC.buildSinglePageHtml({ name: "demo" }, p2);
-ok(built.indexOf('class="hic-href"') >= 0, "链接渲染含 hic-href");
-ok(built.indexOf("hic-sub") >= 0, "副标题渲染含 hic-sub");
-
 console.log("\n通过 " + pass + " 项，失败 " + fail + " 项");
 process.exit(fail ? 1 : 0);

@@ -1,5 +1,5 @@
 /* ============================================================
- * HC v0.02 —— HIC 语言引擎
+ * HC v0.01 —— HIC 语言引擎
  * 负责：HIC 词法/语法解析、HIC→HTML 转译、轻量 ZIP 写入、下载
  * 说明：本文件为纯逻辑，不依赖 DOM(localStorage/document)，
  *       唯一例外是 download()（仅浏览器调用）；可用 Node 单元测试。
@@ -11,7 +11,7 @@
 })(typeof self !== 'undefined' ? self : null, function () {
   "use strict";
 
-  const APP = { version: "v0.02", name: "HiCode", lang: "HIC" };
+  const APP = { version: "v0.01", name: "HiCode", lang: "HIC" };
 
   /* ---------------- 工具 ---------------- */
   function esc(s) {
@@ -19,11 +19,7 @@
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
-  // 标识符：支持英文与中文（中日韩统一表意文字）开头的变量名
-  const ID_START = "A-Za-z_\\u4e00-\\u9fff";
-  const ID_CHAR = "A-Za-z0-9_\\u4e00-\\u9fff";
-  const NAME_RE = new RegExp("^[" + ID_START + "][" + ID_CHAR + "]*$");
-  function isName(s) { return NAME_RE.test(String(s || "")); }
+  function isName(s) { return /^[A-Za-z_][A-Za-z0-9_]*$/.test(s); }
   const PY_TYPES = ["int", "float", "str", "bool", "list", "dict", "tuple"];
 
   /* ---------------- 词法：表达式求值（安全，无 eval） ---------------- */
@@ -34,7 +30,7 @@
       if (c === " " || c === "\t") { i++; continue; }
       if (c === "(") { out.push({ t: "(", v: c }); i++; continue; }
       if (c === ")") { out.push({ t: ")", v: c }); i++; continue; }
-      if ("+-*/%".indexOf(c) >= 0) { out.push({ t: c, v: c }); i++; continue; }
+      if (c === "+") { out.push({ t: "+", v: c }); i++; continue; }
       const two = expr.substr(i, 2);
       if (two === "==" || two === "!=" || two === "<=" || two === ">=") { out.push({ t: two, v: two }); i += 2; continue; }
       if (c === "<" || c === ">") { out.push({ t: c, v: c }); i++; continue; }
@@ -43,14 +39,14 @@
         while (j < n && expr[j] !== q) { s += expr[j]; j++; }
         out.push({ t: "str", v: s }); i = Math.min(j + 1, n); continue;
       }
-      if (/[0-9]/.test(c)) {
+      if (/[0-9]/.test(c) || (c === "-" && /[0-9]/.test(expr[i + 1]))) {
         let j = i; let num = "";
-        while (j < n && /[0-9.]/.test(expr[j])) { num += expr[j]; j++; }
-        out.push({ t: "num", v: Number(num) }); i = j; continue;
+        while (j < n && /[0-9._]/.test(expr[j])) { num += expr[j]; j++; }
+        out.push({ t: "num", v: Number(num.replace(/[^0-9.]/g, "")) }); i = j; continue;
       }
-      if (/[A-Za-z_\u4e00-\u9fff]/.test(c)) {
+      if (/[A-Za-z_0-9]/.test(c)) {
         let j = i; let w = "";
-        while (j < n && /[A-Za-z0-9_\u4e00-\u9fff]/.test(expr[j])) { w += expr[j]; j++; }
+        while (j < n && /[A-Za-z0-9_]/.test(expr[j])) { w += expr[j]; j++; }
         out.push({ t: (["and", "or", "not", "in"].indexOf(w) >= 0 ? w : "id"), v: w });
         i = j; continue;
       }
@@ -99,42 +95,27 @@
         if (w === "false") return false;
         if (w === "None") return "";
         if (Object.prototype.hasOwnProperty.call(vars, w)) return vars[w].value;
-        return ""; // 未知裸标识符当空串处理
+        return ""; // 未知裸标识符当空串处理（v0.01 约定）
       }
       return "";
     }
-    function unary() {
-      if (peek() && peek().t === "-") { next(); return -Number(unary()); }
-      return primary();
-    }
-    function mulDiv() {
-      let v = unary();
-      while (peek() && (peek().t === "*" || peek().t === "/" || peek().t === "%")) {
-        const op = next().t; const r = unary();
-        const a = Number(v), b = Number(r);
-        v = op === "*" ? a * b : (op === "/" ? a / b : a % b);
-      }
-      return v;
-    }
-    function addSub() {
-      let v = mulDiv();
-      while (peek() && (peek().t === "+" || peek().t === "-")) {
-        const op = next().t; const r = mulDiv();
-        v = Number(v) + (op === "+" ? Number(r) : -Number(r));
-      }
+    function factor() { return primary(); }
+    function term() {
+      let v = factor();
+      while (peek() && peek().t === "+") { next(); v = Number(v) + Number(factor()); }
       return v;
     }
     function cmp() {
-      let l = addSub();
+      let l = term();
       while (peek() && ["==", "!=", "<", ">", "<=", ">=", "in"].indexOf(peek().t) >= 0) {
-        const op = next().t; const r = addSub(); l = applyCmp(op, l, r);
+        const op = next().t; const r = term(); l = applyCmp(op, l, r);
       }
       return l;
     }
     function notExpr() { if (peek() && peek().t === "not") { next(); return !truthy(notExpr()); } return cmp(); }
     function andExpr() { let v = notExpr(); while (peek() && peek().t === "and") { next(); v = truthy(v) && truthy(notExpr()); } return v; }
     function orExpr() { let v = andExpr(); while (peek() && peek().t === "or") { next(); v = truthy(v) || truthy(andExpr()); } return v; }
-    try { return orExpr(); } catch (e) { return false; }
+    try { return truthy(orExpr()); } catch (e) { return false; }
   }
 
   /* ---------------- 判断头解析 ---------------- */
@@ -155,8 +136,8 @@
   function classify(line) {
     // 返回 {kind, ...}
     if (!line || line.trim() === "" ) return { kind: "blank" };
-    // it 变量声明（支持中文变量名）
-    const itm = line.match(/^it\s+([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)(?:\s+([A-Za-z0-9_]+))?(?:\s+(.*))?$/);
+    // it 变量声明
+    const itm = line.match(/^it\s+([A-Za-z_][A-Za-z0-9_]*)(?:\s+([A-Za-z0-9_]+))?(?:\s+(.*))?$/);
     if (itm) {
       const name = itm[1];
       let type = itm[2] || "";
@@ -169,12 +150,11 @@
       if (type !== "t" && type !== "p" && type) type = "ordinary"; // int/str... 归普通
       return { kind: "it", name, vtype: kind, type, value };
     }
-    // in 展示：name in t 标题 / in s 副标题 / in b 正文 / in p 图片 / in link 链接
-    const inm = line.match(/^([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s+in\s+(t|p|s|b|text|img|sub|body|link)\b/i);
+    // in 展示：name in t / name in p   （坐标在本版本不启用，默认居中）
+    const inm = line.match(/^([A-Za-z_][A-Za-z0-9_]*)\s+in\s+(t|p|text|img)\b/i);
     if (inm) {
       const mode = inm[2].toLowerCase();
-      const map = { t: "text", text: "text", p: "img", img: "img", s: "sub", sub: "sub", b: "body", body: "body", link: "link" };
-      return { kind: "in", name: inm[1], mode: map[mode] || "text" };
+      return { kind: "in", name: inm[1], mode: (mode === "p" || mode === "img") ? "img" : "text" };
     }
     const cond = parseCondHeader(line);
     if (cond) return { kind: "cond", ...cond };
@@ -275,12 +255,7 @@
     nodes.forEach(function (n) {
       if (n.kind === "it") {
         if (!vars[n.name]) {
-          let val = n.value || "";
-          // 数值变量：普通变量的值为纯数字时存为 number，便于算术与数值比较
-          if (n.vtype !== "text" && n.vtype !== "img" && val !== "" && !isNaN(Number(val))) {
-            val = Number(val);
-          }
-          vars[n.name] = { type: n.vtype || "ordinary", value: val, isImg: (n.vtype === "img") };
+          vars[n.name] = { type: n.vtype || "ordinary", value: n.value || "", isImg: (n.vtype === "img") };
         }
       } else if (n.kind === "cond") {
         collectVars(n.body, vars);
@@ -346,13 +321,9 @@
     " background:transparent;color:#f2e9da;cursor:pointer;text-decoration:none;font-size:13px;}",
     ".hic-bar button:hover,.hic-bar a:hover{border-color:#d9ae6b;color:#d9ae6b;}",
     ".hic-bar .on{border-color:#d9ae6b;color:#15100b;background:#d9ae6b;font-weight:600;}",
-    ".hic-item{max-width:860px;margin:34px auto;padding:0 20px;text-align:center;}",
+    ".hic-item{max-width:860px;margin:40px auto;padding:0 20px;text-align:center;}",
     ".hic-text{font-size:42px;font-weight:800;letter-spacing:.5px;line-height:1.3;}",
-    ".hic-sub{font-size:24px;font-weight:600;color:#cbb995;margin-top:10px;}",
-    ".hic-body{max-width:640px;text-align:left;font-size:16px;color:#cfc3ab;line-height:1.9;}",
-    ".hic-linkwrap{text-align:center;}",
-    ".hic-href{display:inline-block;margin-top:8px;padding:12px 26px;border-radius:999px;border:1px solid rgba(217,174,107,.5);color:#d9ae6b;font-size:15px;text-decoration:none;transition:background .2s,color .2s;}",
-    ".hic-href:hover{background:#d9ae6b;color:#15100b;}",
+    ".hic-sub{font-size:20px;color:#cbb995;margin-top:8px;}",
     ".hic-link{margin-top:14px;font-size:14px;color:#8d7f63;}",
     ".hic-imgwrap{max-width:860px;margin:40px auto;padding:0 20px;text-align:center;}",
     ".hic-img{max-width:100%;max-height:70vh;border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.4);}",
@@ -368,17 +339,6 @@
     return items.map(function (it) {
       if (it.kind === "display" && it.mode === "text") {
         return '<p class="hic-item hic-text">' + esc(it.value) + "</p>";
-      }
-      if (it.kind === "display" && it.mode === "sub") {
-        return '<p class="hic-item hic-sub">' + esc(it.value) + "</p>";
-      }
-      if (it.kind === "display" && it.mode === "body") {
-        return '<p class="hic-item hic-body">' + esc(it.value) + "</p>";
-      }
-      if (it.kind === "display" && it.mode === "link") {
-        const href = it.value ? String(it.value) : "#";
-        return '<div class="hic-item hic-linkwrap"><a class="hic-href" href="' + esc(href) +
-          '" target="_blank" rel="noopener">' + esc(it.value) + "</a></div>";
       }
       if (it.kind === "display" && it.mode === "img") {
         const src = it.value ? esc(it.value) : "";
@@ -397,7 +357,7 @@
           (href.sameDoc ? ' data-hc-goto="' + esc(href.pageKey) + '"' : "") + ">前往 " + esc(href.label || label) + " 页面 →</a></div>";
       }
       if (it.kind === "textline") {
-        return '<p class="hic-item hic-body">' + esc(it.text) + "</p>";
+        return '<p class="hic-item hic-sub">' + esc(it.text) + "</p>";
       }
       return "";
     }).join("\n");

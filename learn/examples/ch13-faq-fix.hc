@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.01",
+  "version": "v0.02",
   "project": {
     "id": "ch13-faq-fix.hc",
     "name": "第13章 常见问题（修复对照）",

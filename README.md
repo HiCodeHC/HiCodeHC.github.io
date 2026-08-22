@@ -28,9 +28,17 @@ HiCode（简称 **HC**）的诞生源于一个朴素的愿望：**让编程真�
 - ✅ **开源可用**：完全开放源代码，自由使用与二次开发
 - ✅ **多端开放**：网页、安卓、Windows 三大平台同时支持开发与运行
 
+## 当前版本
+
+- **v0.02（网页端在线开发）**：支持 `it` 变量（含中文名）、`in` 分级展示（`t / s / b / link / p`）、`if / orif / noif` 条件、四则运算表达式、`to / fr` 页面跳转，可实时转译为网页并导出 `.hc` / `.html` / `.zip`。
+- **历史版本**：v0.01 已归档至仓库 `old/v0.01/`，用户仍可访问旧版预览版。
+
 ## 官网
 
 - 官网地址：**[https://HiCodeHC.github.io](https://HiCodeHC.github.io)**
+- 网页端体验：**[https://HiCodeHC.github.io/ide/](https://HiCodeHC.github.io/ide/)**
+- 学习中心：**[https://HiCodeHC.github.io/learn/](https://HiCodeHC.github.io/learn/)**
+- 历史版本 v0.01：**[https://HiCodeHC.github.io/old/v0.01/](https://HiCodeHC.github.io/old/v0.01/)**
 
 ## 联系与建议
 

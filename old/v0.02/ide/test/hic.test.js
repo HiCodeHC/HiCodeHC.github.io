@@ -76,7 +76,6 @@ ok(/<!DOCTYPE html>/i.test(merged), "含 HTML 骨架");
 
 const single = HC.buildSinglePageHtml({ name: "我的项目" }, page);
 ok(single.indexOf("你好，HiCode") >= 0 || single.indexOf("简单上手") >= 0, "单页html含内容");
-ok(single.indexOf("我的项目-about.html") < 0 && single.indexOf("导出包内暂未包含") >= 0, "单页导出禁用跳转避免404");
 
 // ---- 8. ZIP ----
 const entries = HC.buildZipEntries([proj]);
@@ -134,21 +133,6 @@ ok(displayModes.indexOf("link") >= 0, "link 链接模式");
 const built = HC.buildSinglePageHtml({ name: "demo" }, p2);
 ok(built.indexOf('class="hic-href"') >= 0, "链接渲染含 hic-href");
 ok(built.indexOf("hic-sub") >= 0, "副标题渲染含 hic-sub");
-
-// ---- 12. v0.021 人性化编译：单等号 + 全角/数学运算符 ----
-ok(HC.evalExpr("age = 18", { age: { value: 18 } }) === true, "单等号 = 当作 == 比较");
-ok(HC.evalExpr("age = 19", { age: { value: 18 } }) === false, "单等号 = 比较为假");
-ok(HC.evalExpr("2 \uFF0B 3", {}) === 5, "全角加 ＋");
-ok(HC.evalExpr("6 \u00F7 2", {}) === 3, "除号 ÷");
-ok(HC.evalExpr("3 \u00D7 4", {}) === 12, "乘号 ×");
-ok(HC.evalExpr("10 \uFF0D 4", {}) === 6, "全角减 －");
-ok(HC.evalExpr("10 \u2212 4", {}) === 6, "数学减号 −");
-ok(HC.evalExpr("10 \uFF05 3", {}) === 1, "全角百分号 ％");
-ok(HC.evalExpr("3 \u2265 3", {}) === true, "≥ 当作 >=");
-ok(HC.evalExpr("2 \u2264 3", {}) === true, "≤ 当作 <=");
-ok(HC.evalExpr("2 \u2260 3", {}) === true, "≠ 当作 !=");
-ok(HC.evalExpr("\uFF082 \uFF0B 3\uFF09\u00D7 4", {}) === 20, "全角括号与混合运算符");
-ok(HC.evalExpr("年龄 = 18", { "年龄": { value: 18 } }) === true, "中文变量 + 单等号");
 
 console.log("\n通过 " + pass + " 项，失败 " + fail + " 项");
 process.exit(fail ? 1 : 0);

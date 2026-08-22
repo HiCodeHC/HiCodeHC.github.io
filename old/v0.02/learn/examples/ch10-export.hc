@@ -2,17 +2,17 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.021",
+  "version": "v0.02",
   "project": {
-    "id": "ch08-syntax.hc",
-    "name": "第08章 语法规范",
+    "id": "ch10-export.hc",
+    "name": "第10章 转译与导出",
     "createdAt": 0,
     "updatedAt": 0,
     "pages": {
       "p1": {
         "id": "p1",
         "name": "页面1",
-        "code": "# 这是注释\nit 标题 t 规范示例\n\n# 空行会被忽略\n标题 in t",
+        "code": "it 标题 t 综合演示\nit 副标题 t 展示变量、样式、判断与跳转\n\n标题 in t\n副标题 in s",
         "images": {}
       }
     }

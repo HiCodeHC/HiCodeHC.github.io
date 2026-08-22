@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.021",
+  "version": "v0.02",
   "project": {
     "id": "ch06-expressions.hc",
     "name": "第06章 表达式与运算符",

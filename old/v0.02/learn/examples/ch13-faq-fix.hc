@@ -2,17 +2,17 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.021",
+  "version": "v0.02",
   "project": {
-    "id": "ch08-syntax.hc",
-    "name": "第08章 语法规范",
+    "id": "ch13-faq-fix.hc",
+    "name": "第13章 常见问题（修复对照）",
     "createdAt": 0,
     "updatedAt": 0,
     "pages": {
       "p1": {
         "id": "p1",
         "name": "页面1",
-        "code": "# 这是注释\nit 标题 t 规范示例\n\n# 空行会被忽略\n标题 in t",
+        "code": "it 标题 t 正确的写法\n标题 in t",
         "images": {}
       }
     }

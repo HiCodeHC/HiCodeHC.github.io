@@ -1,5 +1,5 @@
 /* ============================================================
- * HC v0.021 在线 IDE —— 界面逻辑 app.js
+ * HC v0.02 在线 IDE —— 界面逻辑 app.js
  * 依赖：Store (store.js) + HC (hic.js)
  * 职责：首页引导、项目/页面 CRUD、代码编辑、实时转译预览、
  *       变量面板（含 p 图片上传）、导出菜单。
@@ -57,7 +57,6 @@
     el.modalBody.innerHTML = body;
     $("modalCancel").textContent = "确定";
     $("modalOk").classList.add("hidden");
-    $("modalCancel").onclick = function () { el.modal.classList.add("hidden"); };
     el.modal.classList.remove("hidden");
   }
   // 通用确认/输入弹窗，返回 Promise
@@ -194,9 +193,9 @@
 
   /* ---- 实时转译 ---- */
   function liveHtml() {
-    const proj = currentProj();
-    if (!proj) return "<p>请先打开一个页面</p>";
-    try { return HC.buildProjectMergedHtml(proj, {}); }
+    const proj = currentProj(); const pg = currentPage();
+    if (!proj || !pg) return "<p>请先打开一个页面</p>";
+    try { return HC.buildSinglePageHtml(proj, pg); }
     catch (e) { return "<pre>转译出错：" + esc(e.message) + "</pre>"; }
   }
   function doLive() {

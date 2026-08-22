@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.02",
+  "version": "v0.021",
   "project": {
     "id": "ch02-quickstart.hc",
     "name": "第02章 快速上手：第一个程序",

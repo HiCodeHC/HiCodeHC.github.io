@@ -30,15 +30,15 @@ HiCode（简称 **HC**）的诞生源于一个朴素的愿望：**让编程真�
 
 ## 当前版本
 
-- **v0.02（网页端在线开发）**：支持 `it` 变量（含中文名）、`in` 分级展示（`t / s / b / link / p`）、`if / orif / noif` 条件、四则运算表达式、`to / fr` 页面跳转，可实时转译为网页并导出 `.hc` / `.html` / `.zip`。
-- **历史版本**：v0.01 已归档至仓库 `old/v0.01/`，用户仍可访问旧版预览版。
+- **v0.021（网页端在线开发）**：支持 `it` 变量（含中文名）、`in` 分级展示（`t / s / b / link / p`）、`if / orif / noif` 条件、四则运算表达式、`to / fr` 页面跳转，可实时转译为网页并导出 `.hc` / `.html` / `.zip`。v0.021 进一步支持单等号 `=` 比较与全角/数学运算符（＋ － × ÷ ≥ ≤ ≠ 等），并修复项目内页面跳转与导入交互。
+- **历史版本**：v0.01、v0.02 均已归档至 `old/`，可在 [历史版本索引](https://HiCodeHC.github.io/old/) 中集中访问。
 
 ## 官网
 
 - 官网地址：**[https://HiCodeHC.github.io](https://HiCodeHC.github.io)**
 - 网页端体验：**[https://HiCodeHC.github.io/ide/](https://HiCodeHC.github.io/ide/)**
 - 学习中心：**[https://HiCodeHC.github.io/learn/](https://HiCodeHC.github.io/learn/)**
-- 历史版本 v0.01：**[https://HiCodeHC.github.io/old/v0.01/](https://HiCodeHC.github.io/old/v0.01/)**
+- 历史版本索引：**[https://HiCodeHC.github.io/old/](https://HiCodeHC.github.io/old/)**
 
 ## 联系与建议
 

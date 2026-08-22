@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HiCode · 在线开发环境 v0.01</title>
+<title>HiCode · 在线开发环境 v0.02</title>
 <link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-<div style="background:#e0a96b;color:#241a10;text-align:center;padding:10px 16px;font-size:13.5px;font-weight:600;line-height:1.7;">⚠️ 你正在查看旧版本 v0.01 网页端 · <a href="/" style="color:#241a10;font-weight:800;">返回最新版 →</a> · <a href="/old/" style="color:#241a10;">所有历史版本</a></div>
+<div style="background:#e0a96b;color:#241a10;text-align:center;padding:10px 16px;font-size:13.5px;font-weight:600;line-height:1.7;">⚠️ 你正在查看旧版本 v0.02 网页端 · <a href="/" style="color:#241a10;font-weight:800;">返回最新版 →</a> · <a href="/old/" style="color:#241a10;">所有历史版本</a></div>
   <!-- ===== 顶部导航 ===== -->
   <header class="topbar">
     <div class="brand" id="btnHome" title="返回首页">
       <span class="logo-dot"></span>
       <span class="brand-name">HiCode</span>
-      <span class="ver">v0.01 · 网页端</span>
+      <span class="ver">v0.02 · 网页端</span>
     </div>
     <div class="crumb" id="crumb" title="当前文件">—</div>
     <div class="actions">
@@ -63,10 +63,10 @@
       <section class="pane on" id="pane-editor">
         <div class="editor-head">
           <span class="hint">页面自带 HTML 骨架，无需编写 <code>&lt;html&gt;</code> 等标签</span>
-          <span class="shortcut">支持：it 变量 · in t 文字 / in p 图片 · if/orif/noif 判断 · to/fr 导向</span>
+          <span class="shortcut">支持：it 变量(含中文名) · in t/s/b/p/link 展示 · if/orif/noif 判断 · 四则运算 · to/fr 导向</span>
         </div>
         <textarea id="code" class="codearea" spellcheck="false"
-          placeholder="在这里编写 HIC 代码…&#10;&#10;it 标题 t Hello HiCode&#10;标题 in t"
+          placeholder="在这里编写 HIC 代码…&#10;&#10;it 标题 t Hello HiCode&#10;标题 in t&#10;it 分数 int 85&#10;if 分数 &gt;= 60:&#10;    标题 in s"
           ></textarea>
         <div class="statusbar" id="statusbar">未打开页面</div>
       </section>
@@ -82,9 +82,9 @@
 
       <section class="pane" id="pane-vars">
         <div class="var-help">
-          <p><b>it 变量</b>：默认普通变量（前端不显示）。<code>t</code> 显示文字、<code>p</code> 存放图片。</p>
-          <p>用 <code>变量名 in t</code> 居中显示文字；<code>变量名 in p</code> 显示图片（本版坐标居中）。</p>
-          <p>点击下方图片条目即可上传 / 更换 / 删除图片。</p>
+          <p><b>it 变量</b>：默认普通变量（前端不显示）。<code>t</code> 文字、<code>p</code> 图片；变量名支持<b>中文</b>。</p>
+          <p><code>变量名 in t</code> 标题 · <code>in s</code> 副标题 · <code>in b</code> 正文 · <code>in link</code> 链接 · <code>in p</code> 图片。</p>
+          <p>条件支持 <b>四则运算</b>（<code>+ - * / %</code>）与括号。点击下方图片条目即可上传 / 更换 / 删除图片。</p>
         </div>
         <div id="varList" class="var-list"></div>
         <div class="var-empty" id="varEmpty">当前页面没有声明变量</div>
@@ -100,7 +100,7 @@
       <div class="home-logo"><span class="logo-dot lg"></span></div>
       <h1>HiCode <span class="dim">· HIC 语言在线开发</span></h1>
       <p class="home-sub">自研 HIC 语言一键转译为 HTML，零基础也能搭建网页项目。</p>
-      <p class="home-sub small">v0.01 为代码开发版本，支持项目 / 页面管理、条件、导向、实时转译与导出。</p>
+      <p class="home-sub small">v0.02 为代码开发版本，新增中文变量名、四则运算、展示样式分级与链接；支持项目 / 页面管理、条件、导向、实时转译与导出。</p>
       <div class="home-actions">
         <button id="homeNew" class="btn solid big">新建项目</button>
         <button id="homeImport" class="btn ghost big">导入项目 .hc</button>

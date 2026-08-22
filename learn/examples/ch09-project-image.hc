@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.02",
+  "version": "v0.021",
   "project": {
     "id": "ch09-project-image.hc",
     "name": "第09章 项目与图片管理",

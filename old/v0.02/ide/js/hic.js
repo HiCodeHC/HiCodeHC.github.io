@@ -1,5 +1,5 @@
 /* ============================================================
- * HC v0.021 —— HIC 语言引擎
+ * HC v0.02 —— HIC 语言引擎
  * 负责：HIC 词法/语法解析、HIC→HTML 转译、轻量 ZIP 写入、下载
  * 说明：本文件为纯逻辑，不依赖 DOM(localStorage/document)，
  *       唯一例外是 download()（仅浏览器调用）；可用 Node 单元测试。
@@ -11,7 +11,7 @@
 })(typeof self !== 'undefined' ? self : null, function () {
   "use strict";
 
-  const APP = { version: "v0.021", name: "HiCode", lang: "HIC" };
+  const APP = { version: "v0.02", name: "HiCode", lang: "HIC" };
 
   /* ---------------- 工具 ---------------- */
   function esc(s) {
@@ -25,28 +25,19 @@
   const NAME_RE = new RegExp("^[" + ID_START + "][" + ID_CHAR + "]*$");
   function isName(s) { return NAME_RE.test(String(s || "")); }
   const PY_TYPES = ["int", "float", "str", "bool", "list", "dict", "tuple"];
-  // 全角/数学符号运算符 → 半角等价（人性化编译：兼容中文输入法全角符号、≥ ≤ ≠ 等）
-  const FULLWIDTH_OPS = {
-    "\uFF0B": "+", "\uFF0D": "-", "\u2212": "-", "\u00D7": "*", "\u00F7": "/", "\uFF05": "%",   // ＋ － − × ÷ ％
-    "\uFF1D": "==", "\uFF1C": "<", "\uFF1E": ">",                                   // ＝ ＜ ＞
-    "\u2265": ">=", "\u2264": "<=", "\u2260": "!=",                                 // ≥ ≤ ≠
-    "\uFF08": "(", "\uFF09": ")"                                                     // （ ）
-  };
 
   /* ---------------- 词法：表达式求值（安全，无 eval） ---------------- */
   function tokenize(expr) {
     const out = []; let i = 0; const n = expr.length;
     while (i < n) {
       const c = expr[i];
-      if (c === " " || c === "\t" || c === "\u3000") { i++; continue; }
-      if (FULLWIDTH_OPS[c]) { out.push({ t: FULLWIDTH_OPS[c], v: FULLWIDTH_OPS[c] }); i++; continue; }
+      if (c === " " || c === "\t") { i++; continue; }
       if (c === "(") { out.push({ t: "(", v: c }); i++; continue; }
       if (c === ")") { out.push({ t: ")", v: c }); i++; continue; }
       if ("+-*/%".indexOf(c) >= 0) { out.push({ t: c, v: c }); i++; continue; }
       const two = expr.substr(i, 2);
       if (two === "==" || two === "!=" || two === "<=" || two === ">=") { out.push({ t: two, v: two }); i += 2; continue; }
       if (c === "<" || c === ">") { out.push({ t: c, v: c }); i++; continue; }
-      if (c === "=") { out.push({ t: "==", v: "==" }); i++; continue; }
       if (c === '"' || c === "'") {
         const q = c; let j = i + 1, s = "";
         while (j < n && expr[j] !== q) { s += expr[j]; j++; }
@@ -418,13 +409,9 @@
     if (!it.cross) {
       // 同项目内：目标页面在同项目
       const targetPage = it.toPage;
-      if (ctx.mode === "zip") {
+      if (ctx.mode === "zip" || ctx.mode === "singlepage") {
         const fn = ctx.projSlug + "-" + slugify(targetPage) + ".html";
         return { href: fn, label: targetPage };
-      }
-      if (ctx.mode === "singlepage") {
-        // 单页导出不含其它页面，禁用跳转，避免生成不存在的 .html 造成 404
-        return { kind: "disabled" };
       }
       // 合并单 html：跳转同文档内区块
       const key = ctx.projSlug + "::" + targetPage;

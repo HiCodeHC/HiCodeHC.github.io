@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.021",
+  "version": "v0.02",
   "project": {
     "id": "ch04-display.hc",
     "name": "第04章 展示 in",

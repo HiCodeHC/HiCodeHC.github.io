@@ -2,7 +2,7 @@
   "app": "HiCode",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v0.021",
+  "version": "v0.02",
   "project": {
     "id": "ch11-full-example.hc",
     "name": "第11章 完整案例：个人名片",

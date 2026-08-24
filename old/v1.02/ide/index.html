@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HiCode · 在线开发环境 v1.02</title>
+<link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- ===== 顶部导航 ===== -->
+  <header class="topbar">
+    <div class="brand" id="btnHome" title="返回首页">
+      <span class="logo-dot"></span>
+      <span class="brand-name">HiCode</span>
+      <span class="ver">v1.02 · 网页端</span>
+    </div>
+    <div class="crumb" id="crumb" title="当前文件">—</div>
+    <div class="actions">
+      <button id="btnLive" class="btn ghost live" title="观看实时转译：立即把当前页面 HIC 代码转译为 HTML">✓ 实时转译</button>
+      <div class="menu-wrap">
+        <button id="btnExport" class="btn solid">导出 ▾</button>
+        <div class="menu" id="exportMenu">
+          <div class="menu-title">导出当前项目</div>
+          <button data-act="hc">导出 .hc（可导入继续开发）</button>
+          <button data-act="single">导出单个 .html</button>
+          <button data-act="zip">导出全部页面 · 打包 .zip</button>
+          <button data-act="merge">导出全部页面 · 合并成 1 个 .html</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ===== 左侧：项目 + 页面 ===== -->
+    <aside class="tree" id="tree">
+      <div class="tree-sec">
+        <div class="tree-head">
+          <span>项目</span>
+          <button class="mini" id="addProject" title="新建项目">+</button>
+        </div>
+        <ul class="tree-list" id="projList"></ul>
+      </div>
+      <div class="tree-sec" id="pageSec" hidden>
+        <div class="tree-head">
+          <span>页面</span>
+          <button class="mini" id="addPage" title="新建页面">+</button>
+        </div>
+        <ul class="tree-list" id="pageList"></ul>
+      </div>
+      <div class="tree-empty" id="treeHint">创建或导入一个项目后开始开发</div>
+    </aside>
+
+    <!-- ===== 右侧：工作区 ===== -->
+    <main class="workspace">
+      <div class="tabs" id="workTabs">
+        <button class="tab on" data-tab="editor">代码</button>
+        <button class="tab" data-tab="preview">转译预览</button>
+        <button class="tab" data-tab="graph">图形画布</button>
+      </div>
+
+      <section class="pane on" id="pane-editor">
+        <div class="editor-head">
+          <span class="file-name" id="fileName">未打开文件</span>
+          <span class="shortcut">it 变量 · in t/s/b/link/p 展示 · if/orif/noif 判断 · for 循环 · {变量} 插值 · to/fr 导向</span>
+        </div>
+        <textarea id="code" class="codearea" spellcheck="false"
+          placeholder="在这里编写 HIC 代码…&#10;&#10;it 标题 t Hello HiCode&#10;标题 in t&#10;it 分数 int 85&#10;if 分数 &gt;= 60:&#10;    标题 in s"
+          ></textarea>
+      </section>
+
+      <section class="pane" id="pane-preview">
+        <div class="preview-bar">
+          <span>实时转译结果（HIC → HTML）</span>
+          <span class="preview-tools">
+            <button class="mini" id="btnToggleSrc" title="预览与源码对照">查看源码</button>
+            <button class="mini" id="openPreview" title="在独立标签页打开预览">↗ 新标签打开</button>
+          </span>
+        </div>
+        <iframe id="previewFrame" class="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+        <textarea id="previewSrc" class="codearea src" spellcheck="false" hidden readonly></textarea>
+      </section>
+
+      <section class="pane" id="pane-graph">
+        <div class="graph-help">
+          <p><b>图形化定位</b>：在下方画布<b>点击</b>确定一个点的运作定位坐标 <code>(x, y)</code>，点击「插入坐标点」即生成 HIC 代码。</p>
+          <p>文字点会生成 <code>it 变量名 t 内容</code>；图片点会生成 <code>it 变量名 p</code>（图片请到「变量」面板上传）。两个都会生成 <code>变量名 in point x y</code>。</p>
+        </div>
+        <div class="graph-tools">
+          <label>变量名 <input id="graphVarName" type="text" value="点A" placeholder="点A" /></label>
+          <label>内容 <input id="graphContent" type="text" placeholder="文字点的内容" /></label>
+          <label>类型
+            <select id="graphType">
+              <option value="text">文字 t</option>
+              <option value="img">图片 p</option>
+            </select>
+          </label>
+          <button id="btnInsertPoint" class="btn solid">插入坐标点</button>
+          <button id="btnClearGraph" class="btn ghost">清除标记</button>
+        </div>
+        <div class="graph-stage">
+          <div class="graph-canvas" id="graphCanvas">
+            <span class="graph-gridhint">点击画布任意位置放置坐标点</span>
+            <span class="graph-dot" id="graphDot" hidden></span>
+          </div>
+          <div class="graph-coord" id="graphCoord">坐标：未选择（请在画布上点击）</div>
+        </div>
+      </section>
+
+      <!-- ===== 底部面板（专业 IDE：问题 / 输出 / 变量 停靠区） ===== -->
+      <div class="bottom-panel" id="bottomPanel">
+        <div class="bottom-tabs" id="bottomTabs">
+          <button class="btab on" data-btab="problems">问题<span class="tab-badge" id="probBadge" hidden>0</span></button>
+          <button class="btab" data-btab="output">输出</button>
+          <button class="btab" data-btab="vars">变量</button>
+        </div>
+        <div class="bottom-body">
+          <div class="bpane on" id="bp-problems">
+            <div class="prob-bar">
+              <div class="prob-filter" id="probFilter">
+                <button data-f="all" class="on">全部 <span id="cntAll">0</span></button>
+                <button data-f="error">错误 <span id="cntErr">0</span></button>
+                <button data-f="warn">警告 <span id="cntWarn">0</span></button>
+              </div>
+              <span class="prob-hint">点击条目跳转到对应代码行</span>
+            </div>
+            <div class="prob-list" id="probList"></div>
+            <div class="prob-empty" id="probEmpty">未发现错误或警告，代码运行良好 ✓</div>
+          </div>
+          <div class="bpane" id="bp-output">
+            <div class="output-list" id="outputList"></div>
+          </div>
+          <div class="bpane" id="bp-vars">
+            <div class="var-help">点击图片条目可上传 / 更换 · <code>it 名 t/p</code> 声明 · <code>名 in t/s/b/link/p</code> 展示</div>
+            <div id="varList" class="var-list"></div>
+            <div class="var-empty" id="varEmpty">当前页面没有声明变量</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="statusbar" id="statusbar">
+        <span class="sb-left" id="sbLeft">就绪</span>
+        <span class="sb-right" id="sbRight">行 1, 列 1 · UTF-8 · LF · HIC</span>
+      </div>
+    </main>
+
+    <!-- 空窗口占位 -->
+  </div>
+
+  <!-- ===== 首页引导 ===== -->
+  <div id="home" class="home hidden">
+    <div class="home-card">
+      <div class="home-logo"><span class="logo-dot lg"></span></div>
+      <h1>HiCode <span class="dim">· HIC 语言在线开发</span></h1>
+      <p class="home-sub">自研 HIC 语言一键转译为 HTML，零基础也能搭建网页项目。</p>
+      <p class="home-sub small">v1.02 界面升级：专业 IDE 底部面板（问题 / 输出 / 变量停靠）、文件名显示与增强状态栏（行/列 · UTF-8 · LF · HIC）；支持中文变量名、四则运算、条件、导向、for 循环、{变量} 插值、实时转译与导出。</p>
+      <div class="home-actions">
+        <button id="homeNew" class="btn solid big">新建项目</button>
+        <button id="homeImport" class="btn ghost big">导入项目 .hc</button>
+      </div>
+      <div class="home-recent" id="homeRecent" hidden>
+        <div class="recent-title">继续上次开发</div>
+        <button id="homeResume" class="btn soft big">恢复最近项目 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 通用弹窗 ===== -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-title" id="modalTitle">标题</div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions">
+        <button id="modalCancel" class="btn ghost">取消</button>
+        <button id="modalOk" class="btn solid">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 图片导入用隐藏 input -->
+  <input type="file" id="fileImg" accept="image/*" hidden />
+  <input type="file" id="fileHc" accept=".hc,application/json" hidden />
+
+<script src="js/store.js"></script>
+<script src="js/hic.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

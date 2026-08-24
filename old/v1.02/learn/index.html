@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="HiCode（HIC 语言）v1.00 学习中心 —— 分章节超详细教程，每章配套可下载导入的 .hc 练习文件。" />
+<title>学习中心 · HiCode HIC 语言教程</title>
+<link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
+<style>
+  :root {
+    --bg: #171310;
+    --card: rgba(255, 248, 235, 0.06);
+    --line: rgba(255, 230, 190, 0.16);
+    --accent: #d9ae6b;
+    --accent-soft: rgba(217, 174, 107, .16);
+    --text: #f5ecdd;
+    --muted: #b4a488;
+    --dim: #86775d;
+    --good: #7ec99b;
+    --warn: #e0a96b;
+    --radius: 16px;
+    --glass-bg: linear-gradient(140deg, rgba(255, 252, 244, .62), rgba(255, 249, 240, .30));
+    --glass-line: rgba(255, 246, 230, .8);
+    --glass-text: #3a2f1e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(72% 54% at 16% 12%, rgba(228, 186, 116, .30), transparent 62%),
+      radial-gradient(62% 48% at 86% 72%, rgba(211, 150, 120, .22), transparent 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: rgba(217, 174, 107, .3); }
+
+  /* ===== 顶栏 ===== */
+  header {
+    position: sticky; top: 0; z-index: 40;
+    background: linear-gradient(180deg, rgba(255, 252, 244, .8), rgba(255, 252, 244, .42));
+    -webkit-backdrop-filter: blur(22px) saturate(190%); backdrop-filter: blur(22px) saturate(190%);
+    border-bottom: 1px solid var(--glass-line);
+  }
+  .topbar { width: min(1180px, 92%); margin: 0 auto; display: flex; align-items: center; gap: 20px; padding: 12px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; color: var(--glass-text); }
+  .brand img { width: 30px; height: 30px; border-radius: 9px; object-fit: cover; }
+  .crumb { flex: 1; min-width: 0; color: var(--dim); font-size: 12.5px; letter-spacing: .5px; }
+  .topbar .nav { display: flex; gap: 20px; color: rgba(70, 56, 36, .75); font-size: 14px; }
+  .topbar .nav a:hover { color: var(--glass-text); }
+  .btn { padding: 9px 20px; border-radius: 999px; font-size: 14px; font-weight: 700; transition: opacity .2s, transform .2s; }
+  .btn.primary { background: var(--accent); color: #241a10; }
+  .btn.primary:hover { opacity: .9; transform: translateY(-1px); }
+  @media (max-width: 760px) { .topbar .nav { display: none; } }
+
+  /* ===== Hero ===== */
+  .hero { padding: 88px 0 36px; text-align: center; }
+  .hero .badge { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13.5px; }
+  .hero .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .hero h1 { margin: 22px auto 0; max-width: 760px; font-size: clamp(34px, 5vw, 54px); line-height: 1.15; font-weight: 800; }
+  .hero h1 .accent { color: var(--accent); }
+  .hero .sub { margin: 18px auto 0; max-width: 660px; color: var(--muted); font-size: 16.5px; }
+  .hero .meta { margin-top: 20px; color: var(--dim); font-size: 13px; }
+
+  /* ===== 章节目录卡片 ===== */
+  .chapters { width: min(1180px, 92%); margin: 34px auto 0; }
+  .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .ch-card {
+    display: flex; flex-direction: column; padding: 22px 20px; border-radius: var(--radius);
+    border: 1px solid var(--line); background: rgba(255, 248, 235, .05);
+    transition: border-color .2s, transform .2s, background .2s;
+  }
+  .ch-card:hover { border-color: rgba(217, 174, 107, .45); transform: translateY(-3px); background: rgba(255, 248, 235, .08); }
+  .ch-no { font-size: 12px; letter-spacing: 2px; color: var(--accent); font-weight: 700; }
+  .ch-card h3 { font-size: 17px; margin: 6px 0 6px; color: var(--text); }
+  .ch-card p { color: var(--muted); font-size: 13.5px; flex: 1; }
+  .ch-card-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .ch-card-actions a { font-size: 13px; padding: 7px 14px; border-radius: 999px; font-weight: 600; transition: opacity .2s, transform .2s; }
+  .ch-card-actions .go { border: 1px solid var(--line); color: var(--muted); }
+  .ch-card-actions .go:hover { border-color: var(--accent); color: var(--accent); }
+  .ch-card-actions .dl { background: var(--accent-soft); color: var(--accent); }
+  .ch-card-actions .dl:hover { opacity: .85; }
+
+  /* ===== 布局 ===== */
+  .learn-layout { display: flex; gap: 44px; align-items: flex-start; width: min(1180px, 92%); margin: 40px auto 0; }
+  .sidebar { width: 250px; flex: 0 0 250px; position: sticky; top: 90px; max-height: calc(100vh - 120px); overflow-y: auto; padding: 6px 4px 30px; }
+  .sidebar h4 { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+  .sidebar a { display: block; padding: 7px 12px; border-radius: 9px; color: var(--muted); font-size: 13.5px; border-left: 2px solid transparent; transition: color .15s, background .15s; }
+  .sidebar a:hover { color: var(--text); background: rgba(255, 248, 235, .05); }
+  .sidebar a.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
+  .content { flex: 1; min-width: 0; max-width: 820px; padding-bottom: 120px; }
+  @media (max-width: 900px) { .learn-layout { flex-direction: column; } .sidebar { position: static; width: 100%; flex: auto; max-height: none; } }
+
+  /* ===== 章节 ===== */
+  section { padding: 38px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+  h2 { font-size: clamp(24px, 3vw, 32px); font-weight: 800; letter-spacing: .5px; margin-bottom: 6px; }
+  h2 .no { color: var(--accent); font-size: .7em; margin-right: 8px; }
+  .lead { color: var(--muted); font-size: 15.5px; margin-bottom: 18px; }
+  h3 { font-size: 18px; font-weight: 700; margin: 26px 0 10px; }
+  p { color: var(--muted); font-size: 15px; }
+  ul, ol { margin: 10px 0 10px 4px; padding-left: 20px; }
+  li { color: var(--muted); font-size: 15px; margin: 8px 0; }
+  li b, p b, strong { color: var(--text); font-weight: 600; }
+  code {
+    background: rgba(120, 90, 50, .18); padding: 1px 7px; border-radius: 6px;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: .9em; color: var(--accent);
+  }
+  pre {
+    background: rgba(0, 0, 0, .38); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 20px; overflow-x: auto; margin: 16px 0;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.75; color: #f0e6d2;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+
+  /* 章节操作条：下载练习 */
+  .ch-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 12px 0 4px; }
+  .dl {
+    display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 999px;
+    background: var(--accent); color: #241a10; font-size: 14px; font-weight: 700; transition: opacity .2s, transform .2s;
+  }
+  .dl:hover { opacity: .9; transform: translateY(-1px); }
+  .ch-actions .hint { color: var(--dim); font-size: 13px; }
+
+  /* 提示框 */
+  .callout { border-radius: 12px; padding: 14px 18px; margin: 14px 0; font-size: 14.5px; line-height: 1.75; }
+  .callout.tip { background: rgba(126, 201, 155, .1); border: 1px solid rgba(126, 201, 155, .3); }
+  .callout.warn { background: rgba(224, 169, 107, .1); border: 1px solid rgba(224, 169, 107, .3); }
+  .callout b { display: block; margin-bottom: 2px; }
+  .callout.tip b { color: var(--good); }
+  .callout.warn b { color: var(--warn); }
+  .callout p { color: var(--muted); font-size: 14.5px; }
+
+  /* 本章练习 */
+  .practice { border-radius: 12px; padding: 16px 20px; margin-top: 20px; background: rgba(217, 174, 107, .08); border: 1px solid rgba(217, 174, 107, .25); }
+  .practice-title { color: var(--accent); font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .practice li { font-size: 14.5px; }
+
+  /* 表格 */
+  .tbl { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  .tbl th, .tbl td { text-align: left; padding: 10px 12px; border: 1px solid var(--line); vertical-align: top; }
+  .tbl th { color: var(--text); background: rgba(255, 248, 235, .05); font-weight: 600; }
+  .tbl td { color: var(--muted); }
+  .tbl code { font-size: .88em; }
+  .tbl-wrap { overflow-x: auto; }
+
+  /* 页脚 */
+  footer { border-top: 1px solid var(--line); padding: 44px 0 40px; margin-top: 40px; }
+  .foot { width: min(1180px, 92%); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .foot .brand { color: var(--text); }
+  .foot .brand img { width: 26px; height: 26px; }
+  .foot p { font-size: 13px; color: var(--dim); }
+  .foot a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <a class="brand" href="../"><img src="../assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span></a>
+    <span class="crumb">学习中心 · HIC v1.00</span>
+    <nav class="nav">
+      <a href="#chapters">章节目录</a>
+      <a href="#quickstart">快速上手</a>
+      <a href="#condition">条件</a>
+      <a href="#example">完整案例</a>
+      <a href="#faq">常见问题</a>
+      <a href="#graphical">图形化定位</a>
+    </nav>
+    <a class="btn primary" href="../ide/">网页端体验</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="badge"><span class="dot"></span> HiCode · HIC 语言官方教程</div>
+  <h1>分章节，从零学会<br /><span class="accent">HIC 语言</span></h1>
+  <p class="sub">14 个章节循序渐进，每章都附一段可直接下载的 <code>.hc</code> 练习文件——下载后导入「网页端体验」即可查看源码、实时转译、照着改着学。无需任何编程基础。</p>
+  <div class="meta">适用版本：v1.00（网页端在线开发） · 建议边看边动手 · 每章约 3–5 分钟</div>
+</div>
+
+<!-- ===== 章节目录 ===== -->
+<div class="chapters" id="chapters">
+  <div class="ch-grid">
+    <div class="ch-card"><div class="ch-no">第 01 章</div><h3>认识 HIC</h3><p>了解 HIC 是什么、学习路径与整体结构</p><div class="ch-card-actions"><a class="go" href="#overview">开始学习</a><a class="dl" href="examples/ch01-overview.hc" download="第01章-认识HIC.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 02 章</div><h3>快速上手</h3><p>3 分钟跑通第一个「你好 HiCode」程序</p><div class="ch-card-actions"><a class="go" href="#quickstart">开始学习</a><a class="dl" href="examples/ch02-quickstart.hc" download="第02章-快速上手.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 03 章</div><h3>变量 it</h3><p>普通 / 文字 t / 图片 p 三种变量</p><div class="ch-card-actions"><a class="go" href="#variables">开始学习</a><a class="dl" href="examples/ch03-variables.hc" download="第03章-变量.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 04 章</div><h3>展示 in</h3><p>用 in t/s/b/link/p 把内容分级显示</p><div class="ch-card-actions"><a class="go" href="#display">开始学习</a><a class="dl" href="examples/ch04-display.hc" download="第04章-展示.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 05 章</div><h3>条件判断</h3><p>if / orif / noif 让页面变聪明</p><div class="ch-card-actions"><a class="go" href="#condition">开始学习</a><a class="dl" href="examples/ch05-conditions.hc" download="第05章-条件判断.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 06 章</div><h3>表达式与运算符</h3><p>四则运算、比较、逻辑、包含运算符</p><div class="ch-card-actions"><a class="go" href="#expression">开始学习</a><a class="dl" href="examples/ch06-expressions.hc" download="第06章-表达式.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 07 章</div><h3>页面跳转</h3><p>to / fr 构建多页应用</p><div class="ch-card-actions"><a class="go" href="#navigation">开始学习</a><a class="dl" href="examples/ch07-navigation.hc" download="第07章-页面跳转.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 08 章</div><h3>语法规范</h3><p>缩进、注释、命名必守规则</p><div class="ch-card-actions"><a class="go" href="#syntax">开始学习</a><a class="dl" href="examples/ch08-syntax.hc" download="第08章-语法规范.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 09 章</div><h3>项目与图片</h3><p>项目 / 页面管理 + 图片上传</p><div class="ch-card-actions"><a class="go" href="#project">开始学习</a><a class="dl" href="examples/ch09-project-image.hc" download="第09章-项目与图片.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 10 章</div><h3>转译与导出</h3><p>实时转译 + 四种导出方式</p><div class="ch-card-actions"><a class="go" href="#export">开始学习</a><a class="dl" href="examples/ch10-export.hc" download="第10章-转译与导出.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 11 章</div><h3>完整案例</h3><p>综合实战：做一个个人名片</p><div class="ch-card-actions"><a class="go" href="#example">开始学习</a><a class="dl" href="examples/ch11-full-example.hc" download="第11章-完整案例.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 12 章</div><h3>语法速查表</h3><p>一页看完 v1.00 全部语法</p><div class="ch-card-actions"><a class="go" href="#cheatsheet">开始学习</a><a class="dl" href="examples/ch12-cheatsheet.hc" download="第12章-语法速查.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 13 章</div><h3>常见问题</h3><p>报错与踩坑排查指南</p><div class="ch-card-actions"><a class="go" href="#faq">开始学习</a><a class="dl" href="examples/ch13-faq-fix.hc" download="第13章-常见问题.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 14 章</div><h3>图形化定位</h3><p>画布点击定坐标，一键生成 in point 代码</p><div class="ch-card-actions"><a class="go" href="#graphical">开始学习</a><a class="dl" href="examples/ch14-graphical.hc" download="第14章-图形化定位.hc">下载 .hc</a></div></div>
+  </div>
+</div>
+
+<div class="learn-layout">
+  <!-- 侧边目录 -->
+  <nav class="sidebar">
+    <h4>教程目录</h4>
+    <a href="#overview">01 · 认识 HIC</a>
+    <a href="#quickstart">02 · 快速上手</a>
+    <a href="#variables">03 · 变量 it</a>
+    <a href="#display">04 · 展示 in</a>
+    <a href="#condition">05 · 条件判断</a>
+    <a href="#expression">06 · 表达式与运算符</a>
+    <a href="#navigation">07 · 页面跳转</a>
+    <a href="#syntax">08 · 语法规范</a>
+    <a href="#project">09 · 项目与图片</a>
+    <a href="#export">10 · 转译与导出</a>
+    <a href="#example">11 · 完整案例</a>
+    <a href="#cheatsheet">12 · 语法速查表</a>
+    <a href="#faq">13 · 常见问题</a>
+    <a href="#graphical">14 · 图形化定位</a>
+  </nav>
+
+  <!-- 正文 -->
+  <main class="content">
+
+    <!-- 01 认识 HIC -->
+    <section id="overview">
+      <h2><span class="no">01</span>认识 HIC</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch01-overview.hc" download="第01章-认识HIC.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">HiCode（简称 HC）是一门前端与后端一体化的解释型语言，HIC 是它的代码格式名。v1.00 是当前「网页端在线开发」版本，v0.01 为早期预览版。</p>
+
+      <h3>HIC 是什么</h3>
+      <ul>
+        <li>你在编辑区里写的代码，就是 <b>HIC 代码</b>；它由引擎<b>实时转译为 HTML</b> 网页。</li>
+        <li>HIC 用「简单中文式指令 + 缩进」描述页面，读起来接近自然语言，<b>无需会 HTML / CSS / JavaScript</b>。</li>
+        <li>只需掌握 5 类语法：<code>it</code>（声明变量）、<code>in</code>（分级展示）、<code>if / orif / noif</code>（判断）、<code>to / fr</code>（跳转）、<b>表达式</b>（四则运算、比较与逻辑）。</li>
+        <li>无需安装任何环境：打开网页端即可编写、预览、导出。</li>
+      </ul>
+
+      <h3>学习前提</h3>
+      <ul>
+        <li>会打开浏览器、会打字即可，不需要任何编程经验。</li>
+        <li>建议<b>边看边动手</b>，每章都下载 <code>.hc</code> 练习文件导入后照着改。</li>
+      </ul>
+
+      <h3>推荐学习路径</h3>
+      <ol>
+        <li>先跑通「<b>02 快速上手</b>」里的第一个程序。</li>
+        <li>掌握「<b>03 变量</b>」和「<b>04 展示</b>」。</li>
+        <li>学会「<b>05 条件判断</b>」做分支。</li>
+        <li>学会「<b>07 页面跳转</b>」做多页应用。</li>
+        <li>用「<b>11 完整案例</b>」把所学串起来。</li>
+        <li>遇到问题查「<b>13 常见问题</b>」和「<b>12 速查表</b>」。</li>
+      </ol>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>下载本章 <code>.hc</code> 导入，观察三段文案的显示效果。</li>
+        <li>把「标题」「简介」「说明」的文字改成你自己的话。</li>
+        <li>新增一行 <code>it 新变量 t ...</code> 和对应的 <code>新变量 in t</code>，观察变化。</li>
+      </ul></div>
+    </section>
+
+    <!-- 02 快速上手 -->
+    <section id="quickstart">
+      <h2><span class="no">02</span>快速上手：第一个程序</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch02-quickstart.hc" download="第02章-快速上手.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">3 分钟跑通一个「你好，HiCode」页面，建立整体印象。</p>
+
+      <h3>操作步骤</h3>
+      <ol>
+        <li>打开官网，点「<b>网页端体验</b>」进入在线开发环境。</li>
+        <li>点「<b>新建项目</b>」，输入项目名，例如「我的第一个项目」。</li>
+        <li>项目会自动带一个默认页面「页面1」，点击它进入编辑区。</li>
+        <li>在代码编辑区输入：</li>
+      </ol>
+<pre><code>it 标题 t 你好，HiCode
+标题 in t</code></pre>
+      <ol start="5">
+        <li>点右上角「<b>✓ 实时转译</b>」，或切到「<b>转译预览</b>」标签，即可看到「你好，HiCode」放大居中显示。</li>
+        <li>代码会<b>自动保存到本地浏览器</b>，下次打开可点「恢复最近项目」继续。</li>
+      </ol>
+
+      <h3>逐行解释</h3>
+      <ul>
+        <li><code>it 标题 t 你好，HiCode</code>：声明一个名为「标题」的<b>文字变量</b>，值为「你好，HiCode」。</li>
+        <li><code>标题 in t</code>：把「标题」这个变量以<b>文字（t）方式居中显示</b>出来。</li>
+        <li>你<b>不需要</b>写 <code>&lt;html&gt;</code>、<code>&lt;head&gt;</code>、<code>&lt;body&gt;</code> 等标签，页面骨架由引擎自动生成。</li>
+      </ul>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>新建项目手动输入上面两行，验证与下载文件效果一致。</li>
+        <li>把「你好，HiCode」改成「你好，世界」，实时预览。</li>
+      </ul></div>
+    </section>
+
+    <!-- 03 变量 -->
+    <section id="variables">
+      <h2><span class="no">03</span>变量 it</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch03-variables.hc" download="第03章-变量.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">用 <code>it</code> 声明变量。变量用于存放文字、图片或普通数据，供下文的 <code>in</code> 展示和 <code>if</code> 判断使用。</p>
+
+      <h3>三种变量</h3>
+      <ol>
+        <li><b>普通变量</b> —— 语法 <code>it 名字 [类型] [值]</code>
+          <ul>
+            <li>例：<code>it 备注</code>（只声明，无值）</li>
+            <li>例：<code>it 年龄 int 18</code>（带类型标注的值）</li>
+            <li>v1.00 中 <code>int / str / float / bool / list / dict / tuple</code> 这些类型标注，目前统一按「普通变量」处理，<b>不做强类型校验</b>，仅作语义提示。</li>
+            <li>普通变量<b>不会直接显示</b>在页面上，主要供条件判断使用。</li>
+          </ul>
+        </li>
+        <li><b>文字变量</b> —— 语法 <code>it 名字 t 值</code>
+          <ul>
+            <li><code>t</code> 表示 text，值是一段文本。</li>
+            <li>例：<code>it 标题 t 你好，HiCode</code></li>
+            <li>配合 <code>名字 in t</code> 显示。</li>
+          </ul>
+        </li>
+        <li><b>图片变量</b> —— 语法 <code>it 名字 p</code>
+          <ul>
+            <li><code>p</code> 表示 picture，声明后<b>不含文字值</b>。</li>
+            <li>真实图片需到「变量」面板<b>上传绑定</b>。</li>
+            <li>配合 <code>名字 in p</code> 显示。</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h3>命名规则</h3>
+      <ul>
+        <li>可以以<b>字母、下划线或中文</b>开头（<code>A-Z</code>、<code>a-z</code>、<code>_</code>、中日韩汉字）。</li>
+        <li>后面可跟<b>字母、数字、下划线、中文</b>。</li>
+        <li>示例：<code>标题</code>、<code>title</code>、<code>用户年龄</code>、<code>分数</code> 都是<b>合法变量名</b>。</li>
+        <li>同一页面内变量名<b>不要重复</b>。</li>
+      </ul>
+
+      <div class="callout tip"><b>小贴士</b><p>文字值里可以包含空格和中文，直接写在 <code>t</code> 后面即可，无需加引号。一行只能声明一个变量。</p></div>
+      <div class="callout warn"><b>注意</b><p>变量声明本身<b>不会</b>在页面上显示，必须用 <code>in</code> 才会真正展示出来。</p></div>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>声明三种变量（普通 / 文字 t / 图片 p）。</li>
+        <li>分别用 <code>in t</code>、<code>in p</code> 展示。</li>
+        <li>给普通变量加类型（如 <code>int</code>），观察它始终按普通变量处理。</li>
+      </ul></div>
+    </section>
+
+    <!-- 04 展示 -->
+    <section id="display">
+      <h2><span class="no">04</span>展示 in</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch04-display.hc" download="第04章-展示.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">用 <code>in</code> 把已声明的变量渲染到页面上。v1.00 新增<b>五种展示样式</b>，让排版更有层次。</p>
+
+      <h3>五种展示样式</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tr><th>写法</th><th>等价</th><th>样式</th><th>用途</th></tr>
+          <tr><td><code>变量名 in t</code></td><td><code>text</code></td><td>大标题</td><td>页面主标题，居中放大加粗</td></tr>
+          <tr><td><code>变量名 in s</code></td><td><code>sub</code></td><td>副标题</td><td>次级标题，略小、略淡</td></tr>
+          <tr><td><code>变量名 in b</code></td><td><code>body</code></td><td>正文</td><td>较长说明文字，<b>左对齐</b>自动换行</td></tr>
+          <tr><td><code>变量名 in link</code></td><td>—</td><td>链接</td><td>把值渲染成可点击的按钮链接</td></tr>
+          <tr><td><code>变量名 in p</code></td><td><code>img</code></td><td>图片</td><td>居中显示图片，带圆角阴影</td></tr>
+        </table>
+      </div>
+
+      <h3>示例</h3>
+<pre><code>it 大标题 t 这是居中的大标题
+it 副标题 t 这是居中的副标题
+it 正文 t 这是正文样式，适合写较长的说明文字
+it 链接 t https://HiCodeHC.github.io
+it 配图 p
+
+大标题 in t
+副标题 in s
+正文 in b
+链接 in link
+配图 in p</code></pre>
+
+      <h3>要点</h3>
+      <ul>
+        <li><code>in</code> 前面的名字，必须是<b>已经用 <code>it</code> 声明过的变量名</b>，否则该行会被忽略。</li>
+        <li><code>in link</code> 会把值当作链接地址，渲染成<b>绿色按钮</b>，点击在新标签页打开。</li>
+        <li>每行 <code>in</code> 会在页面上生成一个<b>独立区块</b>。</li>
+        <li>如需把内容放到<b>指定位置</b>，请用 <code>变量名 in point x y</code>，详见「<a href="#graphical">14 图形化定位</a>」。</li>
+      </ul>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>把五种样式各写一遍，观察标题、副标题、正文、链接、图片的差异。</li>
+        <li>试试 <code>in text</code> / <code>in sub</code> / <code>in body</code> 等价写法。</li>
+        <li>把 <code>in b</code> 换成一段更长的文字，体验自动左对齐换行。</li>
+      </ul></div>
+    </section>
+
+    <!-- 05 条件判断 -->
+    <section id="condition">
+      <h2><span class="no">05</span>条件判断 if / orif / noif</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch05-conditions.hc" download="第05章-条件判断.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">根据条件决定显示哪些内容，是让页面「变聪明」的关键。</p>
+
+      <h3>三种关键词</h3>
+      <ul>
+        <li><code>if 条件:</code> —— 条件成立时执行下方缩进块。</li>
+        <li><code>orif 条件:</code> —— 「否则若」，可写多个，紧跟在前面的 <code>if</code> / <code>orif</code> 之后。</li>
+        <li><code>noif:</code> —— 「否则」，相当于「上面的条件都不满足」；注意 <b>noif 后面不带条件</b>。</li>
+      </ul>
+
+      <h3>示例</h3>
+<pre><code>it 分数 int 85
+if 分数 &gt;= 90:
+    优秀 in t
+orif 分数 &gt;= 60:
+    及格 in t
+noif:
+    需努力 in t</code></pre>
+      <ul>
+        <li>分数 85：不满足第一个条件，满足第二个，显示「<b>及格</b>」。</li>
+        <li>缩进表示「属于谁」：<code>优秀 in t</code> 缩进在 <code>if</code> 下，表示它是 if 命中时才执行的内容。</li>
+      </ul>
+
+      <div class="callout warn"><b>注意</b><p>条件后面要加英文冒号 <code>:</code>；块内代码必须比条件行<b>多缩进</b>；同一级代码要保持对齐。</p></div>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>把分数改成 95，看是否显示「优秀」；改成 50，看是否显示「需努力」。</li>
+        <li>增加一条 <code>orif 分数 == 59:</code> 中间分支。</li>
+      </ul></div>
+    </section>
+
+    <!-- 06 表达式 -->
+    <section id="expression">
+      <h2><span class="no">06</span>表达式与运算符</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch06-expressions.hc" download="第06章-表达式.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">条件里可以写表达式，HIC 支持四则运算、比较、逻辑、包含四类运算。</p>
+
+      <h3>运算符</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tr><th>类别</th><th>运算符</th><th>含义</th><th>示例</th></tr>
+          <tr><td>四则</td><td><code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>%</code></td><td>加 / 减 / 乘 / 除 / 取余</td><td><code>2 + 3 * 4</code></td></tr>
+          <tr><td>比较</td><td><code>==</code></td><td>等于</td><td><code>年龄 == 18</code></td></tr>
+          <tr><td>比较</td><td><code>!=</code></td><td>不等于</td><td><code>名字 != "张三"</code></td></tr>
+          <tr><td>比较</td><td><code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td>小于 / 大于 / 小于等于 / 大于等于</td><td><code>分数 &gt;= 60</code></td></tr>
+          <tr><td>逻辑</td><td><code>and</code></td><td>且（都成立）</td><td><code>a and b</code></td></tr>
+          <tr><td>逻辑</td><td><code>or</code></td><td>或（任一成立）</td><td><code>a or b</code></td></tr>
+          <tr><td>逻辑</td><td><code>not</code></td><td>非（取反）</td><td><code>not a</code></td></tr>
+          <tr><td>包含</td><td><code>in</code></td><td>右侧是否包含左侧子串</td><td><code>"hello" in "xxhello"</code></td></tr>
+        </table>
+      </div>
+
+      <h3>四则运算</h3>
+      <ul>
+        <li>支持 <code>+ - * / %</code> 及一元负号（如 <code>-5</code>），遵循<b>先乘除、后加减</b>，可用小括号 <code>()</code> 改变优先级。</li>
+        <li>示例：<code>2 + 3 * 4</code> 等于 <code>14</code>；<code>(2 + 3) * 4</code> 等于 <code>20</code>；<code>10 % 3</code> 等于 <code>1</code>。</li>
+        <li>变量的值是数字时可直接参与运算，如 <code>满分 - 已扣 &gt;= 60</code>。</li>
+      </ul>
+
+      <h3>字面量</h3>
+      <ul>
+        <li>数字：<code>18</code>、<code>3.14</code></li>
+        <li>字符串：<code>'你好'</code> 或 <code>"你好"</code>（单双引号均可）</li>
+        <li>布尔：<code>true</code>、<code>false</code></li>
+        <li>空值：<code>None</code></li>
+      </ul>
+
+      <h3>比较规则</h3>
+      <ul>
+        <li>两侧<b>都是数字</b>时按<b>数值</b>比较；否则按<b>字符串</b>比较。</li>
+        <li><code>in</code> 用于<b>子串包含</b>判断。</li>
+      </ul>
+
+      <h3>组合示例</h3>
+<pre><code>it 年龄 int 18
+it 名字 t 张三
+if 年龄 == 18 and 名字 in '张三':
+    匹配 in t</code></pre>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>用 <code>or</code> / <code>not</code> / <code>in</code> 组合条件写到 <code>if</code> 里。</li>
+        <li>改数字和字符串做比较，观察结果变化。</li>
+      </ul></div>
+    </section>
+
+    <!-- 07 跳转 -->
+    <section id="navigation">
+      <h2><span class="no">07</span>页面跳转 to / fr</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch07-navigation.hc" download="第07章-页面跳转.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">用 <code>to</code> 或 <code>fr</code> 在页面之间跳转，构建多页应用。</p>
+
+      <h3>语法</h3>
+      <ol>
+        <li><b>跳到当前项目的另一页</b>：<code>to 页面名</code>
+<pre><code>to 关于</code></pre>
+        </li>
+        <li><b>显式指定来源页与目标页（同项目）</b>：<code>页面A to 页面B</code>
+<pre><code>首页 to 关于</code></pre>
+        </li>
+        <li><b>跨项目跳转</b>：<code>fr 项目A 页面A to 项目B 页面B</code>
+<pre><code>fr 我的项目 首页 to 我的项目 关于</code></pre>
+        </li>
+      </ol>
+
+      <h3>要点</h3>
+      <ul>
+        <li>「页面名」是你在「页面」区点 <code>+</code> 新建页面时填写的名字。</li>
+        <li>跳转链接在导出后会<b>自动生成真实的 .html 链接</b>。</li>
+        <li><b>跨项目跳转</b>要求目标项目也被一并导入 / 导出，否则链接不可点击（编辑区会有提示）。</li>
+      </ul>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>导入后点「导出全部页面 · 合并成 1 个 .html」，验证「首页 ↔ 关于」互相跳转。</li>
+        <li>新增一个页面，用 <code>to</code> 跳转过去。</li>
+      </ul></div>
+    </section>
+
+    <!-- 08 语法规范 -->
+    <section id="syntax">
+      <h2><span class="no">08</span>语法规范</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch08-syntax.hc" download="第08章-语法规范.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">几条必须遵守的基本规则，遵守后代码几乎不会出错。</p>
+
+      <h3>缩进</h3>
+      <ul>
+        <li>用<b>缩进表示层次</b>，同一代码块必须对齐。</li>
+        <li><code>Tab</code> 会被当作 <b>2 个空格</b>；建议统一用 2 或 4 个空格。</li>
+        <li>只有 <code>if / orif / noif</code> 下面需要缩进块，其余语句<b>顶格写</b>。</li>
+      </ul>
+
+      <h3>注释</h3>
+      <ul>
+        <li>以 <code>#</code> 开头的行是注释，会被忽略。</li>
+        <li>例：<code># 这是一行注释</code></li>
+      </ul>
+
+      <h3>空行与骨架</h3>
+      <ul>
+        <li>空行自动忽略，可用空行给代码分区。</li>
+        <li>页面自带 HTML 骨架，<b>不要写</b> <code>&lt;html&gt;</code> / <code>&lt;head&gt;</code> / <code>&lt;body&gt;</code> / <code>&lt;style&gt;</code> 等标签。</li>
+        <li>编辑器顶部有快捷提示，忘记语法时可参考。</li>
+      </ul>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>添加注释、空行，保持缩进一致。</li>
+        <li>故意打乱缩进，观察转译异常，再改回正确缩进。</li>
+      </ul></div>
+    </section>
+
+    <!-- 09 项目与图片 -->
+    <section id="project">
+      <h2><span class="no">09</span>项目与图片管理</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch09-project-image.hc" download="第09章-项目与图片.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">学会管理左侧的项目 / 页面树，以及给图片变量上传图片。</p>
+
+      <h3>项目 / 页面树</h3>
+      <ul>
+        <li><b>新建项目</b>：点「项目」旁 <code>+</code>。</li>
+        <li><b>新建页面</b>：点「页面」旁 <code>+</code>。</li>
+        <li><b>重命名 / 删除</b>：鼠标移到项目或页面上，点 <code>✎</code>（重命名）或 <code>🗑</code>（删除）。</li>
+        <li>删除<b>不可恢复</b>，请谨慎操作。</li>
+      </ul>
+
+      <h3>图片上传</h3>
+      <ol>
+        <li>先用代码声明图片变量，如 <code>it 头像 p</code>。</li>
+        <li>切到「<b>变量</b>」标签，找到「头像」条目。</li>
+        <li>点「<b>上传</b>」选择本地图片；「<b>更换</b>」替换图片、「<b>删除</b>」移除图片。</li>
+        <li>图片会以 dataURL 内嵌保存，随 <code>.hc</code> 一并导出，<b>不会丢失</b>。</li>
+      </ol>
+
+      <h3>变量面板</h3>
+      <ul>
+        <li>展示当前页面所有变量：普通、文字 <code>t</code>、图片 <code>p</code>。</li>
+        <li>图片变量拥有专属的「上传 / 更换 / 删除」按钮。</li>
+      </ul>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>在变量面板上传一张图片，观察显示效果。</li>
+        <li>尝试「更换」和「删除」图片。</li>
+      </ul></div>
+    </section>
+
+    <!-- 10 转译与导出 -->
+    <section id="export">
+      <h2><span class="no">10</span>实时转译与导出</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch10-export.hc" download="第10章-转译与导出.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">HIC 会实时转译为 HTML，你可以随时预览，并把成果导出成网页或可继续编辑的工程文件。</p>
+
+      <h3>实时转译</h3>
+      <ul>
+        <li>编辑时引擎<b>实时</b>把 HIC 转译为 HTML，切到「<b>转译预览</b>」即可看到结果。</li>
+        <li>点「<b>↗ 新标签打开</b>」可独立预览。</li>
+        <li>点顶部「<b>✓ 实时转译</b>」立即转译当前页。</li>
+      </ul>
+
+      <h3>导出</h3>
+      <ul>
+        <li><b>导出 .hc</b>：保存项目（含图片），之后可用「导入项目 .hc」继续开发。</li>
+        <li><b>导出单个 .html</b>：只导出当前页面。</li>
+        <li><b>导出全部页面 · 打包 .zip</b>：所有页面打包成 zip（多文件）。</li>
+        <li><b>导出全部页面 · 合并成 1 个 .html</b>：合并成单文件，含顶部导航，可点击跳转。</li>
+      </ul>
+
+      <div class="callout tip"><b>小贴士</b><p>重要项目请养成「导出 .hc」备份的习惯；网页端数据保存在浏览器本地，清缓存可能丢失。</p></div>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>分别尝试 4 种导出方式。</li>
+        <li>导出 <code>.hc</code> 再重新导入，确认数据完整。</li>
+      </ul></div>
+    </section>
+
+    <!-- 11 完整案例 -->
+    <section id="example">
+      <h2><span class="no">11</span>完整案例：个人名片</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch11-full-example.hc" download="第11章-完整案例.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">做两张页面——「名片」和「联系方式」。名片显示头像、判断是否成年，并跳到联系方式页。</p>
+
+      <h3>步骤</h3>
+      <ol>
+        <li>新建项目「个人名片」。</li>
+        <li>把默认页面「页面1」重命名为「名片」，写入：</li>
+      </ol>
+<pre><code>it 姓名 t 张三
+it 简介 t 一名热爱编程的初学者
+it 头像 p
+it 年龄 int 20
+
+姓名 in t
+简介 in t
+头像 in p
+
+if 年龄 &gt;= 18:
+    成年人 in t
+noif:
+    未成年人 in t
+
+to 联系方式</code></pre>
+      <ol start="3">
+        <li>切到「变量」面板，为「头像」上传图片。</li>
+        <li>新建页面「联系方式」，写入：</li>
+      </ol>
+<pre><code>it 邮箱 t zhang@example.com
+邮箱 in t
+
+to 名片</code></pre>
+      <ol start="5">
+        <li>切「转译预览」查看效果。</li>
+        <li>点「导出全部页面 · 合并成 1 个 .html」下载，即可得到一个可跳转的完整网页。</li>
+      </ol>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>复刻个人名片案例。</li>
+        <li>扩展一个「技能」页面，并加入跳转。</li>
+      </ul></div>
+    </section>
+
+    <!-- 12 速查表 -->
+    <section id="cheatsheet">
+      <h2><span class="no">12</span>语法速查表</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch12-cheatsheet.hc" download="第12章-语法速查.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">一页看完 v1.00 全部语法，可收藏备用。</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tr><th>功能</th><th>语法</th></tr>
+          <tr><td>声明普通变量</td><td><code>it 名字 [类型] [值]</code></td></tr>
+          <tr><td>声明文字变量</td><td><code>it 名字 t 值</code></td></tr>
+          <tr><td>声明图片变量</td><td><code>it 名字 p</code></td></tr>
+          <tr><td>显示大标题</td><td><code>名字 in t</code>（<code>text</code> 等价）</td></tr>
+          <tr><td>显示副标题</td><td><code>名字 in s</code>（<code>sub</code> 等价）</td></tr>
+          <tr><td>显示正文</td><td><code>名字 in b</code>（<code>body</code> 等价）</td></tr>
+          <tr><td>显示链接</td><td><code>名字 in link</code></td></tr>
+          <tr><td>显示图片</td><td><code>名字 in p</code>（<code>img</code> 等价）</td></tr>
+          <tr><td>图形化定位</td><td><code>名字 in point x y</code>（x、y 为像素坐标，可引用数值变量）</td></tr>
+          <tr><td>条件判断</td><td><code>if 条件:</code> / <code>orif 条件:</code> / <code>noif:</code></td></tr>
+          <tr><td>页面跳转（同项目）</td><td><code>to 页面</code> 或 <code>页面A to 页面B</code></td></tr>
+          <tr><td>跨项目跳转</td><td><code>fr 项目A 页面A to 项目B 页面B</code></td></tr>
+          <tr><td>注释</td><td><code># 注释内容</code></td></tr>
+          <tr><td>四则运算</td><td><code>+ - * / % ( )</code>，如 <code>2 + 3 * 4</code></td></tr>
+          <tr><td>比较 / 逻辑 / 包含</td><td><code>== != &lt; &gt; &lt;= &gt;= and or not in</code></td></tr>
+        </table>
+      </div>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>对照速查表，自查一遍全部语法。</li>
+        <li>在空项目里，把每类语法各写一条。</li>
+      </ul></div>
+    </section>
+
+    <!-- 13 常见问题 -->
+    <section id="faq">
+      <h2><span class="no">13</span>常见问题</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch13-faq-fix.hc" download="第13章-常见问题.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">遇到问题先来这里排查。</p>
+      <ul>
+        <li><b>为什么 <code>标题 in t</code> 没显示？</b><br/>变量名未声明或拼写不一致。请先用 <code>it 标题 t ...</code> 声明。</li>
+        <li><b><code>in</code> 那行没效果？</b><br/><code>in</code> 前面的变量名必须与 <code>it</code> 声明完全一致。</li>
+        <li><b>缩进不对会怎样？</b><br/>可能把代码分到错误的块，导致 if 逻辑异常；保持块内代码对齐即可。</li>
+        <li><b>图片为什么是空的？</b><br/>图片变量需要在「变量」面板上传图片，<code>it 图片 p</code> 只是声明。</li>
+        <li><b>跳转点了没反应？</b><br/>跨项目跳转的目标项目未一并导出；导出时记得包含目标项目。</li>
+        <li><b>数据保存在哪里？</b><br/>浏览器 localStorage，清缓存会丢失；请用「导出 .hc」备份重要项目。</li>
+        <li><b><code>int</code> / <code>str</code> 等类型有效吗？</b><br/>v1.00 目前统一按普通变量处理，暂不做类型约束；数值变量会按数字参与四则运算与数值比较。</li>
+      </ul>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>故意用未声明的变量名写 <code>in</code>，观察效果。</li>
+        <li>再修正成正确写法，养成自查习惯。</li>
+      </ul></div>
+    </section>
+
+    <!-- 14 图形化定位 -->
+    <section id="graphical">
+      <h2><span class="no">14</span>图形化定位 in point</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch14-graphical.hc" download="第14章-图形化定位.hc">📥 下载本章练习 .hc</a><span class="hint">下载后在「网页端体验」→「导入项目 .hc」即可查看</span></div>
+      <p class="lead">想让某个内容出现在页面的<b>指定位置</b>？v1.00 新增「图形化编程界面」，在画布上<b>点一下</b>就能确定坐标，自动生成 <code>变量名 in point x y</code> 代码，所见即所得。</p>
+
+      <h3>语法</h3>
+      <ul>
+        <li>文字点：<code>变量名 in point x y</code> —— 把变量内容放到坐标 <code>(x, y)</code> 处。</li>
+        <li>图片点：<code>变量名 in point x y</code> —— 若变量是图片 <code>p</code>，则在该坐标显示图片。</li>
+        <li><code>x</code> 和 <code>y</code> 分别是横、纵坐标，单位为<b>像素 px</b>，以页面左上角为原点。</li>
+      </ul>
+<pre><code>it 点A t 我在这里
+点A in point 180 120</code></pre>
+
+      <h3>坐标也可以用变量</h3>
+      <p><code>x</code>、<code>y</code> 除了写具体数字，还能引用<b>数值变量</b>，让位置由逻辑决定：</p>
+<pre><code>it 坐标X int 320
+it 坐标Y int 240
+it 点B t 由变量定位
+点B in point 坐标X 坐标Y</code></pre>
+
+      <h3>用图形画布确定坐标</h3>
+      <ol>
+        <li>在编辑区顶部切到「<b>图形画布</b>」标签。</li>
+        <li>输入<b>变量名</b>，选择「文字 t」或「图片 p」，填好「内容」。</li>
+        <li>在画布上<b>点击任意位置</b>，会出现一个定位点并显示坐标。</li>
+        <li>点「<b>插入坐标点</b>」，引擎会自动在同一页面生成变量声明和 <code>变量名 in point x y</code>。</li>
+        <li>切到「转译预览」，即可看到内容精确落在你点击的位置。</li>
+      </ol>
+
+      <div class="callout tip"><b>小贴士</b><p>如果选了「图片 p」，图片本身请到「变量」面板上传；画布只负责生成位置的坐标代码，不含图片数据。</p></div>
+      <div class="callout warn"><b>注意</b><p>坐标点是<b>绝对定位</b>，会盖在普通排版内容之上；坐标值建议在画布内（画布尺寸即参考视口），过大可能超出屏幕。</p></div>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>下载本章练习，观察三个坐标点的位置差异。</li>
+        <li>在图形画布上点一个点，插入坐标代码，验证「点击处 = 显示处」。</li>
+        <li>把 <code>坐标X / 坐标Y</code> 改成别的数字，看「点B」如何随之移动。</li>
+      </ul></div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="foot">
+    <a class="brand" href="../"><img src="../assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span></a>
+    <p>学习中心 · 分章节教程 + 每章配套 <a href="#chapters">.hc 练习文件</a> · <a href="../">返回官网</a> · <a href="../ide/">网页端体验</a></p>
+    <p>© <span id="year"></span> HiCode（HC）项目团队</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // 侧边目录滚动高亮
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#"]'));
+  var map = {};
+  links.forEach(function (l) { map[l.getAttribute('href').slice(1)] = l; });
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        links.forEach(function (l) { l.classList.remove('active'); });
+        var l = map[e.target.id];
+        if (l) l.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+  Array.prototype.forEach.call(document.querySelectorAll('section[id]'), function (s) { obs.observe(s); });
+</script>
+</body>
+</html>

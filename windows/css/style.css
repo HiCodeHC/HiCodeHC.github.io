@@ -122,14 +122,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .codearea {
   flex: 1; min-height: 0; resize: none; border: 1px solid var(--line); border-radius: var(--radius);
   padding: 16px; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  background: rgba(255,255,255,.6); color: #2d2416; outline: none; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  background: #ffffff; color: #2d2416; outline: none;
 }
 .codearea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .codearea.src { flex: none; height: 100%; white-space: pre; width: 100%; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 12.5px; line-height: 1.6; color: #cfd6dd; background: #1b1f27; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
 .preview-tools { display: inline-flex; gap: 8px; }
 
 /* ---- 轻量编辑器：高亮层 + 行号 ---- */
-.editor-wrap { --gutter: 52px; position: relative; flex: 1; min-height: 0; }
+.editor-wrap { --gutter: 52px; position: relative; flex: 1; min-height: 0; background: #ffffff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .editor-wrap textarea.codearea {
   position: relative; z-index: 4; width: 100%; height: 100%;
   padding-left: calc(var(--gutter) + 13px);
@@ -141,13 +141,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   margin: 0; padding: 16px 16px 16px calc(var(--gutter) + 13px);
   pointer-events: none; overflow: hidden; white-space: pre; tab-size: 4;
   font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  color: #2d2416;
+  color: #2d2416; background: #ffffff;
 }
 .editor-gutter {
   position: absolute; left: 0; top: 0; bottom: 0; width: var(--gutter); z-index: 3;
   overflow: hidden; padding: 16px 10px 16px 0; text-align: right; user-select: none;
   font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  color: rgba(120,90,50,.32); border-right: 1px solid var(--line); background: rgba(120,90,50,.04);
+  color: rgba(120,90,50,.38); border-right: 1px solid var(--line); background: #f6f2ea;
 }
 .editor-mark { position: absolute; left: var(--gutter); top: 0; right: 0; bottom: 0; z-index: 2; pointer-events: none; overflow: hidden; }
 .ed-diag { position: absolute; height: 0; border-bottom: 2px solid transparent; border-radius: 2px; }

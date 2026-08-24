@@ -122,14 +122,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .codearea {
   flex: 1; min-height: 0; resize: none; border: 1px solid var(--line); border-radius: var(--radius);
   padding: 16px; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  background: rgba(255,255,255,.6); color: #2d2416; outline: none; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  background: #ffffff; color: #2d2416; outline: none;
 }
 .codearea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .codearea.src { flex: none; height: 100%; white-space: pre; width: 100%; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 12.5px; line-height: 1.6; color: #cfd6dd; background: #1b1f27; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
 .preview-tools { display: inline-flex; gap: 8px; }
 
 /* ---- 轻量编辑器：高亮层 + 行号 ---- */
-.editor-wrap { --gutter: 52px; position: relative; flex: 1; min-height: 0; }
+.editor-wrap { --gutter: 52px; position: relative; flex: 1; min-height: 0; background: #ffffff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .editor-wrap textarea.codearea {
   position: relative; z-index: 4; width: 100%; height: 100%;
   padding-left: calc(var(--gutter) + 13px);
@@ -141,13 +141,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   margin: 0; padding: 16px 16px 16px calc(var(--gutter) + 13px);
   pointer-events: none; overflow: hidden; white-space: pre; tab-size: 4;
   font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  color: #2d2416;
+  color: #2d2416; background: #ffffff;
 }
 .editor-gutter {
   position: absolute; left: 0; top: 0; bottom: 0; width: var(--gutter); z-index: 3;
   overflow: hidden; padding: 16px 10px 16px 0; text-align: right; user-select: none;
   font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  color: rgba(120,90,50,.32); border-right: 1px solid var(--line); background: rgba(120,90,50,.04);
+  color: rgba(120,90,50,.38); border-right: 1px solid var(--line); background: #f6f2ea;
 }
 .editor-mark { position: absolute; left: var(--gutter); top: 0; right: 0; bottom: 0; z-index: 2; pointer-events: none; overflow: hidden; }
 .ed-diag { position: absolute; height: 0; border-bottom: 2px solid transparent; border-radius: 2px; }
@@ -448,3 +448,43 @@ body.drawer-open { overflow: hidden; }
 
 .statusbar { margin: 8px 10px 10px; padding: 5px 10px; font-size: 11px; }
 .sb-right { font-size: 10.5px; }
+
+/* ---- 窄屏（≤400px）进一步压缩，避免横向溢出 ---- */
+@media (max-width: 400px) {
+  .topbar { padding: 7px 8px; gap: 6px; }
+  .btn-tree { width: 34px; height: 34px; flex-basis: 34px; }
+  .brand { gap: 5px; min-width: 0; }
+  .brand-name { font-size: 14px; white-space: nowrap; overflow: hidden; max-width: 72px; text-overflow: ellipsis; }
+  .brand .ver { font-size: 9.5px; padding: 1px 5px; }
+  .crumb { max-width: 84px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .actions .btn { padding: 7px 10px; font-size: 12px; }
+  .actions .btn:first-of-type { letter-spacing: 0; }
+  .pane { padding: 8px 8px 10px; }
+  .tabs { padding: 6px 8px 0; gap: 1px; }
+  .tab { padding: 9px 3px; font-size: 12.5px; letter-spacing: -.2px; }
+  .editor-head { gap: 4px; }
+  .file-name { font-size: 13px; }
+  .editor-snippets .snippet { padding: 6px 9px; font-size: 11px; }
+  .codearea, .editor-highlight, .editor-gutter { font-size: 12.5px; line-height: 1.6; }
+  .editor-wrap { --gutter: 34px; }
+  .editor-wrap textarea.codearea { padding-left: calc(34px + 9px); }
+  .editor-highlight { padding-left: calc(34px + 9px); }
+  .editor-mark { left: 34px; }
+  .bottom-panel { margin: 6px 8px 0; flex-basis: 42vh; }
+  .btab { font-size: 12px; padding: 8px 10px; }
+  .statusbar { margin: 6px 8px 8px; }
+  .home-card { padding: 26px 18px; }
+  .home-card h1 { font-size: 23px; }
+  .menu { left: 8px; right: 8px; top: 50px; }
+  .graph-canvas { min-height: 50vh; }
+}
+
+/* ---- 极窄屏（≤340px）：隐藏次要文本，仅保留核心操作 ---- */
+@media (max-width: 340px) {
+  .brand-name { display: none; }
+  .crumb { max-width: 40px; }
+  .preview-bar .preview-fname { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .graph-tools label { font-size: 12px; }
+  .console-filter { display: none; }
+  .home-actions .btn.big { padding: 13px 12px; font-size: 14px; }
+}

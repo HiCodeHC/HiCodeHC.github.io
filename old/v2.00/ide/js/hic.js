@@ -778,22 +778,24 @@
 
   /* ---- 顶层导出入口 ---- */
   // pageObj: {id,name,code,images}
-  function buildSinglePageHtml(project, page) {
+  function buildSinglePageHtml(project, page, opts) {
     const { items } = processPage(page, {});
     const projSlug = slugify(project.name);
+    const noBar = !!(opts && opts.noBar);
     const inner = '<div class="hic-page" data-page="' + esc(page.name) + '">\n' + renderItems(items, {
       mode: "singlepage", projSlug, projName: project.name, pageName: page.name,
       projectsMap: null
     }) + "\n</div>";
-    const navBar = ['<div class="hic-bar"><span class="t">', esc(project.name + " · " + page.name), "</span></div>"].join("");
+    const navBar = noBar ? "" : ['<div class="hic-bar"><span class="t">', esc(project.name + " · " + page.name), "</span></div>"].join("");
     return pageShell(navBar + inner, { title: project.name + " - " + page.name, navJs: regionJsBlock() });
   }
 
-  function buildProjectMergedHtml(project, projectsMap) {
+  function buildProjectMergedHtml(project, projectsMap, opts) {
     const pages = Object.values(project.pages);
     const projSlug = slugify(project.name);
     const ctxBase = { mode: "merged", projSlug, projName: project.name, projectsMap };
-    const navBar = ['<div class="hic-bar"><span class="t">', esc(project.name), "</span>",
+    const noBar = !!(opts && opts.noBar);
+    const navBar = noBar ? "" : ['<div class="hic-bar"><span class="t">', esc(project.name), "</span>",
       ...pages.map(function (p, i) {
         return '<button data-goto="' + esc(projSlug + "::" + p.name) + '"' + (i === 0 ? "" : "") + ">" + esc(p.name) + "</button>";
       }), "</div>"].join("");
@@ -807,12 +809,13 @@
   }
 
   // 多项目多页面合并成一个 html（用于「多个项目统一导出」），支持同项目与原跨项目跳转
-  function buildAllMergedHtml(projects, projectsMap) {
+  function buildAllMergedHtml(projects, projectsMap, opts) {
     const allPages = [];
     projects.forEach(function (proj) {
       Object.values(proj.pages).forEach(function (pg) { allPages.push({ proj: proj, page: pg }); });
     });
-    const navBar = ['<div class="hic-bar"><span class="t">HiCode · ', esc(String(projects.length)), " 项目</span>",
+    const noBar = !!(opts && opts.noBar);
+    const navBar = noBar ? "" : ['<div class="hic-bar"><span class="t">HiCode · ', esc(String(projects.length)), " 项目</span>",
       ...allPages.map(function (ob) {
         return '<button data-goto="' + esc(slugify(ob.proj.name) + "::" + ob.page.name) + '">' + esc(ob.proj.name + " · " + ob.page.name) + "</button>";
       }), "</div>"].join("");
@@ -824,15 +827,16 @@
     return pageShell(navBar + sections, { title: "HiCode 合并预览（" + projects.length + " 项目）", navJs: pageJsBlock(null) + regionJsBlock() });
   }
 
-  function buildZipEntries(projects) {
+  function buildZipEntries(projects, opts) {
     // 返回 [{name, html|data}]，name = "{proj}-{page}.html"；若页面声明了可下载文件(app+in d)则追加文件条目
+    const noBar = !!(opts && opts.noBar);
     const arr = [];
     projects.forEach(function (proj) {
       Object.values(proj.pages).forEach(function (pg) {
         const { items } = processPage(pg, {});
         const ctx = { mode: "zip", projSlug: slugify(proj.name), projName: proj.name, pageName: pg.name, projectsMap: {} };
         const inner = '<div class="hic-page" data-page="' + esc(pg.name) + '">\n' + renderItems(items, ctx) + "\n</div>";
-        const navBar = ['<div class="hic-bar"><span class="t">', esc(proj.name + " · " + pg.name), "</span></div>"].join("");
+        const navBar = noBar ? "" : ['<div class="hic-bar"><span class="t">', esc(proj.name + " · " + pg.name), "</span></div>"].join("");
         arr.push({ name: slugify(proj.name) + "-" + slugify(pg.name) + ".html", html: pageShell(navBar + inner, { title: proj.name + " - " + pg.name, navJs: regionJsBlock() }) });
         // 附带 app 上传文件（.zip 专属）：dataURL → 恢复为二进制
         const files = (pg.files && typeof pg.files === "object") ? pg.files : {};

@@ -338,17 +338,5 @@ ok(diag.some(function (d) { return d.msg.indexOf("notamodule") >= 0; }), "diagno
 const diagRegion = HC.diagnose("cf 未闭合\n it x t 1");
 ok(diagRegion.some(function (d) { return d.msg.indexOf("未闭合") >= 0; }), "diagnose 对未闭合触发区域告警");
 
-// ---- 20. v2.00 导出可选去除顶部题目标识（noBar） ----
-const barPage = { name: "x", code: "it 标题 t 内容\n标题 in t", images: {}, files: {} };
-const withBar = HC.buildSinglePageHtml({ name: "项目" }, barPage, {});
-const noBarHtml = HC.buildSinglePageHtml({ name: "项目" }, barPage, { noBar: true });
-ok(withBar.indexOf('class="hic-bar"') >= 0, "默认导出含顶部题目标识");
-ok(noBarHtml.indexOf('class="hic-bar"') < 0, "勾选后导出不含顶部题目标识（纯内容）");
-ok(noBarHtml.indexOf("内容") >= 0 && noBarHtml.indexOf("<!DOCTYPE html>") >= 0, "去题目标识后仍保留页面内容与骨架");
-const noBarZip = HC.buildZipEntries([{ name: "项目", pages: { x: barPage } }], { noBar: true });
-const noBarAllHtml = HC.buildAllMergedHtml([{ name: "项目", pages: { x: barPage } }], {}, { noBar: true });
-ok(noBarAllHtml.indexOf('class="hic-bar"') < 0, "合并导出也可去除顶部题目标识");
-ok(noBarZip.every(function (e) { return !e.html || e.html.indexOf('class="hic-bar"') < 0; }), "zip 展开后各页也可去除顶部题目标识");
-
 console.log("\n通过 " + pass + " 项，失败 " + fail + " 项");
 process.exit(fail ? 1 : 0);

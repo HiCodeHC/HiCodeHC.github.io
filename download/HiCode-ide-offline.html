@@ -23,7 +23,7 @@
   --bad: #c05a5a;
   --radius: 14px;
   --glass: linear-gradient(150deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .28));
-  font-size: 14px;
+  font-size: 14.5px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
@@ -350,6 +350,38 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .alert-info { padding: 10px; border-radius: 8px; background: var(--accent-soft); text-align: left; font-size: 12.5px; }
 .msg-good { color: var(--good); }
 .msg-bad { color: var(--bad); }
+
+/* ============================================================
+ * HC v2.00 桌面版（/windows/）增强 —— 高分辨率 / 宽屏更广显示
+ * 置于文件末尾，确保覆盖上方同名基础规则
+ * ============================================================ */
+:root {
+  --tree-w: 268px;          /* 侧栏更宽，能容纳更长的项目/页面名 */
+  --bottom-h: 248px;        /* 底部面板更高，控制台/变量显示更多 */
+}
+.tree { width: var(--tree-w); flex: 0 0 var(--tree-w); padding: 14px; }
+.bottom-panel { flex: 0 0 var(--bottom-h); }
+.topbar { padding: 11px 20px; }
+.workspace .pane { padding: 14px 18px 16px; }
+.statusbar { margin: 10px 18px 14px; padding: 6px 14px; min-height: 28px; }
+.codearea, .editor-highlight, .editor-gutter { font-size: 14.5px; line-height: 1.7; }
+.editor-wrap { --gutter: 56px; }
+.editor-gutter { width: 56px; }
+/* 超宽屏：内容区限宽，避免横向拉伸过长，提升阅读舒适度 */
+@media (min-width: 1720px) {
+  .workspace > .pane { max-width: 1560px; margin: 0 auto; width: 100%; }
+}
+.prob-item { padding: 10px 14px; }
+.var-row { padding: 12px 14px; }
+.graph-canvas { min-height: 340px; }
+
+/* 导出时的「不包含顶部题目标识」勾选项 */
+.export-opt {
+  display: block; margin: 6px 4px 2px; padding: 9px 10px; cursor: pointer; user-select: none;
+  border-top: 1px dashed var(--line); font-size: 12.5px; color: var(--muted);
+}
+.export-opt:hover { color: var(--accent); }
+.export-opt input { margin-right: 6px; width: 15px; height: 15px; vertical-align: -2px; accent-color: var(--accent); cursor: pointer; }
 </style>
 </head>
 <body>
@@ -371,6 +403,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
           <button data-act="single">导出单个 .html</button>
           <button data-act="zip">导出全部页面 · 打包 .zip</button>
           <button data-act="merge">导出全部页面 · 合并成 1 个 .html</button>
+          <label class="export-opt" title="勾选后，导出的页面不添加顶部“项目名 · 页面名”题目标识，仅保留你自己编写的页面内容">
+            <input type="checkbox" id="optNoBar" /> 不包含顶部题目标识（纯内容导出）
+          </label>
         </div>
       </div>
     </div>
@@ -480,7 +515,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
               <div class="console-welcome">
                 <span class="cw-logo">H</span>
                 <div class="cw-text">
-                  <span class="cw-title">HiCode · HIC 语言开发环境 v2.00</span>
+                  <span class="cw-title">HiCode · HIC 本地开发环境 v2.00</span>
                   <span class="cw-sub">HIC 引擎已就绪 · 正在加载编辑器…</span>
                 </div>
               </div>
@@ -528,7 +563,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <div id="home" class="home hidden">
     <div class="home-card">
       <div class="home-logo"><span class="logo-dot lg"></span></div>
-      <h1>HiCode <span class="dim">· HIC 语言本地开发</span></h1>
+      <h1>HiCode <span class="dim">· HIC 语言在线开发</span></h1>
       <p class="home-sub">自研 HIC 语言一键转译为 HTML，零基础也能搭建网页项目。</p>
       <div class="home-sub small">v2.00：图形化前端开发 —— 触发区域色块（<code>cf 名 … cf 名 stop</code>，点击/长按即触发执行该段代码）、图片变量支持从 URL 直接获取、可下载文件变量（<code>it 名 app</code> + <code>名 in d</code>）、Python 标准库导入（<code>use os, sys, math, json, sqlite3…</code>）；兼容 for 循环、{变量} 插值、中文变量名、实时转译与任意页面导出。</p>
       <div class="home-actions">
@@ -1610,22 +1645,24 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
   /* ---- 顶层导出入口 ---- */
   // pageObj: {id,name,code,images}
-  function buildSinglePageHtml(project, page) {
+  function buildSinglePageHtml(project, page, opts) {
     const { items } = processPage(page, {});
     const projSlug = slugify(project.name);
+    const noBar = !!(opts && opts.noBar);
     const inner = '<div class="hic-page" data-page="' + esc(page.name) + '">\n' + renderItems(items, {
       mode: "singlepage", projSlug, projName: project.name, pageName: page.name,
       projectsMap: null
     }) + "\n</div>";
-    const navBar = ['<div class="hic-bar"><span class="t">', esc(project.name + " · " + page.name), "</span></div>"].join("");
+    const navBar = noBar ? "" : ['<div class="hic-bar"><span class="t">', esc(project.name + " · " + page.name), "</span></div>"].join("");
     return pageShell(navBar + inner, { title: project.name + " - " + page.name, navJs: regionJsBlock() });
   }
 
-  function buildProjectMergedHtml(project, projectsMap) {
+  function buildProjectMergedHtml(project, projectsMap, opts) {
     const pages = Object.values(project.pages);
     const projSlug = slugify(project.name);
     const ctxBase = { mode: "merged", projSlug, projName: project.name, projectsMap };
-    const navBar = ['<div class="hic-bar"><span class="t">', esc(project.name), "</span>",
+    const noBar = !!(opts && opts.noBar);
+    const navBar = noBar ? "" : ['<div class="hic-bar"><span class="t">', esc(project.name), "</span>",
       ...pages.map(function (p, i) {
         return '<button data-goto="' + esc(projSlug + "::" + p.name) + '"' + (i === 0 ? "" : "") + ">" + esc(p.name) + "</button>";
       }), "</div>"].join("");
@@ -1639,12 +1676,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   }
 
   // 多项目多页面合并成一个 html（用于「多个项目统一导出」），支持同项目与原跨项目跳转
-  function buildAllMergedHtml(projects, projectsMap) {
+  function buildAllMergedHtml(projects, projectsMap, opts) {
     const allPages = [];
     projects.forEach(function (proj) {
       Object.values(proj.pages).forEach(function (pg) { allPages.push({ proj: proj, page: pg }); });
     });
-    const navBar = ['<div class="hic-bar"><span class="t">HiCode · ', esc(String(projects.length)), " 项目</span>",
+    const noBar = !!(opts && opts.noBar);
+    const navBar = noBar ? "" : ['<div class="hic-bar"><span class="t">HiCode · ', esc(String(projects.length)), " 项目</span>",
       ...allPages.map(function (ob) {
         return '<button data-goto="' + esc(slugify(ob.proj.name) + "::" + ob.page.name) + '">' + esc(ob.proj.name + " · " + ob.page.name) + "</button>";
       }), "</div>"].join("");
@@ -1656,15 +1694,16 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     return pageShell(navBar + sections, { title: "HiCode 合并预览（" + projects.length + " 项目）", navJs: pageJsBlock(null) + regionJsBlock() });
   }
 
-  function buildZipEntries(projects) {
+  function buildZipEntries(projects, opts) {
     // 返回 [{name, html|data}]，name = "{proj}-{page}.html"；若页面声明了可下载文件(app+in d)则追加文件条目
+    const noBar = !!(opts && opts.noBar);
     const arr = [];
     projects.forEach(function (proj) {
       Object.values(proj.pages).forEach(function (pg) {
         const { items } = processPage(pg, {});
         const ctx = { mode: "zip", projSlug: slugify(proj.name), projName: proj.name, pageName: pg.name, projectsMap: {} };
         const inner = '<div class="hic-page" data-page="' + esc(pg.name) + '">\n' + renderItems(items, ctx) + "\n</div>";
-        const navBar = ['<div class="hic-bar"><span class="t">', esc(proj.name + " · " + pg.name), "</span></div>"].join("");
+        const navBar = noBar ? "" : ['<div class="hic-bar"><span class="t">', esc(proj.name + " · " + pg.name), "</span></div>"].join("");
         arr.push({ name: slugify(proj.name) + "-" + slugify(pg.name) + ".html", html: pageShell(navBar + inner, { title: proj.name + " - " + pg.name, navJs: regionJsBlock() }) });
         // 附带 app 上传文件（.zip 专属）：dataURL → 恢复为二进制
         const files = (pg.files && typeof pg.files === "object") ? pg.files : {};
@@ -2020,6 +2059,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     cntErr: $("cntErr"),
     cntWarn: $("cntWarn"),
     exportMenu: $("exportMenu"),
+    optNoBar: $("optNoBar"),
     modal: $("modal"),
     modalTitle: $("modalTitle"),
     modalBody: $("modalBody"),
@@ -2567,17 +2607,29 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     logConsole("output", "已导出 .hc 项目「" + proj.name + "」");
     toastOn("已导出 .hc", '项目「' + esc(proj.name) + '」已导出为 <b>' + esc(HC.slugify(proj.name)) + '.hc</b>，下次可直接导入继续开发。');
   }
+  // 导出时是否保留顶部题目标识（"项目名 · 页面名" 横幅）。默认保留；用户可勾选"不包含"。
+  const NO_BAR_KEY = "hicode_noexportbar";
+  function noBarPref() {
+    return el.optNoBar ? el.optNoBar.checked : false;
+  }
+  function bindNoBarPref() {
+    if (!el.optNoBar) return;
+    try { el.optNoBar.checked = localStorage.getItem(NO_BAR_KEY) === "1"; } catch (e) {}
+    el.optNoBar.addEventListener("change", function () {
+      try { localStorage.setItem(NO_BAR_KEY, el.optNoBar.checked ? "1" : "0"); } catch (e) {}
+    });
+  }
   function exportSingle() {
     const proj = currentProj(); const pg = currentPage();
     if (!proj || !pg) return;
     if (HC.usesDownload(proj)) { warnZipOnly(); return; }
-    const html = HC.buildSinglePageHtml(proj, pg);
+    const html = HC.buildSinglePageHtml(proj, pg, { noBar: noBarPref() });
     HC.download(html, HC.slugify(pg.name) + ".html");
     logConsole("output", "已导出单个页面「" + pg.name + "」为 .html");
   }
   function exportZip() {
     const list = allProjects(); if (!list.length) return;
-    const entries = HC.buildZipEntries(list);
+    const entries = HC.buildZipEntries(list, { noBar: noBarPref() });
     // 普通页面条目用 .html；可下载文件(app)条目用 .data（二进制）
     const files = entries.map(function (e) { return { name: e.name, data: (e.data ? e.data : e.html) }; });
     const blob = new Blob([HC.zipFiles(files).buffer], { type: "application/zip" });
@@ -2591,10 +2643,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   function exportMerge() {
     const list = allProjects(); if (!list.length) return;
     for (let i = 0; i < list.length; i++) if (HC.usesDownload(list[i])) { warnZipOnly(); return; }
-    const html = HC.buildAllMergedHtml(list, projectsMapOf(list));
+    const html = HC.buildAllMergedHtml(list, projectsMapOf(list), { noBar: noBarPref() });
     HC.download(html, "HiCode-merged.html");
     logConsole("output", "已导出全部项目为合并 .html");
-    toastOn("已导出合并 .html", "全部项目已合并为一个 <b>HiCode-merged.html</b>，含顶部导航，可点击跳转各页面。");
+    toastOn("已导出合并 .html", "全部项目已合并为一个 <b>HiCode-merged.html</b>" + (noBarPref() ? "（已去除顶部题目标识）" : "，含顶部导航") + "。");
   }
 
   /* ---- 导入 ---- */
@@ -2799,6 +2851,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   /* ---- 启动 ---- */
   function boot() {
     bind();
+    bindNoBarPref();
     // 轻量编辑器：语法高亮 + 行号 + 自动缩进 + 括号补全
     if (window.HICED) window.hiced = HICED.create(el.code);
     logConsole("output", "HiCode IDE 已启动 · 就绪");

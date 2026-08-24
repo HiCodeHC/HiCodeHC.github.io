@@ -3,220 +3,106 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HiCode · 在线开发环境 v2.00</title>
+<meta name="description" content="HiCode 在线开发环境 v2.00 入口 —— 自动根据设备检测进入手机端（安卓）或电脑端开发界面。" />
+<title>HiCode · 入口 v2.00</title>
 <link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
-<link rel="stylesheet" href="css/style.css" />
+<style>
+  :root {
+    --bg: #f3eee6;
+    --panel: rgba(255, 252, 245, .72);
+    --line: rgba(90, 70, 40, .14);
+    --text: #3a2f1e;
+    --muted: #6b5f49;
+    --dim: #9a8c73;
+    --accent: #c2965c;
+    --accent-strong: #b38545;
+    --accent-soft: rgba(194, 150, 92, .16);
+    --glass: linear-gradient(150deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .28));
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(70% 60% at 12% 8%, rgba(228, 196, 150, .30), transparent 60%),
+      radial-gradient(60% 55% at 90% 90%, rgba(200, 160, 120, .20), transparent 58%),
+      var(--bg);
+  }
+  a { color: inherit; text-decoration: none; }
+  .card {
+    width: min(440px, 94vw); padding: 40px 34px; text-align: center;
+    background: var(--glass); border: 1px solid var(--line); border-radius: 22px;
+    box-shadow: 0 24px 70px rgba(60, 45, 20, .18); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+  }
+  .logo { width: 54px; height: 54px; margin: 0 auto; border-radius: 14px;
+    background: linear-gradient(140deg, #e2b878, #b38545); box-shadow: 0 8px 20px rgba(179,133,69,.4); }
+  h1 { margin: 18px 0 6px; font-size: 27px; }
+  h1 .accent { color: var(--accent-strong); }
+  .sub { color: var(--muted); font-size: 14px; }
+  .detect { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12.5px; color: var(--dim); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px rgba(194,150,92,.6); animation: blink 1.1s infinite; }
+  @keyframes blink { 50% { opacity: .3; } }
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 26px; }
+  .choice {
+    display: block; padding: 18px 14px; border-radius: 14px; border: 1px solid var(--line);
+    background: rgba(255,255,255,.5); transition: transform .18s, border-color .18s, box-shadow .2s;
+  }
+  .choice:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 10px 26px rgba(179,133,69,.2); }
+  .choice .ic { font-size: 26px; }
+  .choice h3 { font-size: 15px; margin: 8px 0 2px; color: var(--accent-strong); }
+  .choice p { font-size: 12px; color: var(--muted); }
+  .auto { margin-top: 24px; font-size: 13px; color: var(--muted); }
+  .auto .nobtn { color: var(--accent-strong); font-weight: 700; cursor: pointer; }
+  .link { margin-top: 26px; font-size: 12.5px; color: var(--dim); }
+  .link a { color: var(--accent-strong); }
+</style>
 </head>
 <body>
-  <!-- ===== 顶部导航 ===== -->
-  <header class="topbar">
-    <div class="brand" id="btnHome" title="返回首页">
-      <span class="logo-dot"></span>
-      <span class="brand-name">HiCode</span>
-      <span class="ver">v2.00 · 网页端</span>
+  <div class="card">
+    <div class="logo"></div>
+    <h1>HiCode <span class="accent">v2.00</span></h1>
+    <div class="sub">图形化前端开发 · 触发区域 · URL 图片 · 文件下载 · 标准库导入</div>
+    <div class="detect" id="detect"><span class="dot"></span><span id="detectTxt">正在检测设备类型…</span></div>
+
+    <div class="choices">
+      <a class="choice" href="./windows/">
+        <div class="ic">🖥️</div>
+        <h3>电脑端</h3>
+        <p>更高分辨率 · 功能更多 · 显示更广</p>
+      </a>
+      <a class="choice" href="./android/">
+        <div class="ic">📱</div>
+        <h3>手机端</h3>
+        <p>触控特调 · 防挤压 · 便捷开发</p>
+      </a>
     </div>
-    <div class="crumb" id="crumb" title="当前文件">—</div>
-    <div class="actions">
-      <button id="btnLive" class="btn ghost live" title="观看实时转译：立即把当前页面 HIC 代码转译为 HTML">✓ 实时转译</button>
-      <div class="menu-wrap">
-        <button id="btnExport" class="btn solid">导出 ▾</button>
-        <div class="menu" id="exportMenu">
-          <div class="menu-title">导出当前项目</div>
-          <button data-act="hc">导出 .hc（可导入继续开发）</button>
-          <button data-act="single">导出单个 .html</button>
-          <button data-act="zip">导出全部页面 · 打包 .zip</button>
-          <button data-act="merge">导出全部页面 · 合并成 1 个 .html</button>
-        </div>
-      </div>
-    </div>
-  </header>
 
-  <div class="layout">
-    <!-- ===== 左侧：项目 + 页面 ===== -->
-    <aside class="tree" id="tree">
-      <div class="tree-sec">
-        <div class="tree-head">
-          <span>项目</span>
-          <button class="mini" id="addProject" title="新建项目">+</button>
-        </div>
-        <ul class="tree-list" id="projList"></ul>
-      </div>
-      <div class="tree-sec" id="pageSec" hidden>
-        <div class="tree-head">
-          <span>页面</span>
-          <button class="mini" id="addPage" title="新建页面">+</button>
-        </div>
-        <ul class="tree-list" id="pageList"></ul>
-      </div>
-      <div class="tree-empty" id="treeHint">创建或导入一个项目后开始开发</div>
-    </aside>
-
-    <!-- ===== 右侧：工作区 ===== -->
-    <main class="workspace">
-      <div class="tabs" id="workTabs">
-        <button class="tab on" data-tab="editor">代码</button>
-        <button class="tab" data-tab="preview">转译预览</button>
-        <button class="tab" data-tab="graph">图形画布</button>
-      </div>
-
-      <section class="pane on" id="pane-editor">
-        <div class="editor-head">
-          <span class="file-name" id="fileName">未打开文件</span>
-          <span class="shortcut">it 变量 · in t/s/b/link/p 展示 / in d 下载 · if/orif/noif 判断 · for 循环 · cf 触发区域 · use 标准库 · 图片可写 URL · {变量} 插值 · to/fr 导向</span>
-        </div>
-        <div class="editor-snippets">
-          <button type="button" class="snippet" data-snip="region" title="插入一个可点击/长按触发的区域色块">+ 触发区域</button>
-          <button type="button" class="snippet" data-snip="use" title="导入 Python 标准库模块（网页输出为标识占位，打包/原生运行时可用）">+ 标准库 use</button>
-          <button type="button" class="snippet" data-snip="app" title="声明一个可上传文件、供用户下载的变量">+ 下载文件</button>
-        </div>
-        <textarea id="code" class="codearea" spellcheck="false"
-          placeholder="在这里编写 HIC 代码…&#10;&#10;it 标题 t Hello HiCode&#10;标题 in t&#10;it 分数 int 85&#10;if 分数 &gt;= 60:&#10;    标题 in s"
-          ></textarea>
-      </section>
-
-      <section class="pane" id="pane-preview">
-        <div class="preview-bar">
-          <span>实时转译结果（HIC → HTML）</span>
-          <span class="preview-tools">
-            <button class="mini" id="btnToggleSrc" title="预览与源码对照">查看源码</button>
-            <button class="mini" id="openPreview" title="在独立标签页打开预览">↗ 新标签打开</button>
-          </span>
-        </div>
-        <iframe id="previewFrame" class="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
-        <textarea id="previewSrc" class="codearea src" spellcheck="false" hidden readonly></textarea>
-      </section>
-
-      <section class="pane" id="pane-graph">
-        <div class="graph-help">
-          <p><b>图形化定位</b>：在下方画布<b>点击</b>确定一个点的运作定位坐标 <code>(x, y)</code>，点击「插入坐标点」即生成 HIC 代码。</p>
-          <p>文字点会生成 <code>it 变量名 t 内容</code>；图片点会生成 <code>it 变量名 p</code>（图片请到「变量」面板上传）。两个都会生成 <code>变量名 in point x y</code>。</p>
-        </div>
-        <div class="graph-tools">
-          <label>变量名 <input id="graphVarName" type="text" value="点A" placeholder="点A" /></label>
-          <label>内容 <input id="graphContent" type="text" placeholder="文字点的内容" /></label>
-          <label>类型
-            <select id="graphType">
-              <option value="text">文字 t</option>
-              <option value="img">图片 p</option>
-            </select>
-          </label>
-          <button id="btnInsertPoint" class="btn solid">插入坐标点</button>
-          <button id="btnClearGraph" class="btn ghost">清除标记</button>
-        </div>
-        <div class="graph-stage">
-          <div class="graph-canvas" id="graphCanvas">
-            <span class="graph-gridhint">点击画布任意位置放置坐标点</span>
-            <span class="graph-dot" id="graphDot" hidden></span>
-          </div>
-          <div class="graph-coord" id="graphCoord">坐标：未选择（请在画布上点击）</div>
-        </div>
-      </section>
-
-      <!-- ===== 底部面板（专业 IDE：控制台 / 输出 / 问题 / 变量 停靠区） ===== -->
-      <div class="bottom-panel" id="bottomPanel">
-        <div class="bottom-tabs" id="bottomTabs">
-          <button class="btab on" data-btab="console">控制台</button>
-          <button class="btab" data-btab="output">输出</button>
-          <button class="btab" data-btab="problems">问题<span class="tab-badge" id="probBadge" hidden>0</span></button>
-          <button class="btab" data-btab="vars">变量</button>
-        </div>
-        <div class="bottom-body">
-          <div class="bpane on" id="bp-console">
-            <div class="console-toolbar">
-              <button class="console-clear" id="btnClearConsole" title="清空控制台">🗑 清空</button>
-              <div class="console-filter" id="consoleFilter">
-                <button data-cf="all" class="on">全部</button>
-                <button data-cf="output">输出</button>
-                <button data-cf="error">错误</button>
-                <button data-cf="warning">警告</button>
-              </div>
-            </div>
-            <div class="console-output" id="consoleOutput">
-              <div class="console-welcome">
-                <span class="cw-logo">H</span>
-                <div class="cw-text">
-                  <span class="cw-title">HiCode · HIC 语言开发环境 v2.00</span>
-                  <span class="cw-sub">HIC 引擎已就绪 · 正在加载编辑器…</span>
-                </div>
-              </div>
-              <div class="console-log" id="consoleLog"></div>
-            </div>
-            <div class="console-status-line">
-              <span class="status-dot idle"></span>
-              <span>空闲中</span>
-              <span class="console-ver">HIC 引擎就绪</span>
-            </div>
-          </div>
-          <div class="bpane" id="bp-problems">
-            <div class="prob-bar">
-              <div class="prob-filter" id="probFilter">
-                <button data-f="all" class="on">全部 <span id="cntAll">0</span></button>
-                <button data-f="error">错误 <span id="cntErr">0</span></button>
-                <button data-f="warn">警告 <span id="cntWarn">0</span></button>
-              </div>
-              <span class="prob-hint">点击条目跳转到对应代码行</span>
-            </div>
-            <div class="prob-list" id="probList"></div>
-            <div class="prob-empty" id="probEmpty">未发现错误或警告，代码运行良好 ✓</div>
-          </div>
-          <div class="bpane" id="bp-output">
-            <div class="output-list" id="outputList"></div>
-          </div>
-          <div class="bpane" id="bp-vars">
-            <div class="var-help">图片条目可<b>上传</b>或填<b>URL</b>直接引用 · <code>it 名 t/p/app</code> 声明 · <code>名 in t/s/b/link/p/d</code> 展示/下载</div>
-            <div id="varList" class="var-list"></div>
-            <div class="var-empty" id="varEmpty">当前页面没有声明变量</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="statusbar" id="statusbar">
-        <span class="sb-left" id="sbLeft">就绪</span>
-        <span class="sb-right" id="sbRight">行 1, 列 1 · UTF-8 · LF · HIC</span>
-      </div>
-    </main>
-
-    <!-- 空窗口占位 -->
+    <div class="auto">正在自动进入 <b id="autoTarget">…</b> · <span class="nobtn" onclick="cancel()">取消并在下方选择</span></div>
+    <div class="link">没有自动跳转？<a href="#" onclick="go();return false;">立即进入手机端 / 电脑端</a> · 前往 <a href="../">官网首页</a></div>
   </div>
 
-  <!-- ===== 首页引导 ===== -->
-  <div id="home" class="home hidden">
-    <div class="home-card">
-      <div class="home-logo"><span class="logo-dot lg"></span></div>
-      <h1>HiCode <span class="dim">· HIC 语言在线开发</span></h1>
-      <p class="home-sub">自研 HIC 语言一键转译为 HTML，零基础也能搭建网页项目。</p>
-      <div class="home-sub small">v2.00：图形化前端开发 —— 触发区域色块（<code>cf 名 … cf 名 stop</code>，点击/长按即触发执行该段代码）、图片变量支持从 URL 直接获取、可下载文件变量（<code>it 名 app</code> + <code>名 in d</code>）、Python 标准库导入（<code>use os, sys, math, json, sqlite3…</code>）；兼容 for 循环、{变量} 插值、中文变量名、实时转译与任意页面导出。</p>
-      <div class="home-actions">
-        <button id="homeNew" class="btn solid big">新建项目</button>
-        <button id="homeImport" class="btn ghost big">导入项目 .hc</button>
-      </div>
-      <div class="home-recent" id="homeRecent" hidden>
-        <div class="recent-title">继续上次开发</div>
-        <button id="homeResume" class="btn soft big">恢复最近项目 →</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== 通用弹窗 ===== -->
-  <div id="modal" class="modal hidden">
-    <div class="modal-card">
-      <div class="modal-title" id="modalTitle">标题</div>
-      <div class="modal-body" id="modalBody"></div>
-      <div class="modal-actions">
-        <button id="modalCancel" class="btn ghost">取消</button>
-        <button id="modalOk" class="btn solid">确定</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 图片导入用隐藏 input -->
-  <input type="file" id="fileImg" accept="image/*" hidden />
-  <input type="file" id="fileApp" hidden />
-  <input type="file" id="fileHc" accept=".hc,application/json" hidden />
-
-<script src="js/store.js"></script>
-<script src="js/hic.js"></script>
-<script src="js/editor.js"></script>
-<script src="js/app.js"></script>
+<script>
+  // 设备检测：安卓 / 移动窄屏 → 手机端；其余（电脑等大屏）→ 电脑端
+  var timer = null;
+  function detectTarget() {
+    var ua = navigator.userAgent;
+    var mobile = /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(ua);
+    var narrow = (window.innerWidth || document.documentElement.clientWidth) < 900;
+    return (mobile || narrow) ? "../android/" : "../windows/";
+  }
+  function showTarget(t, name) {
+    document.getElementById("autoTarget").textContent = name;
+    document.getElementById("detectTxt").textContent = "已识别为" + name + "设备";
+  }
+  function doAuto() {
+    var t = detectTarget();
+    showTarget(t, /android/i.test(t) ? "手机端" : "电脑端");
+    timer = setTimeout(function () { window.location.href = t; }, 900);
+  }
+  function go() { location.href = detectTarget(); }
+  function cancel() { if (timer) clearTimeout(timer); document.getElementById("detectTxt").textContent = "已取消自动跳转，请手动选择"; document.getElementById("autoTarget").textContent = "—"; }
+  window.addEventListener("load", doAuto);
+</script>
 </body>
 </html>

@@ -43,6 +43,7 @@
     cntErr: $("cntErr"),
     cntWarn: $("cntWarn"),
     exportMenu: $("exportMenu"),
+    optNoBar: $("optNoBar"),
     modal: $("modal"),
     modalTitle: $("modalTitle"),
     modalBody: $("modalBody"),
@@ -590,17 +591,29 @@
     logConsole("output", "已导出 .hc 项目「" + proj.name + "」");
     toastOn("已导出 .hc", '项目「' + esc(proj.name) + '」已导出为 <b>' + esc(HC.slugify(proj.name)) + '.hc</b>，下次可直接导入继续开发。');
   }
+  // 导出时是否保留顶部题目标识（"项目名 · 页面名" 横幅）。默认保留；用户可勾选"不包含"。
+  const NO_BAR_KEY = "hicode_noexportbar";
+  function noBarPref() {
+    return el.optNoBar ? el.optNoBar.checked : false;
+  }
+  function bindNoBarPref() {
+    if (!el.optNoBar) return;
+    try { el.optNoBar.checked = localStorage.getItem(NO_BAR_KEY) === "1"; } catch (e) {}
+    el.optNoBar.addEventListener("change", function () {
+      try { localStorage.setItem(NO_BAR_KEY, el.optNoBar.checked ? "1" : "0"); } catch (e) {}
+    });
+  }
   function exportSingle() {
     const proj = currentProj(); const pg = currentPage();
     if (!proj || !pg) return;
     if (HC.usesDownload(proj)) { warnZipOnly(); return; }
-    const html = HC.buildSinglePageHtml(proj, pg);
+    const html = HC.buildSinglePageHtml(proj, pg, { noBar: noBarPref() });
     HC.download(html, HC.slugify(pg.name) + ".html");
     logConsole("output", "已导出单个页面「" + pg.name + "」为 .html");
   }
   function exportZip() {
     const list = allProjects(); if (!list.length) return;
-    const entries = HC.buildZipEntries(list);
+    const entries = HC.buildZipEntries(list, { noBar: noBarPref() });
     // 普通页面条目用 .html；可下载文件(app)条目用 .data（二进制）
     const files = entries.map(function (e) { return { name: e.name, data: (e.data ? e.data : e.html) }; });
     const blob = new Blob([HC.zipFiles(files).buffer], { type: "application/zip" });
@@ -614,10 +627,10 @@
   function exportMerge() {
     const list = allProjects(); if (!list.length) return;
     for (let i = 0; i < list.length; i++) if (HC.usesDownload(list[i])) { warnZipOnly(); return; }
-    const html = HC.buildAllMergedHtml(list, projectsMapOf(list));
+    const html = HC.buildAllMergedHtml(list, projectsMapOf(list), { noBar: noBarPref() });
     HC.download(html, "HiCode-merged.html");
     logConsole("output", "已导出全部项目为合并 .html");
-    toastOn("已导出合并 .html", "全部项目已合并为一个 <b>HiCode-merged.html</b>，含顶部导航，可点击跳转各页面。");
+    toastOn("已导出合并 .html", "全部项目已合并为一个 <b>HiCode-merged.html</b>" + (noBarPref() ? "（已去除顶部题目标识）" : "，含顶部导航") + "。");
   }
 
   /* ---- 导入 ---- */
@@ -822,6 +835,7 @@
   /* ---- 启动 ---- */
   function boot() {
     bind();
+    bindNoBarPref();
     // 轻量编辑器：语法高亮 + 行号 + 自动缩进 + 括号补全
     if (window.HICED) window.hiced = HICED.create(el.code);
     logConsole("output", "HiCode IDE 已启动 · 就绪");

@@ -10,7 +10,8 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..", ".."); // /workspace/repo
-const IDE = path.join(ROOT, "ide");
+// 打包桌面版（windows/）：差异分支 ide/ 现为「UA 检测跳转入口页」，真正可运行的编辑器在 windows/ 与 android/
+const IDE = path.join(ROOT, "windows");
 const OUT_DIR = path.join(ROOT, "download");
 const OUT_FILE = path.join(OUT_DIR, "HiCode-ide-offline.html");
 
@@ -47,11 +48,11 @@ html = html
 
 /* 4) 文案标记为「本地版」 */
 html = html.replace(
-  "<title>HiCode · 在线开发环境 v2.00</title>",
+  "<title>HiCode · 桌面开发环境 v2.00（电脑端）</title>",
   "<title>HiCode · 本地开发环境 v2.00</title>"
 );
-html = html.replace("v2.00 · 网页端", "v2.00 · 本地版");
-html = html.replace("HIC 语言在线开发", "HIC 语言本地开发");
+html = html.replace("v2.00 · 电脑端", "v2.00 · 本地版");
+html = html.replace("HiCode · HIC 桌面开发环境 v2.00（电脑端）", "HiCode · HIC 本地开发环境 v2.00");
 html = html.replace("网页端在线开发", "本地离线开发");
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });

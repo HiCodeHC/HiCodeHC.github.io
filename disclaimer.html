@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow" />
+<meta name="description" content="HiCode 官方网站完整免责声明 —— 软件提供方式、担保与责任限制、名称与商标说明（hicode / hc / HC / HcLogo 并非注册商标）等。侵权或品牌相关事宜请联系 hicodehc@outlook.com。" />
+<title>免责声明 · HiCode</title>
+<link rel="icon" href="assets/hicode-logo.jpg" type="image/jpeg" />
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --surface: rgba(255, 255, 255, .035);
+    --surface-strong: rgba(255, 255, 255, .06);
+    --line: rgba(255, 255, 255, .08);
+    --line-strong: rgba(255, 255, 255, .16);
+    --text: #f5f5f7;
+    --muted: #a1a1a6;
+    --dim: #6e6e73;
+    --accent: #c7a56b;
+    --accent-ink: #171309;
+    --warn: #e0a96b;
+    --bad: #c9847b;
+    --radius: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    background-image: radial-gradient(80% 50% at 50% 0%, rgba(255, 255, 255, .05), transparent 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: rgba(199, 165, 107, .28); }
+  .container { width: min(820px, 92%); margin: 0 auto; }
+  code { font-family: "Cascadia Code", Consolas, monospace; }
+
+  /* 顶栏 */
+  header { position: sticky; top: 0; z-index: 30; padding: 12px 0;
+    background: rgba(10, 10, 12, .78);
+    -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--line); }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-weight: 700; font-size: 17px; }
+  .brand img { width: 32px; height: 32px; border-radius: 9px; object-fit: cover; }
+  .back { color: var(--muted); font-size: 14px; border: 1px solid var(--line-strong); padding: 8px 18px; border-radius: 999px; transition: border-color .2s, color .2s; }
+  .back:hover { color: var(--text); border-color: rgba(255,255,255,.34); }
+
+  /* 首屏 */
+  .hero { padding: 84px 0 30px; text-align: center; }
+  .hero .kicker { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); }
+  .hero h1 { margin: 16px 0 12px; font-size: clamp(30px, 5vw, 46px); font-weight: 800; line-height: 1.2; }
+  .hero h1 .accent { color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 16px; max-width: 620px; margin: 0 auto; }
+  .updated { margin-top: 20px; font-size: 13px; color: var(--dim); }
+  .updated span { color: var(--muted); }
+
+  /* 正文区块 */
+  main { padding: 24px 0 80px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 34px 38px; margin-bottom: 26px;
+  }
+  h2 { font-size: 21px; font-weight: 800; margin-bottom: 6px; letter-spacing: .5px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--line); }
+  h2 span.no { color: var(--accent); margin-right: 10px; font-family: Georgia, serif; }
+  .card h3 { font-size: 15px; font-weight: 700; margin: 20px 0 6px; color: var(--text); }
+  .card p { color: var(--muted); font-size: 14.5px; margin: 10px 0; }
+  .card p b, .card h3 b { color: var(--text); }
+  .card ul { margin: 10px 0 14px 22px; }
+  .card li { color: var(--muted); font-size: 14.5px; margin: 7px 0; }
+  .card li b { color: var(--text); }
+  .callout { border: 1px solid var(--line-strong); background: var(--surface-strong); border-radius: 12px; padding: 18px 22px; margin: 16px 0; }
+  .callout.warn { border-color: rgba(224, 169, 107, .4); }
+  .callout.title .accent { color: var(--accent); font-weight: 800; }
+  .trademark-list { display: grid; gap: 10px; margin: 14px 0; }
+  .trademark-item { display: flex; gap: 14px; align-items: baseline; border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; }
+  .trademark-item .word { font-family: "Cascadia Code", Consolas, monospace; font-size: 15px; font-weight: 700; color: var(--accent); flex: 0 0 92px; }
+  .trademark-item p { color: var(--muted); font-size: 13.5px; margin: 0; }
+  .badge-x { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--bad);
+    border: 1px solid rgba(201,132,123,.45); border-radius: 999px; padding: 2px 10px; margin-left: 6px; vertical-align: 1px; }
+
+  /* 底部入口 */
+  footer { padding: 46px 0 58px; border-top: 1px solid var(--line); text-align: center; }
+  footer .entry { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px;
+    border: 1px solid var(--line-strong); border-radius: 999px; padding: 10px 24px; transition: color .2s, border-color .2s; }
+  footer .entry:hover { color: var(--text); border-color: rgba(255,255,255,.34); }
+  footer .mini { margin-top: 18px; color: var(--dim); font-size: 12.5px; }
+  footer .mini a { color: var(--accent); }
+
+  @media (max-width: 780px) {
+    .card { padding: 24px 20px; }
+    .trademark-item { flex-direction: column; gap: 6px; }
+    .trademark-item .word { flex: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a class="brand" href="index.html"><img src="assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span></a>
+    <a class="back" href="index.html">← 返回首页</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="container">
+    <div class="kicker">Disclaimer · 免责声明</div>
+    <h1>HiCode（HC）<span class="accent">完整免责声明</span></h1>
+    <p>本声明适用于 HiCode（HC）编程语言、HiCode 在线开发环境（网页端 / 安卓端 / Windows 端）、学习中心、离线单文件版、示例与文档等全部相关产品与服务。</p>
+    <div class="updated">最近更新：<span id="upd">—</span> · 请在使用前仔细阅读本声明</div>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+
+    <div class="card">
+      <h2><span class="no">01</span>总则与接受</h2>
+      <p>进入、访问或使用 HiCode（HC）官方网站、开发环境、软件、文档及相关服务，即表示<b>您已阅读、理解并无条件同意本免责声明的全部内容</b>。若您不同意本声明的任何条款，请立即停止使用本站及本项目提供的一切内容与服务。</p>
+      <p>HiCode 作为一个仍在持续开发、迭代与完善中的开源项目，其相关功能、特性、界面、技术方向与发布计划可能随时调整。本声明可能因项目发展而更新，修改后若您继续使用相关服务，视为您接受更新后的条款。</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="no">02</span>软件按“现状”提供</h2>
+      <p>HiCode 以<b>“现状”（AS-IS）和“可适用”（AS-AVAILABLE）</b>为基础提供，并<b>不作任何明示或默示的担保</b>，包括但不限于对适销性、特定用途适用性、不侵犯第三方权利、准确性、可靠性、完整性、稳定性、安全性及可商用性的任何担保。</p>
+      <p>本项目尚处于开发阶段，可能包含缺陷、漏洞、错误或不完整的功能。您了解并同意，<b>使用 HiCode 及相关服务完全由您自行承担风险</b>，相关风险包括但不限于：数据丢失、程序错误、运行异常、安全漏洞、兼容性问题以及与预期不符等。</p>
+      <div class="callout warn">
+        <p><b>不保证：</b>HiCode 及其贡献者不承诺任何特定功能能够完整实现，也不承诺其网页端、安卓端、Windows 端及离线单文件版在任意设备、操作系统或浏览器上均能正常工作。基于本项目生成的程序、网页或应用，其最终结果与运行效果责任在于使用者自行核验。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="no">03</span>担保免责与责任限制</h2>
+      <p>在法律允许的最大范围内，HiCode 项目及其创建者、维护者、贡献者、授权方，<b>不对任何因使用、无法使用或依赖本站及本项目而导致的直接、间接、附带、特殊、惩罚性或后果性损失承担责任</b>，这些损失包括但不限于：利润损失、商誉损失、数据损坏或丢失、业务中断、机会损失、财产损失、人身伤害以及任何第三方索赔。</p>
+      <p>若上述责任限制因适用法律而被认定无效，则本项目相关方对您的累计赔偿责任，<b>不超过您因使用本站或本项目而实际支付的费用（如有）</b>。</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="no">04</span>使用限制与合规</h2>
+      <p>您同意在使用 HiCode 及相关服务时，遵守适用的法律法规，并不得从事包括但不限于下列行为：</p>
+      <ul>
+        <li>违反任何适用的国家或地区法律、法规、政策或行业规范；</li>
+        <li>利用本项目或其分发物用于非法、侵权、欺凌、骚扰、诈骗或危害他人安全的目的；</li>
+        <li>基于本项目生成或传播恶意代码、病毒、钓鱼内容或任何有害内容；</li>
+        <li>试图绕过、破坏或干扰本项目、官方网站或相关服务的正常运作；</li>
+        <li>未经授权地复制、篡改、反编译或去除本项目相关内容中的版权标识（在开源许可明确允许的范围内除外）。</li>
+      </ul>
+      <p>您应对自己使用本项目所产生的一切内容、行为与后果承担全部责任。</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="no">05</span>名称与商标说明（重要）</h2>
+      <p class="title"><b>需要特别说明：</b>以下名称与标识均<b>并非注册商标</b>，仅作为本开源项目的内部代号、工程标识与品牌自称使用：</p>
+      <div class="trademark-list">
+        <div class="trademark-item"><span class="word">hicode</span><p>「hicode」并非注册商标，仅用作本项目的项目名称与技术标识。<span class="badge-x">非商标</span></p></div>
+        <div class="trademark-item"><span class="word">hc</span><p>「hc」并非注册商标，仅用作本项目的短名代号，与「hicode」同一指代。<span class="badge-x">非商标</span></p></div>
+        <div class="trademark-item"><span class="word">HC</span><p>「HC」并非注册商标，是本名称的英文大写缩写，仅作为项目内部缩写使用，与「hicode」同一指代。<span class="badge-x">非商标</span></p></div>
+        <div class="trademark-item"><span class="word">HcLogo</span><p>「HcLogo」并非注册商标，仅指代本项目所使用的图形标识（图标/Logo）名称。<span class="badge-x">非商标</span></p></div>
+      </div>
+      <div class="callout">
+        <p><b>不主张商标权：</b>HiCode 项目<b>不主张、不注册、也不宣称</b>对「hicode」「hc」「HC」「HcLogo」等名称或形象的任何商标权。若其中任一名称或图形在你的地区已被他人合法注册为商标，此类权利的归属以相应权利人及当地法律为准，我们无意亦未声称拥有该等权利。</p>
+        <p><b>尊重他方权利：</b>若上述任一名称或标识与任何第三方已合法注册的商标、商号或受保护的作品在本项目使用范围内存在相同、近似或关联，且你认为构成侵权，请通过下方邮箱与我们联系，我们将在合理时间内进行核实与处理（包括删除、修改相应名称或标识）。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="no">06</span>知识产权与第三方内容</h2>
+      <p>除另有说明外，本项目自身的源代码、文档、界面、示例及原创内容的知识产权归原著作权人所有，并依照仓库内相应的<b>开源许可协议</b>（如 LICENSE 文件所述）进行授权，允许在许可范围内使用、复制、修改与再分发。</p>
+      <p>本项目可能引用、依赖、链接或配套使用第三方软件、库、图标、字体、素材与数据，包括但不限于 Python 标准库模块名称（如 os / sys / subprocess / math / json / sqlite3 / urllib 等）的提及用途。上述第三方内容均归其各自的权利人所有，与 HiCode 无隶属或背书关系。示例中的占位图片、外部 URL 资源等，其版权与权利归属其原始权利人或相应平台。</p>
+      <p>使用第三方内容时，请遵守其各自的授权条款与使用声明。<b>HiCode 不为其链接或引用的任何第三方网站、服务、内容与行为负责。</b></p>
+    </div>
+
+    <div class="card">
+      <h2><span class="no">07</span>第三方链接与外部网站</h2>
+      <p>本站及学习中心、下载页、文档中可能包含指向第三方网站或资源的链接（例如外部图片 URL、GitHub 仓库、文档站等）。这些链接仅为方便起见提供，<b>不等同于我们认可或担保该等第三方内容</b>。我们无法控制且不负责第三方网站的产品、服务、内容、准确性、隐私政策或其与你的交互。访问任何第三方链接均视为你自愿离开本站，并自行承担相应风险。</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="no">08</span>数据、隐私与导出内容</h2>
+      <p>HiCode 网页端/安卓端/Windows 端开发环境：未作说明的情况下，你编写的数据默认存储于你的本地设备（如浏览器的本地存储），<b>我们一般不会主动收集或上传你的代码与内容</b>。请勿在本项目中存放不宜公开或高度敏感的数据。</p>
+      <p>你通过 HiCode 生成或导出的页面、程序、压缩包（.zip）、文件等内容，均由你自行负责其合法性、合规性、安全性与使用后果。关于个人信息处理的更详细说明，请以专门隐私条款为准（如有）。</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="no">09</span>更新、终止与适用法律</h2>
+      <p>我们<b>保留随时修改、暂停或终止</b>HiCode 任何服务、功能、版本或页面的权利，恕不另行通知。除开源许可赋予的法定权利外，我们保留对内容使用的最终解释权。</p>
+      <p>本免责声明受<b>中华人民共和国法律</b>和您届时所在地的法律适用规则管辖；如有争议，应先行友好协商，协商不成时按适用法律及当地法院管辖处理。若本声明中的任何条款被认定无效或不可执行，不影响其余条款的效力。</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="no">10</span>联系我们（侵权与品牌相关）</h2>
+      <p>如您对本免责声明、本项目内容、商标/名称/图片标识的使用产生任何疑问，或认为存在<b>商标、版权、肖像权、隐私权等侵权情形</b>，请通过以下邮箱与我们联系，并尽量随附：您主张的权利证明、涉嫌侵权的具体位置/链接、您的联系方式。</p>
+      <div class="callout title">
+        <p style="font-size:16px;">📮 联系邮箱：<span class="accent">hicodehc@outlook.com</span></p>
+        <p style="margin-bottom:0;">我们将在收到后尽快核实并在合理时限内回复处理。</p>
+      </div>
+      <p style="margin-bottom:0;color:var(--dim);font-size:13px;">提示：向本邮箱投递即视为同意我们为处理你的反馈而读取相关信息。</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <a class="entry" href="index.html">← 返回 HiCode 首页</a>
+    <div class="mini">© <span id="year"></span> HiCode（HC）项目团队 · 保留相关权利 · 意见或反馈请联系 <a href="mailto:hicodehc@outlook.com">hicodehc@outlook.com</a></div>
+  </div>
+</footer>
+
+<script>
+  var y = new Date().getFullYear();
+  (function () { try { document.getElementById("year").textContent = y; } catch (e) {} })();
+  (function () {
+    var d = document.getElementById("upd");
+    if (d) d.textContent = "2026 年 8 月 24 日";
+  })();
+</script>
+</body>
+</html>

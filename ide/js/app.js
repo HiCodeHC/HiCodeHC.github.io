@@ -893,13 +893,15 @@
     // 三版发布：网页端可直接切换 M/R/X。优先级：
     //   ① URL 参数 ?edition=m|r|x（下载页「在线体验三版」直达）
     //   ② localStorage 记忆的上次选择
-    //   ③ 默认 X 全能版
-    let ed = "x";
+    //   ③ 离线单文件在 <head> 注入的 window.HIC_EDITION（发布形态固定档位）
+    //   ④ 默认 X 全能版
+    let ed = "";
     try {
       const q = new URLSearchParams(window.location.search || "").get("edition");
-      ed = q || localStorage.getItem("HIC_EDITION_PREF") || "x";
-    } catch (e) {}
-    state.edition = edNorm(ed);
+      ed = q || localStorage.getItem("HIC_EDITION_PREF") || "";
+    } catch (e) { ed = ""; }
+    if (!ed && window.HIC_EDITION) ed = String(window.HIC_EDITION);
+    state.edition = edNorm(ed || "x");
     applyEditionUI();
     // 轻量编辑器：语法高亮 + 行号 + 自动缩进 + 括号补全
     if (window.HICED) window.hiced = HICED.create(el.code);

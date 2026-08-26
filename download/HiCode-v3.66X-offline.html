@@ -72,6 +72,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .ver { font-size: 11.5px; color: var(--muted); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; }
 .crumb { flex: 1; min-width: 0; color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
 .actions { display: flex; gap: 10px; align-items: center; }
+/* ===== M/R/X 三版切换器 ===== */
+.ed-switch { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 252, 245, .6); }
+.ed-switch .ed-btn { min-width: 28px; padding: 5px 9px; border: none; border-radius: 999px; background: transparent; color: var(--dim); font-size: 12px; font-weight: 800; letter-spacing: .5px; cursor: pointer; transition: background .15s, color .15s; }
+.ed-switch .ed-btn:hover { color: var(--accent-strong); }
+.ed-switch .ed-btn.on { background: linear-gradient(140deg, #e2b878, #b38545); color: #fff; box-shadow: 0 3px 10px rgba(179, 133, 69, .35); }
 .menu-wrap { position: relative; }
 .menu {
   position: absolute; right: 0; top: calc(100% + 8px); min-width: 250px; z-index: 40;
@@ -396,6 +401,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     </div>
     <div class="crumb" id="crumb" title="当前文件">—</div>
     <div class="actions">
+      <div class="ed-switch" id="edSwitch" title="切换 HIC 版本：M 轻量（仅 HIC 内核）/ R 标准（+Python 编译）/ X 全能（+Python +C++ 编译）。切换后预览与导出页面均按所选版本编译">
+        <button type="button" class="ed-btn" data-ed="m">M</button>
+        <button type="button" class="ed-btn" data-ed="r">R</button>
+        <button type="button" class="ed-btn on" data-ed="x">X</button>
+      </div>
       <button id="btnLive" class="btn ghost live" title="观看实时转译：立即把当前页面 HIC 代码转译为 HTML">✓ 实时转译</button>
       <div class="menu-wrap">
         <button id="btnExport" class="btn solid">导出 ▾</button>
@@ -2264,6 +2274,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     addPage: $("addPage"),
     btnLive: $("btnLive"),
     btnExport: $("btnExport"),
+    edSwitch: $("edSwitch"),
     fileImg: $("fileImg"),
     fileHc: $("fileHc"),
     fileApp: $("fileApp"),
@@ -2323,6 +2334,47 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       if (opts.input && inp) inp.onkeydown = function (e) { if (e.key === "Enter") done(inp.value.trim()); if (e.key === "Escape") done(false); };
       if (opts.input && inp) setTimeout(function () { inp.focus(); inp.select(); }, 30);
     });
+  }
+
+  /* ---- 三版切换（M 轻量 / R 标准 / X 全能） ---- */
+  // 网页端可随时切换版本：切换后引擎可编译语言、预览与导出页面均按所选版本执行
+  const ED_NAME = { m: "M·轻量版", r: "R·标准版", x: "X·全能版" };
+  const ED_DESC = { m: "仅 HIC 内核", r: "内核 + Python 编译", x: "内核 + Python + C++ 编译" };
+  function edNorm(ed) {
+    const c = String(ed || "").toLowerCase()[0];
+    return (c === "m" || c === "r" || c === "x") ? c : "x";
+  }
+  function currentEdition() { return state.edition || "x"; }
+  // 把当前版本应用到：引擎(HC.setEdition)、全局标记(window.HIC_EDITION)、
+  // 顶栏版本徽标、切换器高亮、代码片段按钮（+ Python / + C++）显隐
+  function applyEditionUI() {
+    const ed = currentEdition();
+    if (typeof HC !== "undefined" && HC.setEdition) HC.setEdition(ed);
+    try { window.HIC_EDITION = ed; } catch (e) {}
+    const VT = document.getElementById("verTag");
+    if (VT) VT.textContent = "v3.66 · " + ED_NAME[ed];
+    if (el.edSwitch) Array.prototype.forEach.call(el.edSwitch.querySelectorAll(".ed-btn"), function (b) {
+      b.classList.toggle("on", b.getAttribute("data-ed") === ed);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".snippet"), function (b) {
+      const needEd = (b.getAttribute("data-ed") || "").toLowerCase();
+      if (!needEd) return;
+      let visible = false;
+      if (needEd === "rx") visible = (ed === "r" || ed === "x");
+      else if (needEd === "x") visible = (ed === "x");
+      b.style.display = visible ? "" : "none";
+    });
+  }
+  function setEdition(ed, silent) {
+    const v = edNorm(ed);
+    if (v === state.edition) return;
+    state.edition = v;
+    try { localStorage.setItem("HIC_EDITION_PREF", v); } catch (e) {}
+    applyEditionUI();
+    if (!silent) {
+      logConsole("output", "已切换到 " + ED_NAME[v] + "（" + ED_DESC[v] + "）；预览与导出页面将按此版本编译");
+      doLive();
+    }
   }
 
   /* ---- 首页引导 ---- */
@@ -3024,16 +3076,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     });
     // 可下载文件上传
     el.fileApp.onchange = onFileApp;
+    // 三版切换器：M 轻量 / R 标准 / X 全能（切换后立即按新版本重新转译）
+    if (el.edSwitch) el.edSwitch.addEventListener("click", function (e) {
+      const b = e.target.closest ? e.target.closest("[data-ed]") : null;
+      if (b) setEdition(b.getAttribute("data-ed"));
+    });
     // 快捷代码片段：触发区域 / use / 下载文件 / 原生HTML / 编译语言块
-    const _ed = (window.HIC_EDITION || "").toLowerCase(); // m=仅HIC r=+py x=+py+cpp
+    // （「+ Python / + C++」按钮随版本显隐由 applyEditionUI 统一处理）
     Array.prototype.forEach.call(document.querySelectorAll(".snippet"), function (b) {
-      const needEd = (b.getAttribute("data-ed") || "").toLowerCase();
-      if (needEd) {
-        let ok = false;
-        if (needEd === "rx") ok = (_ed === "r" || _ed === "x");
-        else if (needEd === "x") ok = (_ed === "x");
-        if (!ok) { b.style.display = "none"; }
-      }
       b.onclick = function () {
         const snip = b.getAttribute("data-snip");
         const code = el.code, s = code.selectionStart;
@@ -3063,15 +3113,22 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   function boot() {
     bind();
     bindNoBarPref();
-    // 三版发布：按 HIC_EDITION 设置引擎可编译语言并在顶栏显示版本号
-    const ed = (window.HIC_EDITION || "x").toLowerCase();
-    if (HC.setEdition) HC.setEdition(ed);
-    const ED_NAME = { m: "M·轻量版", r: "R·标准版", x: "X·全能版" }[ed] || "X·全能版";
-    const VT = document.getElementById("verTag");
-    if (VT) VT.textContent = "v3.66 · " + ED_NAME;
+    // 三版发布：网页端可直接切换 M/R/X。优先级：
+    //   ① URL 参数 ?edition=m|r|x（下载页「在线体验三版」直达）
+    //   ② localStorage 记忆的上次选择
+    //   ③ 离线单文件在 <head> 注入的 window.HIC_EDITION（发布形态固定档位）
+    //   ④ 默认 X 全能版
+    let ed = "";
+    try {
+      const q = new URLSearchParams(window.location.search || "").get("edition");
+      ed = q || localStorage.getItem("HIC_EDITION_PREF") || "";
+    } catch (e) { ed = ""; }
+    if (!ed && window.HIC_EDITION) ed = String(window.HIC_EDITION);
+    state.edition = edNorm(ed || "x");
+    applyEditionUI();
     // 轻量编辑器：语法高亮 + 行号 + 自动缩进 + 括号补全
     if (window.HICED) window.hiced = HICED.create(el.code);
-    if (typeof HC !== "undefined" && HC.APP) logConsole("output", "HiCode " + HC.APP.version + " " + ED_NAME + "（HIC " + (ed === "m" ? "仅 HIC 内核" : ed === "r" ? "内核 + Python" : "内核 + Python + C++") + "）已启动 · 就绪");
+    if (typeof HC !== "undefined" && HC.APP) logConsole("output", "HiCode " + HC.APP.version + " " + ED_NAME[currentEdition()] + "（HIC " + ED_DESC[currentEdition()] + "）已启动 · 就绪");
     else logConsole("output", "HiCode IDE 已启动 · 就绪");
     if (!Store.hasAnyProject()) { showHome(); return; }
     showHome(); // 默认先回首页引导；也可自动恢复

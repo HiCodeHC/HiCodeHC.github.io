@@ -1,0 +1,9 @@
+# 构建中间产物与本地二进制不入库
+.pcs/art/installer/*.7z
+.buildcache
+*/build/
+*.exe
+*.apk
+download/*-win-x64.exe
+graphstore.json
+.development/

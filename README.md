@@ -55,7 +55,7 @@ HiCode（简称 **HC**）的诞生源于一个朴素的愿望：**让编程真�
 ## 下载
 
 - 下载页：**[https://HiCodeHC.github.io/download/](https://HiCodeHC.github.io/download/)**
-- 可选 **安卓端（.apk）**、**Windows 电脑端（.exe）** 与 **网页端（在线）** 三种形态，每版再分 **M 轻量 / R 标准 / X 全能** 三档（见下载页 / GitHub Releases）；本地端基于网页端 IDE 封装的离线运行时，编译更快、体验一致。各版本（M/R/X）打包为 .apk / .exe 的步骤见下载页「打包为 .apk / .exe」指引，可分别产出对应版本的安装包。
+- 可选 **安卓端（.apk）**、**Windows 电脑端（.exe）** 与 **网页端（在线）** 三种形态，每版再分 **M 轻量 / R 标准 / X 全能** 三档（见下载页 / GitHub Releases）；本地端基于网页端 IDE 封装的离线运行时，编译更快、体验一致。各版本（M/R/X）**已打包好安装包** `.apk` 与 `.exe`，均作为 GitHub Release 资产直链下载，无需再自行构建；打包工程与脚本见仓库 `build/pack/`（Electron 打包 .exe、原生 WebView 壳打包 .apk）。
 - **GitHub Releases**：自 v3.01 起，每个新版本均基于 Git Tag 在 **[GitHub Releases](https://github.com/HiCodeHC/HiCodeHC.github.io/releases)** 默认发布（含三档离线单文件版 / 源码 / 原生安装包），可前往查看各版本的发布说明与附件。
 - **发布规范**：版本发布流程（三档拆分 → 归档旧版 → 打包 → Tag → Release）见 **[docs/RELEASING.md](docs/RELEASING.md)**，每次发布照此执行。
 

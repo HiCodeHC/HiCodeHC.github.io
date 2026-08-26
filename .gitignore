@@ -1,0 +1,8 @@
+# 大型本地二进制（exe 约 71MB）不入库，仅作 GitHub Release 资产
+download/*-win-x64.exe
+# 安卓工程生成产物
+build/pack/android/app/build/
+/app/build/
+# 本地工具缓存
+node_modules/
+pkg/

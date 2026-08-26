@@ -14,7 +14,7 @@
 
   const ID_START = "A-Za-z_\\u4e00-\\u9fff";
   const ID_CHAR = "A-Za-z0-9_\\u4e00-\\u9fff";
-  const KEYWORDS = new Set(["it", "in", "if", "orif", "noif", "point", "to", "fr", "and", "or", "not", "for", "fn", "global", "raw", "g", "cf", "stop", "use", "app", "d"]);
+  const KEYWORDS = new Set(["it", "in", "if", "orif", "noif", "point", "to", "fr", "and", "or", "not", "for", "fn", "global", "raw", "g", "cf", "stop", "use", "app", "d", "html", "py", "py3", "cpp", "cxx", "end"]);
   const TYPES = new Set(["t", "p", "s", "b", "d", "text", "img", "sub", "body", "link", "app", "int", "float", "str", "bool", "list", "dict", "tuple"]);
 
   function esc(s) {
@@ -33,6 +33,10 @@
     function p(seg, cls) { if (seg) out += cls ? '<span class="tk ' + cls + '">' + esc(seg) + "</span>" : esc(seg); }
     while (i < bodyEnd) {
       const c = text[i];
+      // 语言块定界符 html:( / py:( / cpp:( / )end —— 整体高亮为“块”语义
+      const blm = /^(html|py|py3|cpp|cxx):\(/.exec(text.substr(i, 9).toLowerCase());
+      if (blm) { p(blm[1] + ":(", "bl"); i += blm[1].length + 2; continue; }
+      if (c === ")" && text.substr(i, 4).toLowerCase() === ")end") { p(")end", "bl"); i += 4; continue; }
       // 字符串（内部 {变量} 插值高亮）
       if (c === '"' || c === "'") {
         let j = i + 1;

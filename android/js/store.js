@@ -23,7 +23,7 @@
   "use strict";
 
   const KEY = "HICODE_DATA";
-  const STORE_VERSION = "v3.01";
+  const STORE_VERSION = "v3.66";
 
   function uuid() {
     return "h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);

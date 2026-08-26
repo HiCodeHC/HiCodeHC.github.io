@@ -171,6 +171,7 @@
       <a href="#graphical">图形化定位</a>
       <a href="#v200">v2.00 新功能</a>
       <a href="#v301">v3.01 新功能</a>
+      <a href="#v366">v3.66 新功能</a>
     </nav>
     <a class="btn primary" href="../ide/">网页端体验</a>
   </div>
@@ -202,6 +203,7 @@
     <div class="ch-card"><div class="ch-no">第 14 章</div><h3>图形化定位</h3><p>画布点击定坐标，一键生成 in point 代码</p><div class="ch-card-actions"><a class="go" href="#graphical">开始学习</a><a class="dl" href="examples/ch14-graphical.hc" download="第14章-图形化定位.hc">下载 .hc</a></div></div>
     <div class="ch-card"><div class="ch-no">第 15 章</div><h3>图形化前端开发 v2.00</h3><p>触发区域色块、URL图片、文件下载、标准库导入</p><div class="ch-card-actions"><a class="go" href="#v200">开始学习</a><a class="dl" href="examples/ch15-v200.hc" download="第15章-v200新功能.hc">下载 .hc</a></div></div>
     <div class="ch-card"><div class="ch-no">第 16 章</div><h3>原生HTML块 v3.01</h3><p>用 html:(...)end 嵌入任意网页元素，原样注入最终 HTML</p><div class="ch-card-actions"><a class="go" href="#v301">开始学习</a><a class="dl" href="examples/ch16-v301.hc" download="第16章-v301-html块.hc">下载 .hc</a></div></div>
+    <div class="ch-card"><div class="ch-no">第 17 章</div><h3>三版发布 + 编译 Py/C++ v3.66</h3><p>M/R/X 三种版本，让 HIC 把 py:(...) / cpp:(...) 编译成 HTML</p><div class="ch-card-actions"><a class="go" href="#v366">开始学习</a><a class="dl" href="examples/ch17-v366.hc" download="第17章-v366-三版与编译.hc">下载 .hc</a></div></div>
   </div>
 </div>
 
@@ -225,6 +227,7 @@
     <a href="#graphical">14 · 图形化定位</a>
     <a href="#v200">15 · 图形化前端 v2.00</a>
     <a href="#v301">16 · 原生 HTML 块 v3.01</a>
+    <a href="#v366">17 · 三版发布 + 编译 Py/C++ v3.66</a>
   </nav>
 
   <!-- 正文 -->
@@ -862,6 +865,64 @@ html:(
         <li>在自己代码里写一个 <code>html:( … )end</code>，放一个带 <code>style</code> 的按钮，实时转译预览。</li>
         <li>验证声明顺序：先 <code>it</code> → 再 <code>html:(…)</code> → 后 <code>in</code>，看最终导出里 HTML 块是否位于对应位置。</li>
         <li>在 HTML 块内故意写一行 <code>it 测试 t xxx</code>，确认它被原样输出、<b>不会</b>被当作变量声明。</li>
+      </ul></div>
+    </section>
+
+    <!-- 17 三版发布 + 编译 Python / C++ v3.66 -->
+    <section id="v366">
+      <h2><span class="no">17</span>三版发布 + 编译 Python / C++ v3.66</h2>
+      <div class="ch-actions"><a class="dl" href="examples/ch17-v366.hc" download="第17章-v366-三版与编译.hc">📥 下载本章练习 .hc</a><span class="hint">需使用 v3.66 的「网页端体验」导入查看，并选对应版本</span></div>
+      <p class="lead">v3.66 起 HiCode 每次发布都分为三种版本，并且把「能编译其他语言成 HTML」这一能力按版本开放：<b>M（轻量）仅内部 HIC</b>、<b>R（标准）加 Python</b>、<b>X（全能）再加 C++</b>。</p>
+
+      <h3>① 三种版本</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tr><th>版本</th><th>全称</th><th>可被 HIC 编译为 HTML 的语言</th><th>适用</th></tr>
+          <tr><td><code>M</code></td><td>轻量版</td><td>仅 HIC 内核</td><td>最常用、最精简的纯 HIC 开发</td></tr>
+          <tr><td><code>R</code></td><td>标准版</td><td>HIC + Python（<code>py:(…)</code>）</td><td>需要在页面里跑 Python 逻辑</td></tr>
+          <tr><td><code>X</code></td><td>全能版</td><td>HIC + Python + C++（<code>py:(…)</code> / <code>cpp:(…)</code>）</td><td>同时兼顾 Python 与 C++ 能力</td></tr>
+        </table>
+      </div>
+      <div class="callout warn"><b>理解关键</b><p>这里的「Python / C++ 能力」<b>不是</b>在 HIC 里调用它们的官方库，而是<b>让 HIC 自己支持编译这些语言</b>：把 <code>py:(…)</code> / <code>cpp:(…)</code> 括号内的源码<b>编译成 HTML</b>。即把 HIC 扩展成一个可以编译多种语言的“编译器宿主”。</p></div>
+
+      <h3>② Python 编译块 py:( … )end</h3>
+<pre><code>py:(
+    print('你好，HIC 编译的 Python')
+    for i in range(3):
+        print('n =', i)
+)end</code></pre>
+      <ul>
+        <li><code>py:(</code> 开始，<code>)end</code> 结束，中间的 Python 源码会<b>按声明顺序保留</b>。</li>
+        <li>导出时，HIC 内置的转译器把这段 Python <b>编译成 HTML 输出</b>，页面里会出现一个「编译运行」区。</li>
+        <li>块内 <code>#</code> 是 Python 注释，<b>不会</b>被当成 HIC 备注；<code>it</code> / <code>in</code> 也不会被当成 HIC 语句。</li>
+        <li><code>py3:(…)</code> 与 <code>py:(…)</code> 等价，都归并为 Python 块。</li>
+        <li>该能力在 <code>R</code>、<code>X</code> 版可用；<code>M</code> 版会提示「本版本未含 Python 编译能力」。</li>
+      </ul>
+
+      <h3>③ C++ 编译块 cpp:( … )end</h3>
+<pre><code>cpp:(
+    #include &lt;iostream&gt;
+    using namespace std;
+    int main() {
+        cout &lt;&lt; "你好，HIC 编译的 C++";
+        return 0;
+    }
+)end</code></pre>
+      <ul>
+        <li>同样用 <code>cpp:( … )end</code> 包裹，HIC 内置转译器把 C++ 源码<b>编译为 HTML 输出</b>。</li>
+        <li><code>cxx:(…)</code> 与 <code>cpp:(…)</code> 等价。</li>
+        <li>该能力仅在 <code>X</code> 全能版可用；<code>R</code>、<code>M</code> 版会按各自边界提示。</li>
+      </ul>
+
+      <h3>④ 完全自包含，不请求外部库</h3>
+      <p>为满足“离线可用”，以上编译<b>全部由 HIC 内置的转译宿主完成</b>：导出的 HTML 页面<b>不引用任何外部官方库、不加载 CDN、不访问任何网址</b>，Py/C++ 块在导出页里各自生成一个可点击执行的「编译运行」区域并实时输出结果。</p>
+      <div class="callout tip"><b>编辑器帮助你</b><p>网页端编辑器顶部提供「<b>+ Python</b>」（R/X 版可见）与「<b>+ C++</b>」（X 版可见）代码片段按钮，一键插入对应块模板；<code>py</code> / <code>py3</code> / <code>cpp</code> / <code>cxx</code> 与 <code>end</code> 关键字也会被高亮。</p></div>
+
+      <div class="practice"><div class="practice-title">📝 本章练习</div><ul>
+        <li>下载本章练习 <code>.hc</code> 导入，在 Python / C++ 页看两个「编译运行」区，分别点击并观察 HTML 输出。</li>
+        <li>用 <code>X</code> 全能版导出单页，验证导出页无任何外部请求即可运行。</li>
+        <li>换成 <code>R</code> 或 <code>M</code> 版打开同一项目，观察 py/cpp 块各自给出的“版本能力”提示。</li>
+        <li>改动块内代码（如 <code>for i in range(5)</code>），对照查看实时转译 / 编译输出。</li>
       </ul></div>
     </section>
 

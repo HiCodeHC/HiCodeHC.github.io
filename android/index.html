@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HiCode · 手机开发环境 v3.01（安卓端）</title>
+<title>HiCode · 手机开发环境 v3.66（安卓端）</title>
 <link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
 <meta name="theme-color" content="#f3eee6" />
 <link rel="stylesheet" href="css/style.css" />
@@ -15,7 +15,7 @@
     <div class="brand" id="btnHome" title="返回首页">
       <span class="logo-dot"></span>
       <span class="brand-name">HiCode</span>
-      <span class="ver">v3.01 · 手机端</span>
+      <span class="ver" id="verTag">v3.66 · 手机端</span>
     </div>
     <div class="crumb" id="crumb" title="当前文件">—</div>
     <div class="actions">
@@ -76,6 +76,8 @@
           <button type="button" class="snippet" data-snip="use" title="导入 Python 标准库模块（网页输出为标识占位，打包/原生运行时可用）">+ 标准库 use</button>
           <button type="button" class="snippet" data-snip="app" title="声明一个可上传文件、供用户下载的变量">+ 下载文件</button>
           <button type="button" class="snippet" data-snip="html" title="插入原生 HTML 块 html:( … )end，括号内内容 HIC 不编译、原样注入导出">+ 原生 HTML</button>
+          <button type="button" class="snippet" data-snip="py" data-ed="rx" title="插入 Python 代码块 py:( … )end，HIC 将括号内 Python 编译为 HTML（R 标准版 / X 全能版）">+ Python</button>
+          <button type="button" class="snippet" data-snip="cpp" data-ed="x" title="插入 C++ 代码块 cpp:( … )end，HIC 将括号内 C++ 编译为 HTML（X 全能版）">+ C++</button>
         </div>
         <textarea id="code" class="codearea" spellcheck="false"
           placeholder="在这里编写 HIC 代码…&#10;&#10;it 标题 t Hello HiCode&#10;标题 in t&#10;it 分数 int 85&#10;if 分数 &gt;= 60:&#10;    标题 in s"
@@ -143,7 +145,7 @@
               <div class="console-welcome">
                 <span class="cw-logo">H</span>
                 <div class="cw-text">
-                  <span class="cw-title">HiCode · HIC 手机开发环境 v3.01（安卓端）</span>
+                  <span class="cw-title">HiCode · HIC 手机开发环境 v3.66（安卓端）</span>
                   <span class="cw-sub">HIC 引擎已就绪 · 正在加载编辑器…</span>
                 </div>
               </div>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="HiCode 在线开发环境 v3.01 入口 —— 自动根据设备检测进入手机端（安卓）或电脑端开发界面。" />
+<title>HiCode · v3.01 跳转中…</title>
+<link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
+<style>html,body{height:100%;margin:0;background:#f3eee6;}</style>
+</head>
+<body>
+<script>
+  // 无界面设备分流：后台检测 UA 后静默跳转，不显示任何可选页面
+  (function () {
+    var ua = navigator.userAgent;
+    var mobile = /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(ua);
+    var narrow = (window.innerWidth || document.documentElement.clientWidth) < 900;
+    // 手机 / 安卓窄屏 → 手机端；电脑等大屏 → 电脑端
+    var target = (mobile || narrow) ? "../android/" : "../windows/";
+    try { localStorage.setItem("hicode_entry", target); } catch (e) {}
+    window.location.replace(target);
+  })();
+</script>
+</body>
+</html>

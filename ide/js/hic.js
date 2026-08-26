@@ -11,7 +11,16 @@
 })(typeof self !== 'undefined' ? self : null, function () {
   "use strict";
 
-  const APP = { version: "v3.01", name: "HiCode", lang: "HIC" };
+  const APP = { version: "v3.66", name: "HiCode", lang: "HIC" };
+  // 当前发布形态：r=标准(+py) / m=轻量(仅hic) / x=全能(+py+cpp)。
+  // 导出的 HTML 会在 head 写入 window.HIC_EDITION，由内建编译器宿主据此决定编译哪些语言。
+  let EDITION = "x"; // 源码/网页在线版默认全能(X)；离线单文件按 R/M/X 各自注入。可用 HC.setEdition() 覆盖。
+  function setEdition(e) { EDITION = String(e || "").toLowerCase()[0] === "r" ? "r" : String(e || "").toLowerCase()[0] === "m" ? "m" : "x"; }
+  // v3.66 三版发布：R(标准,+py) / M(轻量,仅hic) / X(全能,+py+cpp)。
+  // 引擎统一解析全部语言块，具体版本决定「哪些语言可被 HIC 编译进 HTML」以及打包形态。
+  // 块语法：html:(…)end（原样 HTML）、py:(…)end（HIC 编译 Python→HTML）、cpp:(…)end（HIC 编译 C++→HTML）
+  const BLOCK_LANG = { html: "html", py: "py", py3: "py", cpp: "cpp", cxx: "cpp" };
+  function mapLang(name) { return BLOCK_LANG[String(name || "").toLowerCase()] || "html"; }
 
   /* ---- 标准库（use 指令）：原生/后端运行时可用模块白名单 ---- */
   // 说明：这些 Python 标准库模块在「网页/HTML 输出」中为可识别不报错的占位；
@@ -193,9 +202,10 @@
   function classify(line) {
     // 返回 {kind, ...}
     if (!line || line.trim() === "" ) return { kind: "blank" };
-    // html 原生块：html:( 起始 / )end 结束（括号内为原样 HTML，HIC 不编译、直接注入最终导出）
-    if (/^html\s*:\s*\(\s*$/i.test(line)) return { kind: "htmlBlockStart" };
-    if (/^\)\s*end\s*$/i.test(line)) return { kind: "htmlBlockEnd" };
+    // 语言块（html/py/cpp）：`块名:( … )end` 起始 / 结束标记（括号内为对应语言源码，HIC 不参与编译）
+    const lsm = line.match(/^(html|py|py3|cpp|cxx)\s*:\s*\(\s*$/i);
+    if (lsm) return { kind: "blockStart", lang: mapLang(lsm[1]) };
+    if (/^\)\s*end\s*$/i.test(line)) return { kind: "blockEnd" };
     // 标准库导入：use 模块[, 模块...]
     const usem = line.match(/^use\s+(.+)$/i);
     if (usem) return { kind: "use", modules: usem[1].split(/[,\uFF0C\s]+/).filter(Boolean).map(function (m) { return m.trim(); }) };
@@ -299,7 +309,8 @@
       const raw = rawLines[li];
       const mt = raw.match(/^[ \t]*/)[0];
       const lt = raw.replace(/(^|[ \t])#.*$/, "").trim();
-      if (/^html\s*:\s*\(\s*$/i.test(lt)) {
+      if (/^(html|py|py3|cpp|cxx)\s*:\s*\(\s*$/i.test(lt)) {
+        const lang = mapLang(lt.match(/^([a-z0-9]+)\s*:/i)[1]);
         const baseIndent = mt.replace(/\t/g, "  ").length;
         const inner = [];
         let j = li + 1, closed = false;
@@ -307,7 +318,9 @@
           if (/^\)\s*end\s*$/i.test(rawLines[j].replace(/(^|[ \t])#.*$/, "").trim())) { closed = true; break; }
           inner.push(rawLines[j]);
         }
-        ls.push({ indent: baseIndent, kind: "htmlBlock", html: dedentHtml(inner, baseIndent).join("\n") });
+        const code = dedentHtml(inner, baseIndent).join("\n");
+        if (lang === "html") { ls.push({ indent: baseIndent, kind: "htmlBlock", html: code }); }
+        else { ls.push({ indent: baseIndent, kind: lang === "py" ? "pyBlock" : "cppBlock", lang: lang, code: code }); }
         li = closed ? j : (j - 1 > li ? j - 1 : li);
         continue;
       }
@@ -332,7 +345,7 @@
         const cur = ls[i];
         if (cur.indent < indentGoal) break;          // 退回上层
         if (cur.indent > indentGoal) { i++; continue; } // 更深缩进由父层子块统一处理
-        if (cur.kind === "htmlBlock") {              // 原样 HTML 块：原子节点，按声明顺序放置
+        if (cur.kind === "htmlBlock" || cur.kind === "pyBlock" || cur.kind === "cppBlock") { // 语言块：原子节点，按声明顺序放置
           if (pendingIf) { out.push(pendingIf); pendingIf = null; }
           out.push(cur);
           i++;
@@ -538,6 +551,12 @@
       } else if (n.kind === "htmlBlock") {
         // 原样 HTML：不编译，直接注入最终导出
         out.push({ kind: "htmlBlock", html: n.html });
+      } else if (n.kind === "pyBlock") {
+        // 扩展编译：Python → HTML（R/X 版内置编译能力；M 版仅保留源码）
+        out.push({ kind: "pyBlock", lang: "py", code: n.code });
+      } else if (n.kind === "cppBlock") {
+        // 扩展编译：C++ → HTML（X 版内置；其余版本仅保留源码）
+        out.push({ kind: "cppBlock", lang: "cpp", code: n.code });
       } else if (n.kind === "textline") {
         out.push({ kind: "textline", text: n.text });
       }
@@ -609,6 +628,13 @@
     " background:rgba(217,174,107,.08);}",
     ".hic-dl:hover{background:#d9ae6b;color:#15100b;}",
     ".hic-dl[disabled]{opacity:.45;cursor:not-allowed;}",
+    ".hic-ext{max-width:860px;margin:30px auto;padding:0 20px;}",
+    ".hic-ext-head{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#8d7f63;margin-bottom:8px;}",
+    ".hic-ext-src{margin:0;padding:16px;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid rgba(255,230,190,.14);",
+    " font:13px/1.6 ui-monospace,Consolas,Menlo,monospace;color:#e6dcc6;white-space:pre-wrap;overflow-x:auto;}",
+    ".hic-ext-out{margin-top:8px;padding:12px 16px;border-radius:12px;background:rgba(217,174,107,.08);border:1px dashed rgba(217,174,107,.35);}",
+    ".hic-ext-state{font-size:12.5px;color:#8d7f63;}",
+    ".hic-ext-run{margin:0;padding-top:6px;font:13px/1.6 ui-monospace,Consolas,Menlo,monospace;color:#d9ae6b;white-space:pre-wrap;word-break:break-word;}",
     "@media(max-width:700px){.hic-text{font-size:32px;}}"
   ].join("\n");
 
@@ -656,6 +682,15 @@
       if (it.kind === "htmlBlock") {
         // 原样 HTML：按声明顺序原样注入最终导出（不做转义与编译）
         return it.html;
+      }
+      if (it.kind === "pyBlock" || it.kind === "cppBlock") {
+        // 扩展语言块：HIC 把括号内源码【编译进最终 HTML】。源码原样保留，
+        // 由页面内置「扩展编译器宿主」在打开时编译/执行为可运行 HTML 输出。
+        const out = '<pre class="hic-ext-src">' + esc(it.code) + "</pre>";
+        return '<div class="hic-ext" data-lang="' + it.lang + '">' +
+          '<div class="hic-ext-head"><span>' + (it.lang === "py" ? "Python · py:( … )end" : "C++ · cpp:( … )end") + "</span></div>" + out +
+          '<div class="hic-ext-out" data-out>' +
+            '<span class="hic-ext-state">正在编译…</span><pre class="hic-ext-run"></pre></div></div>';
       }
       if (it.kind === "display" && it.mode === "point") {
         const x = Number(it.x) || 0, y = Number(it.y) || 0;
@@ -724,8 +759,9 @@
       "<meta charset=\"UTF-8\">\n",
       '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n',
       "<title>", esc(title), "</title>\n",
+      "<script>window.HIC_EDITION='", EDITION, "';<\/script>\n",
       "<style>\n", PAGE_CSS, "\n</style>\n</head>\n<body>\n", inner, "\n",
-      "<script>", opts.navJs || "", "<\/script>\n</body>\n</html>"
+      "<script>", opts.navJs || "", "\n", extJsBlock(), "<\/script>\n</body>\n</html>"
     ].join("");
   }
 
@@ -752,6 +788,110 @@
       "if(btn){btn.addEventListener('click',fire);btn.addEventListener('touchstart',down,{passive:true});btn.addEventListener('touchend',up);" +
       "btn.addEventListener('mousedown',down);btn.addEventListener('mouseup',up);btn.addEventListener('mouseleave',up);}}" +
       "document.querySelectorAll('.hic-region').forEach(R);})();";
+    return js;
+  }
+  // 扩展编译器宿主（HIC 内建，自包含，不依赖任何外部官方库 / CDN / 网址）。
+  // 把 py:(…)/cpp:(…) 块内的源码由 HIC 自己【编译成 HTML】：
+  //   - Python：HIC 内置 Python→JS 转译器，将括号内 Py 源码译为 JS，执行后在块内输出 HTML。
+  //   - C++ ：HIC 内置 C++→JS 转译器（覆盖 main/cout/printf/变量/if/for 等轻量子集）。
+  // 全程离线可达，仅在导出页存在 .hic-ext 时激活，纯 HIC 页面不引入任何运行时代码。
+  function extJsBlock() {
+    const js = [
+      "(function(){var ex=document.querySelectorAll('.hic-ext');if(!ex.length)return;",
+      "var E=(window.HIC_EDITION||'').toLowerCase();",
+      "var hasPy=(E===''||E==='r'||E==='x');var hasCpp=(E===''||E==='x');",
+      "function noCap(el,m){var o=el.querySelector('.hic-ext-run');var s=el.querySelector('.hic-ext-state');",
+      "if(s)s.textContent=m;if(o)o.textContent=el.querySelector('.hic-ext-src').textContent;",
+      "o&&o.classList.add('hic-fail');}",
+      "function st(el,t){var x=el.querySelector('.hic-ext-state');if(x)x.textContent=t;}",
+      // ---- Python→JS 转译（缩进→花括号，内置常用内置函数，输出走 out()）----
+      "function pyInd(s){var n=0;for(var i=0;i<s.length;i++){n+=s.charAt(i)==='\\t'?4:1;}return n;}",
+      "function pySplitTop(a){var r=[],d=0,b=0,m='',q='',i;",
+      "for(i=0;i<a.length;i++){var c=a.charAt(i);",
+      "if(q){m+=c;if(c===q&&a.charAt(i-1)!=='\\\\')q='';continue;}",
+      "if(c==='\\''||c==='\"'){q=c;m+=c;continue;}",
+      "if(c==='(')d++;else if(c===')')d--;",
+      "if(c==='[')b++;else if(c===']')b--;",
+      "if(c===','&&d===0&&b===0){r.push(m.trim());m='';}else{m+=c;}}",
+      "if(m.trim())r.push(m.trim());return r;}",
+      "function pyToJs(code){",
+      "var lines=String(code||'').split('\\n'),stack=[-1],out=[],i;",
+      "function tr(e){if(e===undefined||e===null)return 'null';var s=String(e);",
+      "var q=s.indexOf(String.fromCharCode(34))<0&&s.indexOf(String.fromCharCode(39))<0;",
+      "s=s.replace(/\\bTrue\\b/g,'true').replace(/\\bFalse\\b/g,'false').replace(/\\bNone\\b/g,'null').replace(/\\bstr\\s*\\(/gi,'String(');",
+      "if(q){s=s.replace(/(^|[^.'\"A-Za-z0-9_])and($|[^.'\"A-Za-z0-9_])/g,'$1&&$2')",
+      ".replace(/(^|[^.'\"A-Za-z0-9_])or($|[^.'\"A-Za-z0-9_])/g,'$1||$2')",
+      ".replace(/(^|[^.'\"A-Za-z0-9_])not($|[^.'\"A-Za-z0-9_])/g,'$1!$2')",
+      ".replace(/\\bstr\\s*/gi,'String');}",
+      "return s;}",
+      "function header(t){var m;",
+      "m=/^def\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\((.*)\\)\\s*:$/.exec(t);if(m)return 'function '+m[1]+'('+m[2]+'){';",
+      "m=/^if\\s+(.+):$/.exec(t);if(m)return 'if('+tr(m[1])+'){';",
+      "m=/^elif\\s+(.+):$/.exec(t);if(m)return '}else if('+tr(m[1])+'){';",
+      "m=/^else\\s*:$/.exec(t);if(m)return '}else{';",
+      "m=/^while\\s+(.+):$/.exec(t);if(m)return 'while('+tr(m[1])+'){';",
+      "m=/^for\\s+([A-Za-z_][A-Za-z0-9_]*)\\s+in\\s+(.+):$/.exec(t);if(m)return 'for(var '+m[1]+' of '+tr(m[2])+'){';",
+      "return null;}",
+      "function stmt(t){var m=/^print\\s*\\((.*)\\).*$/.exec(t);",
+      "if(m){var A=pySplitTop(m[1]).map(function(x){return tr(x);}).join(',');return 'out(arr('+A+'))';}",
+      "var rv=/^return\\s+(.+)$/.exec(t);if(rv)return 'return '+tr(rv[1])+';';",
+      "m=/^([A-Za-z_][A-Za-z0-9_]*)\\s*=\\s*(.+)$/.exec(t);if(m)return tr(m[1])+'='+tr(m[2])+';';",
+      "return tr(t)+';';}",
+      "for(i=0;i<lines.length;i++){var raw=lines[i];",
+      "var mm=raw.replace(/\\t/g,'    ').match(/^( *)(.*)$/);var ind=mm[1].length;var text=mm[2].trim();",
+      "if(!text||text.charAt(0)==='#')continue;",
+      "while(stack.length>1&&ind<=stack[stack.length-1]){out.push('}');stack.pop();}",
+      "var h=header(text);",
+      "if(h){out.push(h);var indHere=ind;stack.push(indHere);}",
+      "else{out.push(stmt(text));}}",
+      "while(stack.length>1){out.push('}');stack.pop();}window.__pycl=out.slice();window.__pyln=lines.map(function(r){var x=r.replace(/\\t/g,'    ').match(/^( *)/);return x[1].length+'|'+r;});",
+      "return out.join('\\n');}",
+      "function arr(){var a=[].slice.call(arguments);var s=[];for(var k=0;k<a.length;k++){var v=a[k];",
+      "if(Array.isArray(v))s.push(v.join(' '));else s.push(v===undefined?'None':String(v));}return s.join(' ');}",
+      "function range(a,b,c){var s=[],start,end,stp=1,x;",
+      "if(arguments.length<2){start=0;end=a;}else{start=a;end=b;}",
+      "if(arguments.length>2)stp=c;stp=stp||1;",
+      "if(stp>0){for(x=start;x<end;x+=stp)s.push(x);}else{for(x=start;x>end;x+=stp)s.push(x);}return s;}",
+      "function len(x){return (x==null?0:x.length);}",
+      "function abs(x){return Math.abs(Number(x));}",
+      "function round(x){return Math.round(Number(x));}",
+      "function minx(){return Math.min.apply(null,[].slice.call(arguments));}",
+      "function maxx(){return Math.max.apply(null,[].slice.call(arguments));}",
+      "function intv(x){return parseInt(x,10);}function fltv(x){return parseFloat(x);}",
+      "function runPy(el){if(!hasPy){return noCap(el,'本版本未含 Python 编译能力（M 轻量版仅 HIC）。');}",
+      "var code=el.querySelector('.hic-ext-src').textContent,o=el.querySelector('.hic-ext-run');",
+      "st(el,'HIC 正在编译 Python → HTML …');",
+      "try{var _js=pyToJs(code),outH='';window.__pyjs=_js;",
+      "function out(s){outH+=String(s==null?'':s)+'\\n';}",
+      "var run=new Function('out','arr','range','len','abs','round','min','max','int','float','str',_js);",
+      "run(out,arr,range,len,abs,round,minx,maxx,intv,fltv,String);",
+      "var txt=outH.replace(/\\n+$/,'');o.textContent=txt||'(程序无输出)';st(el,'✓ 已编译为 HTML 输出');}",
+      "catch(e){st(el,'编译失败：'+e.message);o.textContent=e.message;o.classList.add('hic-fail');}}",
+      // ---- C++→JS 转译（main/cout/变量/if/for/return 轻量子集）----
+      "function cppToJs(code){var src=String(code||'');",
+      "src=src.replace(/\\/\\/.*$/gm,'').replace(/^[ \\t]*\\#[^\\n]*$/gm,'').replace(/using[^;]*;/g,'').replace(/\\bstd::cout\\b/g,'cout').replace(/\\bstd::endl\\b/g,'endl');",
+      "var m=/\\b(?:int|void|auto)\\s+main\\s*\\([^;]*\\)\\s*\\{([\\s\\S]*)\\}/.exec(src);",
+      "if(!m){m=/main\\s*\\{([\\s\\S]*)\\}/.exec(src);}var body=m?m[1]:src;",
+      "body=body.replace(/(?:\\b|\\n)\\s*return\\s+[^;]+;/g,'');",
+      "body=body.replace(/\\bcout\\s*<<\\s*([^;]+);/g,function(_,e){return 'out('+cppExpr(e)+');';});",
+      "body=body.replace(/\\b(double|float|long|int|short|unsigned|char|string|bool|auto)\\s+([A-Za-z_]\\w*\\s*(?:\\s*=|,\\s*|\\s*;))/g,function(_,t,v){return v;});",
+      "return body;}",
+      "function cppExpr(e){e=String(e||'').replace(/\\bendl\\b/g,'\\n');",
+      "var parts=e.split('<<');var outA=[];for(var i=0;i<parts.length;i++){var p=parts[i].trim();",
+      "if(!p)continue;if(p==='\\n'){outA.push('\\n');}else{outA.push('str('+p+')');}}",
+      "return outA.join('+');}",
+      "function runCpp(el){if(!hasCpp){return noCap(el,'本版本未含 C++ 编译能力（R 标准版仅 HIC+Python）。');}",
+      "var code=el.querySelector('.hic-ext-src').textContent,o=el.querySelector('.hic-ext-run');",
+      "st(el,'HIC 正在编译 C++ → HTML …');",
+      "try{var js=cppToJs(code);var _outH='';function out(s){_outH+=String(s==null?'':s)+'\\n';}",
+      "function str(x){return String(x==null?'':x);}function numi(x){return String(parseInt(x,10));}",
+      "function flt(x){var n=parseFloat(x);return isNaN(n)?'0':String(n);}",
+      "new Function('out','str','numi','flt',js+';').call(null,out,str,numi,flt);",
+      "var txt=_outH.replace(/\\n+$/,'');o.textContent=txt||'(程序无输出)';st(el,'✓ 已编译为 HTML 输出');}",
+      "catch(e){st(el,'编译失败：'+e.message);o.textContent=e.message;o.classList.add('hic-fail');}}",
+      "ex.forEach(function(el){var L=el.getAttribute('data-lang');if(L==='py')runPy(el);else if(L==='cpp')runCpp(el);});",
+      "})();"
+    ].join("\n");
     return js;
   }
   // 返回 [{line,col,msg,level}]，line 为 1 起
@@ -986,6 +1126,7 @@
   return {
     APP, STDLIB, STD_MODULES, esc, isName, parse, classify, parseNav, processPage, diagnose,
     buildSinglePageHtml, buildProjectMergedHtml, buildAllMergedHtml, buildZipEntries,
-    zipFiles, zipBlob, download, dataUrlToBytes, usesDownload, evalExpr, slugify
+    zipFiles, zipBlob, download, dataUrlToBytes, usesDownload, evalExpr, slugify,
+    setEdition
   };
 });

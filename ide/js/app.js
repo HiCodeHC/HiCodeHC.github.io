@@ -811,8 +811,16 @@
     });
     // 可下载文件上传
     el.fileApp.onchange = onFileApp;
-    // 快捷代码片段：触发区域 / use / 下载文件
+    // 快捷代码片段：触发区域 / use / 下载文件 / 原生HTML / 编译语言块
+    const _ed = (window.HIC_EDITION || "x").toLowerCase(); // m=仅HIC r=+py x=+py+cpp
     Array.prototype.forEach.call(document.querySelectorAll(".snippet"), function (b) {
+      const needEd = (b.getAttribute("data-ed") || "").toLowerCase();
+      if (needEd) {
+        let ok = false;
+        if (needEd === "rx") ok = (_ed === "r" || _ed === "x");
+        else if (needEd === "x") ok = (_ed === "x");
+        if (!ok) { b.style.display = "none"; }
+      }
       b.onclick = function () {
         const snip = b.getAttribute("data-snip");
         const code = el.code, s = code.selectionStart;
@@ -822,6 +830,12 @@
           insertAtCursor("use math, time, json\n# use 标准库：网页输出为标识占位，打包/后端运行时可用");
         } else if (snip === "app") {
           insertAtCursor("it 下载包 app\n下载包 in d");
+        } else if (snip === "html") {
+          insertAtCursor("html:(\n    <div class=\"myself\" style=\"padding:16px;border:1px solid rgba(255,230,190,.2);border-radius:12px;\">\n        在此处写原生 HTML（HIC 不编译）\n    </div>\n)end");
+        } else if (snip === "py") {
+          insertAtCursor("py:(\n    # 在此处写 Python，HIC 会把括号内代码编译为 HTML\n    print('你好，HIC Python')\n)end");
+        } else if (snip === "cpp") {
+          insertAtCursor("cpp:(\n    // 在此处写 C++，HIC 会把括号内代码编译为 HTML\n    #include <iostream>\n    using namespace std;\n    int main() {\n        cout << \"你好，HIC C++\";\n        return 0;\n    }\n)end");
         }
         doLive(); debounceSave();
       };
@@ -836,9 +850,16 @@
   function boot() {
     bind();
     bindNoBarPref();
+    // 三版发布：按 HIC_EDITION 设置引擎可编译语言并在顶栏显示版本号
+    const ed = (window.HIC_EDITION || "x").toLowerCase();
+    if (HC.setEdition) HC.setEdition(ed);
+    const ED_NAME = { m: "M·轻量版", r: "R·标准版", x: "X·全能版" }[ed] || "X·全能版";
+    const VT = document.getElementById("verTag");
+    if (VT) VT.textContent = "v3.66 · " + ED_NAME;
     // 轻量编辑器：语法高亮 + 行号 + 自动缩进 + 括号补全
     if (window.HICED) window.hiced = HICED.create(el.code);
-    logConsole("output", "HiCode IDE 已启动 · 就绪");
+    if (typeof HC !== "undefined" && HC.APP) logConsole("output", "HiCode " + HC.APP.version + " " + ED_NAME + "（HIC " + (ed === "m" ? "仅 HIC 内核" : ed === "r" ? "内核 + Python" : "内核 + Python + C++") + "）已启动 · 就绪");
+    else logConsole("output", "HiCode IDE 已启动 · 就绪");
     if (!Store.hasAnyProject()) { showHome(); return; }
     showHome(); // 默认先回首页引导；也可自动恢复
   }

@@ -30,8 +30,13 @@ HiCode（简称 **HC**）的诞生源于一个朴素的愿望：**让编程真�
 
 ## 当前版本
 
-- **v3.01（原生 HTML 块）**：HiCode 当前版本。在 v2.00 能力基础上新增：
-  - 🧩 **原生 HTML 块**：`html:( … )end` 包裹任意 HTML，括号内内容 **HIC 不做编译**，而是 **原样写入最终导出的 HTML**。它与其他语句一样 **从上到下按声明顺序** 执行（先 `it` → 再 `html:(…)` → 后 `in`）。编辑器顶部带「`+ 原生 HTML`」一键插入按钮，`html` / `end` 关键字自动高亮；学习中心扩充至 16 章。
+- **v3.66（三版发布 + 编译 Python / C++ 为 HTML）**：HiCode 当前版本。每次发布分为三档：
+  - `M · 轻量版`：仅含全套 HIC 内核。
+  - `R · 标准版`：全套 HIC 内核 + **编译 Python 为 HTML**（`py:(… )end`）。
+  - `X · 全能版`：全套 HIC 内核 + **编译 Python 与 C++ 为 HTML**（`py:(… )end` / `cpp:(… )end`）。
+  - 🧩 **让 HIC 编译其他语言**：这里的“Python / C++ 能力”不是调用官方库，而是**让 HIC 支持编译这些语言并定义为 HTML**。HIC 内置自包含转译器，把块内源码编译成 HTML 输出，导出页 **不引用任何外部库 / CDN / 网址**，全程离线可用；M/R/X 按版本各自开放可编译的语言。
+  - 🧩 编辑器新增「`+ Python`」「`+ C++`」代码片段按钮与关键字高亮；学习中心扩充至 17 章。
+- **v3.01（原生 HTML 块）**：上一版本。新增原生 HTML 块 `html:( … )end`、编辑器一键插入与关键字高亮；学习中心扩充至 16 章。
 - **v2.00（图形化前端开发）**：为 HIC 增加图形化前端开发能力。在 v1.0x 已有能力（`it` 变量、`in t/s/b/link/p` 展示、`if/orif/noif` 条件、表达式、`to/fr` 跳转、`for` 循环、`{变量}` 插值、实时转译与导出）的基础上新增：
   - 🧩 **触发区域色块**：`cf 区域名 … cf 区域名 stop` 标记一段代码，网页转译成彩色色块，**点击或长按约 0.6 秒** 即触发 / 展开该段内容，让"简单点击也能带动一段逻辑"。
   - 🖼️ **图片变量支持 URL**：`it 名 p 图片地址` 直接引用网络图片，无需上传。
@@ -49,8 +54,8 @@ HiCode（简称 **HC**）的诞生源于一个朴素的愿望：**让编程真�
 ## 下载
 
 - 下载页：**[https://HiCodeHC.github.io/download/](https://HiCodeHC.github.io/download/)**
-- 可选 **安卓端（.apk）**、**Windows 电脑端（.exe）** 与 **网页端（在线）** 三种形态；本地端基于网页端 IDE 封装的离线运行时，编译更快、体验一致。
-- **GitHub Releases**：自 v3.01 起，每个新版本均基于 Git Tag 在 **[GitHub Releases](https://github.com/HiCodeHC/HiCodeHC.github.io/releases)** 默认发布（含离线单文件版 / 源码 / 原生安装包），可前往查看各版本的发布说明与附件。
+- 可选 **安卓端（.apk）**、**Windows 电脑端（.exe）** 与 **网页端（在线）** 三种形态，每版再分 **M 轻量 / R 标准 / X 全能** 三档（见下载页 / GitHub Releases）；本地端基于网页端 IDE 封装的离线运行时，编译更快、体验一致。
+- **GitHub Releases**：自 v3.01 起，每个新版本均基于 Git Tag 在 **[GitHub Releases](https://github.com/HiCodeHC/HiCodeHC.github.io/releases)** 默认发布（含三档离线单文件版 / 源码 / 原生安装包），可前往查看各版本的发布说明与附件。
 
 ## 官网
 

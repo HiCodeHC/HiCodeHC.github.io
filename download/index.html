@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="下载 HiCode（HC）v3.01 —— 可选安卓端（.apk）、电脑端（.exe）与网页端（在线）三种形态。" />
-<title>下载 HiCode · v3.01</title>
+<meta name="description" content="下载 HiCode（HC）v3.66 —— 分为 M 轻量 / R 标准 / X 全能三种版本，支持把 Python、C++ 编译为 HTML。可选安卓端（.apk）、电脑端（.exe）与网页端（在线）。" />
+<title>下载 HiCode · v3.66</title>
 <link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
 <style>
   :root {
@@ -109,7 +109,7 @@
 <body>
 <header>
   <div class="container nav">
-    <a class="brand" href="../"><img src="../assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span><span class="ver">v3.01</span></a>
+    <a class="brand" href="../"><img src="../assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span><span class="ver">v3.66</span></a>
     <nav class="nav-links">
       <a href="../">官网首页</a>
       <a href="../ide/">网页端体验</a>
@@ -122,7 +122,7 @@
 <main>
   <div class="hero container">
     <div class="badge"><span class="dot"></span> HiCode · 多端下载</div>
-    <h1>下载 <span class="accent">HiCode</span> v3.01</h1>
+    <h1>下载 <span class="accent">HiCode</span> v3.66</h1>
     <p>选择你的平台。安卓端与电脑端均以<b>离线单文件版</b>为运行内核，<b>断网也能编译</b>；网页端可直接在线体验。</p>
   </div>
 
@@ -142,7 +142,9 @@
         <p>面向 Android 手机的本地运行形态，以<b>离线单文件版</b>为内核（WebView 壳）。离线运行、断网编译，体验与网页端一致。</p>
         <ul><li>离线运行，无需网络</li><li>本地编译更快</li><li>一次编写，手机 / 平板通用</li></ul>
         <div class="cta">
-          <a class="btn primary" href="HiCode-ide-offline.html" download="HiCode-v3.01-安卓端内核.html">下载 v3.01 内核 HTML</a>
+          <a class="btn primary" href="HiCode-v3.66X-offline.html" download="HiCode-v3.66X-安卓端内核.html">下载 X 全能版内核 HTML</a>
+          <a class="btn ghost" href="HiCode-v3.66R-offline.html" download="HiCode-v3.66R-安卓端内核.html">R 标准版</a>
+          <a class="btn ghost" href="HiCode-v3.66M-offline.html" download="HiCode-v3.66M-安卓端内核.html">M 轻量版</a>
           <a class="btn ghost" href="https://github.com/HiCodeHC/HiCodeHC.github.io/releases" target="_blank" rel="noopener">GitHub Releases · .apk</a>
         </div>
         <div class="dim">离线单文件版即为 app 内核，可直接用 WebView / 本地打开；签名安装包 .apk 请前往上方 GitHub Releases 下载最新发布。</div>
@@ -157,7 +159,9 @@
         <p>面向 Windows 电脑的本地运行形态，核心为<b>离线单文件版</b>。下载后在浏览器 / 本地直接打开即可离线编译，体验与网页端一致。</p>
         <ul><li>双击即用，无需配置环境</li><li>本地编译速度更快</li><li>文件与项目保存在本地</li></ul>
         <div class="cta">
-          <a class="btn primary" href="HiCode-ide-offline.html" download="HiCode-v3.01-电脑端内核.html">下载 v3.01 内核 HTML</a>
+          <a class="btn primary" href="HiCode-v3.66X-offline.html" download="HiCode-v3.66X-电脑端内核.html">下载 X 全能版内核 HTML</a>
+          <a class="btn ghost" href="HiCode-v3.66R-offline.html" download="HiCode-v3.66R-电脑端内核.html">R 标准版</a>
+          <a class="btn ghost" href="HiCode-v3.66M-offline.html" download="HiCode-v3.66M-电脑端内核.html">M 轻量版</a>
           <a class="btn ghost" href="https://github.com/HiCodeHC/HiCodeHC.github.io/releases" target="_blank" rel="noopener">GitHub Releases · .exe</a>
         </div>
         <div class="dim">离线单文件版即可在 Windows 本地离线使用；便携 .exe 安装包请前往上方 GitHub Releases 下载最新发布。</div>
@@ -173,7 +177,7 @@
         <ul><li>零安装，即开即用</li><li>实时转译预览</li><li>导出 .hc / .html / .zip</li></ul>
         <div class="cta">
           <a class="btn primary" href="../ide/">进入网页端体验</a>
-          <a class="btn ghost" href="HiCode-ide-offline.html" download="HiCode-ide-offline.html">下载离线单文件版</a>
+          <a class="btn ghost" href="HiCode-v3.66X-offline.html" download="HiCode-v3.66X-offline.html">下载离线单文件版</a>
         </div>
         <div class="dim">离线单文件版 = 把网页端整个搬到本地，双击即可断网使用。</div>
       </div>
@@ -182,14 +186,37 @@
   </div>
 
   <section class="note container">
-    <h3><span class="no">01</span>v3.01 更新内容</h3>
-    <p>v3.01 新增<b>原生 HTML 块</b>：用 <code>html:( … )end</code> 包裹任意 HTML，括号内的内容 HIC <b>不做编译</b>，而是<b>原样写入最终导出的 HTML</b>。它与其他语句一样<b>从上到下按声明顺序</b>执行（先 <code>it</code> → 再 <code>html:(…)</code> → 后 <code>in</code>）。编辑器顶部带「<code>+ 原生 HTML</code>」一键插入按钮，<code>html</code> / <code>end</code> 关键字自动高亮。</p>
+    <h3><span class="no">00</span>三版下载（M / R / X）</h3>
+    <p>v3.66 起每次发布均分为三档，可在下方选择与你能力需求匹配的<span style="color:var(--accent)">离线单文件版</span>直接下载。</p>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin:16px 0;">
+      <div style="flex:1;min-width:230px;border:1px solid rgba(199,165,107,.35);border-radius:12px;padding:16px;">
+        <h4>M · 轻量版</h4>
+        <p>仅含全套 HIC 内核，最精简。</p>
+        <a class="btn primary" href="HiCode-v3.66M-offline.html" download="HiCode-v3.66M-offline.html">下载 M 轻量版</a>
+      </div>
+      <div style="flex:1;min-width:230px;border:1px solid rgba(199,165,107,.35);border-radius:12px;padding:16px;">
+        <h4>R · 标准版</h4>
+        <p>全套 HIC 内核 + 把 <code>py:(…)</code> 编译为 HTML。</p>
+        <a class="btn primary" href="HiCode-v3.66R-offline.html" download="HiCode-v3.66R-offline.html">下载 R 标准版</a>
+      </div>
+      <div style="flex:1;min-width:230px;border:1px solid rgba(199,165,107,.35);border-radius:12px;padding:16px;">
+        <h4>X · 全能版</h4>
+        <p>全套 HIC 内核 + 把 <code>py:(…)</code> / <code>cpp:(…)</code> 编译为 HTML。</p>
+        <a class="btn primary" href="HiCode-v3.66X-offline.html" download="HiCode-v3.66X-offline.html">下载 X 全能版</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="note container">
+    <h3><span class="no">01</span>v3.66 更新内容</h3>
+    <p><b>① 三版发布</b>：<code>M 轻量</code>（仅 HIC）、<code>R 标准</code>（HIC + Python）、<code>X 全能</code>（HIC + Python + C++）。</p>
+    <p><b>② 编译 Python / C++ 为 HTML</b>：用 <code>py:( … )end</code> / <code>cpp:( … )end</code> 包裹，HIC 内置转译器把它们<b>编译成 HTML</b>。这里的“能力”<b>不是</b>调用官方库，而是<b>让 HIC 支持编译这些语言</b>，完全自包含：导出页<b>不引用任何外部库 / CDN / 网址</b>，M/R/X 按版本各自开放可编译的语言。</p>
 
     <h3><span class="no">02</span>离线单文件版</h3>
-    <p>「离线单文件版」是把网页端 IDE 的 HTML、CSS 与全部脚本（语言引擎、数据层、界面逻辑）打包成一个自包含的 <code>.html</code> 文件。双击即可在浏览器（或 WebView）中运行，<b>无需网络、编译更快</b>，是安卓端与电脑端安装包的运行内核。本页提供的 <code>HiCode-ide-offline.html</code> 即为 v3.01 最新内核。</p>
+    <p>「离线单文件版」是把网页端 IDE 的 HTML、CSS 与全部脚本（语言引擎、数据层、界面逻辑）打包成一个自包含的 <code>.html</code>。双击即可在浏览器（或 WebView）中运行，<b>无需网络、编译更快</b>，是安卓端与电脑端安装包的运行内核。本页新提供 <code>HiCode-v3.66X / R / M-offline.html</code> 三档最新内核。</p>
 
     <h3><span class="no">03</span>GitHub Releases · 默认发布渠道</h3>
-    <p>自 v3.01 起，每个新版本都会基于 <b>Git Tag</b> 在 <b>GitHub Releases</b> 默认发布（含离线单文件版 / 源码 / 后续原生安装包）。前往 <a href="https://github.com/HiCodeHC/HiCodeHC.github.io/releases" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px dashed rgba(199,165,107,.5);">github.com/HiCodeHC/HiCodeHC.github.io/releases</a> 可查看本版本的所有发布附件与更新说明。</p>
+    <p>自 v3.01 起，每个新版本都会基于 <b>Git Tag</b> 在 <b>GitHub Releases</b> 默认发布（含三档离线单文件版 / 源码 / 后续原生安装包）。前往 <a href="https://github.com/HiCodeHC/HiCodeHC.github.io/releases" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px dashed rgba(199,165,107,.5);">github.com/HiCodeHC/HiCodeHC.github.io/releases</a> 可查看本版本的所有发布附件与更新说明。</p>
 
     <h3><span class="no">04</span>打包为 .apk（安卓端）</h3>
     <p>用 <b>Capacitor</b> 把离线单文件封装为原生 Android 应用（WebView 壳）：</p>

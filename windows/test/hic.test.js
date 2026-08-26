@@ -352,9 +352,9 @@ ok(noBarZip.every(function (e) { return !e.html || e.html.indexOf('class="hic-ba
 
 // ---- 21. v3.01 原生 HTML 块 html:( … )end ----
 r = HC.classify("html:(");
-ok(r.kind === "htmlBlockStart", "html:( 解析为块起始");
+ok(r.kind === "blockStart" && r.lang === "html", "html:( 解析为块起始");
 r = HC.classify(")end");
-ok(r.kind === "htmlBlockEnd", ")end 解析为块结束");
+ok(r.kind === "blockEnd", ")end 解析为块结束");
 
 // 原样注入 + 不被编译（内容中的 it/# 应原样保留）
 const pHtml = HC.processPage({
@@ -405,6 +405,71 @@ const pHtmlCond = HC.processPage({
   images: {}, files: {}
 }, {});
 ok(pHtmlCond.items.some(function (x) { return x.kind === "htmlBlock" && x.html.indexOf("命中") >= 0; }), "html 块可置于条件分支内");
+
+// ---- 22. v3.66 扩展语言块：py:( … )end / cpp:( … )end ----
+r = HC.classify("py:(");
+ok(r.kind === "blockStart" && r.lang === "py", "py:( 解析为 py 块起始");
+r = HC.classify("py3:(");
+ok(r.kind === "blockStart" && r.lang === "py", "py3:( 归并为 py 块");
+r = HC.classify("cpp:(");
+ok(r.kind === "blockStart" && r.lang === "cpp", "cpp:( 解析为 cpp 块起始");
+r = HC.classify(")end");
+ok(r.kind === "blockEnd", ")end 解析为块结束");
+
+// py 块：源码保留 + 不被 HIC 编译
+const pPy = HC.processPage({
+  name: "pyx",
+  code: [
+    "it 标题 t 计算页",
+    "py:(",
+    "  def hi(name):",
+    "      return 'Hello, ' + name",
+    "  # 这是 Python 注释，不是 HIC 备注",
+    "  it 不应编译",
+    "  print(hi('HIC'))",
+    ")end",
+    "标题 in t"
+  ].join("\n"),
+  images: {}, files: {}
+}, {});
+const pyItems = pPy.items.filter(function (x) { return x.kind === "pyBlock"; });
+ok(pyItems.length === 1, "解析出 1 个 pyBlock 节点");
+ok(pyItems[0].lang === "py", "pyBlock 语言为 py");
+ok(pyItems[0].code.indexOf("def hi") >= 0, "pyBlock 保留 Python def");
+ok(pyItems[0].code.indexOf("it 不应编译") >= 0, "pyBlock 内 it 不被 HIC 编译、原样保留");
+ok(pyItems[0].code.indexOf("print(hi('HIC'))") >= 0, "pyBlock 保留 Python 调用");
+
+// 声明顺序：it → py → in，且 py 在 html 之外仍按书写位置
+ok(pPy.items.map(function (x) { return x.kind; }).indexOf("pyBlock") >
+   pPy.items.map(function (x) { return x.kind; }).indexOf("it"), "py 块在 it 声明之后");
+ok(pPy.items.map(function (x) { return x.kind; }).indexOf("pyBlock") <
+   pPy.items.map(function (x) { return x.kind; }).indexOf("display"), "py 块在 in 展示之前");
+
+// cpp 块：源码保留 + 声明顺序（py 先于 cpp，均按书写顺序）
+const pX = HC.processPage({
+  name: "x",
+  code: "it 标题 t 全能版\npy:(\n  print(1)\n)end\ncpp:(\n  #include <iostream>\n  int main(){ std::cout << 42; return 0; }\n)end\n标题 in t",
+  images: {}, files: {}
+}, {});
+const cppItems = pX.items.filter(function (x) { return x.kind === "cppBlock"; });
+ok(cppItems.length === 1, "解析出 1 个 cppBlock 节点");
+ok(cppItems[0].lang === "cpp", "cppBlock 语言为 cpp");
+ok(cppItems[0].code.indexOf("#include <iostream>") >= 0, "cppBlock 保留 C++ include");
+const types = pX.items.map(function (x) { return x.kind; });
+ok(types.indexOf("pyBlock") < types.indexOf("cppBlock"), "按声明顺序 py 块在 cpp 块之前");
+ok(types.indexOf("cppBlock") < types.indexOf("display"), "cpp 块在 in 展示之前");
+
+// 最终导出包含扩展编译器宿主结构 + 源码（不内联进 JS，走 DOM 读取）
+const exHtml = HC.buildSinglePageHtml({ name: "ex" }, {
+  name: "ex",
+  code: "py:(\n  print('py-ok')\n)end\ncpp:(\n  int main(){ return 0; }\n)end",
+  images: {}, files: {}
+});
+ok(exHtml.indexOf('class="hic-ext"') >= 0, "导出的 HTML 含扩展语言块容器");
+ok(exHtml.indexOf('data-lang="py"') >= 0 && exHtml.indexOf('data-lang="cpp"') >= 0, "容器标注 py / cpp 语言");
+ok(exHtml.indexOf("py-ok") >= 0, "最终导出保留 py 源码");
+ok(exHtml.indexOf("#include") >= 0 || exHtml.indexOf("int main") >= 0, "最终导出保留 cpp 源码");
+ok(exHtml.indexOf('<script>') >= 0, "含扩展编译器宿主脚本");
 
 console.log("\n通过 " + pass + " 项，失败 " + fail + " 项");
 process.exit(fail ? 1 : 0);

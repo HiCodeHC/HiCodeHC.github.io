@@ -48,11 +48,11 @@ html = html
 
 /* 4) 文案标记为「本地版」 */
 html = html.replace(
-  "<title>HiCode · 桌面开发环境 v2.00（电脑端）</title>",
-  "<title>HiCode · 本地开发环境 v2.00</title>"
+  "<title>HiCode · 桌面开发环境 v3.01（电脑端）</title>",
+  "<title>HiCode · 本地开发环境 v3.01</title>"
 );
-html = html.replace("v2.00 · 电脑端", "v2.00 · 本地版");
-html = html.replace("HiCode · HIC 桌面开发环境 v2.00（电脑端）", "HiCode · HIC 本地开发环境 v2.00");
+html = html.replace("v3.01 · 电脑端", "v3.01 · 本地版");
+html = html.replace("HiCode · HIC 桌面开发环境 v3.01（电脑端）", "HiCode · HIC 本地开发环境 v3.01");
 html = html.replace("网页端在线开发", "本地离线开发");
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });

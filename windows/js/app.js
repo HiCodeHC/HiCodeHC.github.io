@@ -822,6 +822,8 @@
           insertAtCursor("use math, time, json\n# use 标准库：网页输出为标识占位，打包/后端运行时可用");
         } else if (snip === "app") {
           insertAtCursor("it 下载包 app\n下载包 in d");
+        } else if (snip === "html") {
+          insertAtCursor("html:(\n    <div class=\"myself\" style=\"padding:16px;border:1px solid rgba(255,230,190,.2);border-radius:12px;\">\n        在此处写原生 HTML（HIC 不编译）\n    </div>\n)end");
         }
         doLive(); debounceSave();
       };

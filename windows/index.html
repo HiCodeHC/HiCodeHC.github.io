@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HiCode · 桌面开发环境 v2.00（电脑端）</title>
+<title>HiCode · 桌面开发环境 v3.01（电脑端）</title>
 <link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -13,7 +13,7 @@
     <div class="brand" id="btnHome" title="返回首页">
       <span class="logo-dot"></span>
       <span class="brand-name">HiCode</span>
-      <span class="ver">v2.00 · 电脑端</span>
+      <span class="ver">v3.01 · 电脑端</span>
     </div>
     <div class="crumb" id="crumb" title="当前文件">—</div>
     <div class="actions">
@@ -71,6 +71,7 @@
           <button type="button" class="snippet" data-snip="region" title="插入一个可点击/长按触发的区域色块">+ 触发区域</button>
           <button type="button" class="snippet" data-snip="use" title="导入 Python 标准库模块（网页输出为标识占位，打包/原生运行时可用）">+ 标准库 use</button>
           <button type="button" class="snippet" data-snip="app" title="声明一个可上传文件、供用户下载的变量">+ 下载文件</button>
+          <button type="button" class="snippet" data-snip="html" title="插入原生 HTML 块 html:( … )end，括号内内容 HIC 不编译、原样注入导出">+ 原生 HTML</button>
         </div>
         <textarea id="code" class="codearea" spellcheck="false"
           placeholder="在这里编写 HIC 代码…&#10;&#10;it 标题 t Hello HiCode&#10;标题 in t&#10;it 分数 int 85&#10;if 分数 &gt;= 60:&#10;    标题 in s"
@@ -138,7 +139,7 @@
               <div class="console-welcome">
                 <span class="cw-logo">H</span>
                 <div class="cw-text">
-                  <span class="cw-title">HiCode · HIC 桌面开发环境 v2.00（电脑端）</span>
+                  <span class="cw-title">HiCode · HIC 桌面开发环境 v3.01（电脑端）</span>
                   <span class="cw-sub">HIC 引擎已就绪 · 正在加载编辑器…</span>
                 </div>
               </div>
@@ -188,7 +189,7 @@
       <div class="home-logo"><span class="logo-dot lg"></span></div>
       <h1>HiCode <span class="dim">· HIC 语言在线开发</span></h1>
       <p class="home-sub">自研 HIC 语言一键转译为 HTML，零基础也能搭建网页项目。</p>
-      <div class="home-sub small">v2.00：图形化前端开发 —— 触发区域色块（<code>cf 名 … cf 名 stop</code>，点击/长按即触发执行该段代码）、图片变量支持从 URL 直接获取、可下载文件变量（<code>it 名 app</code> + <code>名 in d</code>）、Python 标准库导入（<code>use os, sys, math, json, sqlite3…</code>）；兼容 for 循环、{变量} 插值、中文变量名、实时转译与任意页面导出。</p>
+      <div class="home-sub small">v3.01：新增<b>原生 HTML 块</b>（<code>html:( … )end</code>，括号内直接写 HTML，HIC 不会编译、而是按声明顺序原样放入最终导出）——在色块之外，让你能自由嵌入任意网页元素；并保留 v2.00 的触发区域色块（<code>cf 名 … cf 名 stop</code>，点击/长按触发）、URL 图片、可下载文件（<code>it 名 app</code> + <code>名 in d</code>）、Python 标准库导入（<code>use os, sys, math, json, sqlite3…</code>）；兼容 for 循环、{变量} 插值、中文变量名、实时转译与任意页面导出。</p>
       <div class="home-actions">
         <button id="homeNew" class="btn solid big">新建项目</button>
         <button id="homeImport" class="btn ghost big">导入项目 .hc</button>

@@ -338,5 +338,73 @@ ok(diag.some(function (d) { return d.msg.indexOf("notamodule") >= 0; }), "diagno
 const diagRegion = HC.diagnose("cf 未闭合\n it x t 1");
 ok(diagRegion.some(function (d) { return d.msg.indexOf("未闭合") >= 0; }), "diagnose 对未闭合触发区域告警");
 
+// ---- 20. v2.00 导出可选去除顶部题目标识（noBar） ----
+const barPage = { name: "x", code: "it 标题 t 内容\n标题 in t", images: {}, files: {} };
+const withBar = HC.buildSinglePageHtml({ name: "项目" }, barPage, {});
+const noBarHtml = HC.buildSinglePageHtml({ name: "项目" }, barPage, { noBar: true });
+ok(withBar.indexOf('class="hic-bar"') >= 0, "默认导出含顶部题目标识");
+ok(noBarHtml.indexOf('class="hic-bar"') < 0, "勾选后导出不含顶部题目标识（纯内容）");
+ok(noBarHtml.indexOf("内容") >= 0 && noBarHtml.indexOf("<!DOCTYPE html>") >= 0, "去题目标识后仍保留页面内容与骨架");
+const noBarZip = HC.buildZipEntries([{ name: "项目", pages: { x: barPage } }], { noBar: true });
+const noBarAllHtml = HC.buildAllMergedHtml([{ name: "项目", pages: { x: barPage } }], {}, { noBar: true });
+ok(noBarAllHtml.indexOf('class="hic-bar"') < 0, "合并导出也可去除顶部题目标识");
+ok(noBarZip.every(function (e) { return !e.html || e.html.indexOf('class="hic-bar"') < 0; }), "zip 展开后各页也可去除顶部题目标识");
+
+// ---- 21. v3.01 原生 HTML 块 html:( … )end ----
+r = HC.classify("html:(");
+ok(r.kind === "htmlBlockStart", "html:( 解析为块起始");
+r = HC.classify(")end");
+ok(r.kind === "htmlBlockEnd", ")end 解析为块结束");
+
+// 原样注入 + 不被编译（内容中的 it/# 应原样保留）
+const pHtml = HC.processPage({
+  name: "raw",
+  code: [
+    "it 标题 t 卡片页",
+    "html:(",
+    "  <div class=\"card-demo\" style=\"background:#1abc9c;color:#fff;padding:24px;border-radius:12px;\">",
+    "    <b>这是原生 HTML</b>  # 不是备注",
+    "    it 不是变量",
+    "    <script>document.write('hi')</script>",
+    "  </div>",
+    ")end",
+    "标题 in t"
+  ].join("\n"),
+  images: {}, files: {}
+}, {});
+const htmlItems = pHtml.items.filter(function (x) { return x.kind === "htmlBlock"; });
+ok(htmlItems.length === 1, "解析出 1 个 htmlBlock 节点");
+ok(htmlItems[0].html.indexOf("card-demo") >= 0, "htmlBlock 保留原生 HTML 类名");
+ok(htmlItems[0].html.indexOf("这是原生 HTML") >= 0, "htmlBlock 内 # 不被当作备注、原样保留");
+ok(htmlItems[0].html.indexOf("it 不是变量") >= 0, "htmlBlock 内 it 语句不被编译");
+ok(htmlItems[0].html.indexOf("<script>") >= 0, "htmlBlock 内脚本原样保留");
+// 去缩进：起始行在顶层(基准0)时内容按原样保留（仅剥掉基准缩进）
+ok(htmlItems[0].html.trim().indexOf("<div") === 0, "html 块内容以 <div 开头（忽略首行空白）");
+
+// 声明顺序：it → html → in
+ok(pHtml.items.map(function (x) { return x.kind; }).indexOf("htmlBlock") >
+   pHtml.items.map(function (x) { return x.kind; }).indexOf("it"), "html 块在 it 声明之后");
+ok(pHtml.items.map(function (x) { return x.kind; }).indexOf("htmlBlock") <
+   pHtml.items.map(function (x) { return x.kind; }).indexOf("display"), "html 块在 in 展示之前");
+
+// 最终导出完整骨架 + 注入内容
+const rawHtml = HC.buildSinglePageHtml({ name: "raw" }, {
+  name: "raw",
+  code: "it 标题 t 卡片页\nhtml:(\n<div class=\"card-demo\">hi</div>\n)end\n标题 in t",
+  images: {}, files: {}
+});
+ok(rawHtml.indexOf('<div class="card-demo">hi</div>') >= 0, "最终导出原样包含 html 块内容");
+const itPos = rawHtml.indexOf("卡片页");
+const htmlPos = rawHtml.indexOf("card-demo");
+ok(htmlPos > 0 && (htmlPos < itPos), "导出中 html 块位于声明顺序位置（先 html 后文本）");
+
+// 条件块内也可使用 html 块
+const pHtmlCond = HC.processPage({
+  name: "rawc",
+  code: "it 开关 int 1\nif 开关 == 1:\n    html:(\n      <p class=\"ok\">命中</p>\n    )end",
+  images: {}, files: {}
+}, {});
+ok(pHtmlCond.items.some(function (x) { return x.kind === "htmlBlock" && x.html.indexOf("命中") >= 0; }), "html 块可置于条件分支内");
+
 console.log("\n通过 " + pass + " 项，失败 " + fail + " 项");
 process.exit(fail ? 1 : 0);

@@ -162,6 +162,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .editor-highlight .tk.str { color: #2e7d4f; }
 .editor-highlight .tk.num { color: #b0572d; }
 .editor-highlight .tk.op { color: #8a8a7a; }
+.editor-highlight .tk.bl { color: #c6786a; font-weight: 800; letter-spacing: .3px; }
 .editor-highlight .tk.cm { color: rgba(120,90,50,.5); font-style: italic; }
 /* ---- 状态栏（专业 IDE 风格：左右分段） ---- */
 .statusbar {

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="下载 HiCode（HC）v2.00 —— 可选安卓端（.apk）、电脑端（.exe）与网页端（在线）三种形态。" />
-<title>下载 HiCode · v2.00</title>
+<meta name="description" content="下载 HiCode（HC）v3.01 —— 可选安卓端（.apk）、电脑端（.exe）与网页端（在线）三种形态。" />
+<title>下载 HiCode · v3.01</title>
 <link rel="icon" href="../assets/hicode-logo.jpg" type="image/jpeg" />
 <style>
   :root {
@@ -109,7 +109,7 @@
 <body>
 <header>
   <div class="container nav">
-    <a class="brand" href="../"><img src="../assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span><span class="ver">v2.00</span></a>
+    <a class="brand" href="../"><img src="../assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span><span class="ver">v3.01</span></a>
     <nav class="nav-links">
       <a href="../">官网首页</a>
       <a href="../ide/">网页端体验</a>
@@ -122,7 +122,7 @@
 <main>
   <div class="hero container">
     <div class="badge"><span class="dot"></span> HiCode · 多端下载</div>
-    <h1>下载 <span class="accent">HiCode</span> v2.00</h1>
+    <h1>下载 <span class="accent">HiCode</span> v3.01</h1>
     <p>选择你的平台。安卓端与电脑端均以<b>离线单文件版</b>为运行内核，<b>断网也能编译</b>；网页端可直接在线体验。</p>
   </div>
 
@@ -139,13 +139,13 @@
     <div class="card" data-panel="android">
       <div><div class="ico">📱</div><h2>安卓端 <span style="color:var(--dim)">· .apk</span></h2>
         <span class="tag">Android · WebView</span>
-        <p>面向 Android 手机的本地运行形态。用 Capacitor + WebView 壳打包，离线运行、断网编译，体验与网页端一致。</p>
+        <p>面向 Android 手机的本地运行形态，以<b>离线单文件版</b>为内核（WebView 壳）。离线运行、断网编译，体验与网页端一致。</p>
         <ul><li>离线运行，无需网络</li><li>本地编译更快</li><li>一次编写，手机 / 平板通用</li></ul>
         <div class="cta">
-          <a class="btn primary" href="HiCode-v1.00.apk" download="HiCode-v1.00.apk">下载 .apk（4.2 MB）</a>
-          <a class="btn ghost" href="HiCode-ide-offline.html" download="HiCode-安卓端内核.html">内核 HTML</a>
+          <a class="btn primary" href="HiCode-ide-offline.html" download="HiCode-v3.01-安卓端内核.html">下载 v3.01 内核 HTML</a>
+          <a class="btn ghost" href="https://github.com/HiCodeHC/HiCodeHC.github.io/releases" target="_blank" rel="noopener">GitHub Releases · .apk</a>
         </div>
-        <div class="dim">debug 签名 APK，可直接安装测试。正式发布签名请用 Android Studio 重新签名。</div>
+        <div class="dim">离线单文件版即为 app 内核，可直接用 WebView / 本地打开；签名安装包 .apk 请前往上方 GitHub Releases 下载最新发布。</div>
       </div>
       <div style="text-align:center;color:var(--dim);font-size:52px;opacity:.5;">📱</div>
     </div>
@@ -153,14 +153,14 @@
     <!-- 电脑端 -->
     <div class="card" data-panel="windows" hidden>
       <div><div class="ico">🖥️</div><h2>电脑端 <span style="color:var(--dim)">· .exe</span></h2>
-        <span class="tag">Windows · Electron</span>
-        <p>面向 Windows 电脑的本地运行形态。Electron 壳打包，双击即可运行、离线编译，体验与网页端一致。</p>
-        <ul><li>双击即用，无需安装浏览器环境</li><li>本地编译速度更快</li><li>文件与项目保存在本地</li></ul>
+        <span class="tag">Windows · 离线单文件</span>
+        <p>面向 Windows 电脑的本地运行形态，核心为<b>离线单文件版</b>。下载后在浏览器 / 本地直接打开即可离线编译，体验与网页端一致。</p>
+        <ul><li>双击即用，无需配置环境</li><li>本地编译速度更快</li><li>文件与项目保存在本地</li></ul>
         <div class="cta">
-          <a class="btn primary" href="HiCode-v1.00.exe" download="HiCode-v1.00.exe">下载 .exe（89 MB）</a>
-          <a class="btn ghost" href="HiCode-ide-offline.html" download="HiCode-电脑端内核.html">内核 HTML</a>
+          <a class="btn primary" href="HiCode-ide-offline.html" download="HiCode-v3.01-电脑端内核.html">下载 v3.01 内核 HTML</a>
+          <a class="btn ghost" href="https://github.com/HiCodeHC/HiCodeHC.github.io/releases" target="_blank" rel="noopener">GitHub Releases · .exe</a>
         </div>
-        <div class="dim">便携版 .exe，无需安装直接运行。基于 Electron 43，含完整 Chromium 内核。</div>
+        <div class="dim">离线单文件版即可在 Windows 本地离线使用；便携 .exe 安装包请前往上方 GitHub Releases 下载最新发布。</div>
       </div>
       <div style="text-align:center;color:var(--dim);font-size:52px;opacity:.5;">🖥️</div>
     </div>
@@ -182,10 +182,16 @@
   </div>
 
   <section class="note container">
-    <h3><span class="no">01</span>离线单文件版</h3>
-    <p>「离线单文件版」是把网页端 IDE 的 HTML、CSS 与全部脚本（语言引擎、数据层、界面逻辑）打包成一个自包含的 <code>.html</code> 文件。双击即可在浏览器（或 WebView）中运行，<b>无需网络、编译更快</b>，是安卓端与电脑端安装包的运行内核。</p>
+    <h3><span class="no">01</span>v3.01 更新内容</h3>
+    <p>v3.01 新增<b>原生 HTML 块</b>：用 <code>html:( … )end</code> 包裹任意 HTML，括号内的内容 HIC <b>不做编译</b>，而是<b>原样写入最终导出的 HTML</b>。它与其他语句一样<b>从上到下按声明顺序</b>执行（先 <code>it</code> → 再 <code>html:(…)</code> → 后 <code>in</code>）。编辑器顶部带「<code>+ 原生 HTML</code>」一键插入按钮，<code>html</code> / <code>end</code> 关键字自动高亮。</p>
 
-    <h3><span class="no">02</span>打包为 .apk（安卓端）</h3>
+    <h3><span class="no">02</span>离线单文件版</h3>
+    <p>「离线单文件版」是把网页端 IDE 的 HTML、CSS 与全部脚本（语言引擎、数据层、界面逻辑）打包成一个自包含的 <code>.html</code> 文件。双击即可在浏览器（或 WebView）中运行，<b>无需网络、编译更快</b>，是安卓端与电脑端安装包的运行内核。本页提供的 <code>HiCode-ide-offline.html</code> 即为 v3.01 最新内核。</p>
+
+    <h3><span class="no">03</span>GitHub Releases · 默认发布渠道</h3>
+    <p>自 v3.01 起，每个新版本都会基于 <b>Git Tag</b> 在 <b>GitHub Releases</b> 默认发布（含离线单文件版 / 源码 / 后续原生安装包）。前往 <a href="https://github.com/HiCodeHC/HiCodeHC.github.io/releases" target="_blank" rel="noopener" style="color:var(--accent);border-bottom:1px dashed rgba(199,165,107,.5);">github.com/HiCodeHC/HiCodeHC.github.io/releases</a> 可查看本版本的所有发布附件与更新说明。</p>
+
+    <h3><span class="no">04</span>打包为 .apk（安卓端）</h3>
     <p>用 <b>Capacitor</b> 把离线单文件封装为原生 Android 应用（WebView 壳）：</p>
 <pre><code>npm init -y &amp;&amp; npm i @capacitor/core @capacitor/android @capacitor/cli
 cp 下载的离线单文件.html www/index.html
@@ -193,7 +199,7 @@ npx cap init HiCode com.hicode.ide
 npx cap add android
 cd android &amp;&amp; ANDROID_HOME=/path/to/sdk ./gradlew assembleDebug  # 产出 app-debug.apk</code></pre>
 
-    <h3><span class="no">03</span>打包为 .exe（电脑端）</h3>
+    <h3><span class="no">05</span>打包为 .exe（电脑端）</h3>
     <p>用 <b>Electron</b> + <b>electron-builder</b> 打包为 Windows 便携版：</p>
 <pre><code>npm init -y &amp;&amp; npm i electron electron-builder --save-dev
 # 写 main.js 加载本地 index.html

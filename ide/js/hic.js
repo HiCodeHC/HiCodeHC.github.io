@@ -1,5 +1,5 @@
 /* ============================================================
- * HC v2.00 —— HIC 语言引擎
+ * HC v3.01 —— HIC 语言引擎
  * 负责：HIC 词法/语法解析、HIC→HTML 转译、轻量 ZIP 写入、下载
  * 说明：本文件为纯逻辑，不依赖 DOM(localStorage/document)，
  *       唯一例外是 download()（仅浏览器调用）；可用 Node 单元测试。
@@ -11,7 +11,7 @@
 })(typeof self !== 'undefined' ? self : null, function () {
   "use strict";
 
-  const APP = { version: "v2.00", name: "HiCode", lang: "HIC" };
+  const APP = { version: "v3.01", name: "HiCode", lang: "HIC" };
 
   /* ---- 标准库（use 指令）：原生/后端运行时可用模块白名单 ---- */
   // 说明：这些 Python 标准库模块在「网页/HTML 输出」中为可识别不报错的占位；
@@ -193,6 +193,9 @@
   function classify(line) {
     // 返回 {kind, ...}
     if (!line || line.trim() === "" ) return { kind: "blank" };
+    // html 原生块：html:( 起始 / )end 结束（括号内为原样 HTML，HIC 不编译、直接注入最终导出）
+    if (/^html\s*:\s*\(\s*$/i.test(line)) return { kind: "htmlBlockStart" };
+    if (/^\)\s*end\s*$/i.test(line)) return { kind: "htmlBlockEnd" };
     // 标准库导入：use 模块[, 模块...]
     const usem = line.match(/^use\s+(.+)$/i);
     if (usem) return { kind: "use", modules: usem[1].split(/[,\uFF0C\s]+/).filter(Boolean).map(function (m) { return m.trim(); }) };
@@ -273,14 +276,45 @@
   }
 
   /* ---------------- 缩进块解析 ---------------- */
+  // html:( ... )end 块内容去缩进：去掉与块起始行相同的最多 base 个前导空格/制表符
+  function dedentHtml(lines, base) {
+    return lines.map(function (l) {
+      if (l.trim() === "") return "";
+      let n = 0;
+      for (let k = 0; k < l.length; k++) {
+        if (l[k] === " ") n += 1;
+        else if (l[k] === "\t") n += 2;
+        else break;
+      }
+      const cut = n > base ? base : n;
+      return l.slice(cut);
+    });
+  }
+
   function parse(code) {
-    const ls = String(code || "").split("\n").map(function (raw) {
+    // 先把多行 html:( ... )end 块折叠为单个原子节点；括号内为原样 HTML，HIC 不编译、按声明顺序直接注入
+    const rawLines = String(code || "").split("\n");
+    const ls = [];
+    for (let li = 0; li < rawLines.length; li++) {
+      const raw = rawLines[li];
       const mt = raw.match(/^[ \t]*/)[0];
+      const lt = raw.replace(/(^|[ \t])#.*$/, "").trim();
+      if (/^html\s*:\s*\(\s*$/i.test(lt)) {
+        const baseIndent = mt.replace(/\t/g, "  ").length;
+        const inner = [];
+        let j = li + 1, closed = false;
+        for (; j < rawLines.length; j++) {
+          if (/^\)\s*end\s*$/i.test(rawLines[j].replace(/(^|[ \t])#.*$/, "").trim())) { closed = true; break; }
+          inner.push(rawLines[j]);
+        }
+        ls.push({ indent: baseIndent, kind: "htmlBlock", html: dedentHtml(inner, baseIndent).join("\n") });
+        li = closed ? j : (j - 1 > li ? j - 1 : li);
+        continue;
+      }
+      if (!lt) continue; // 纯空白/注释行跳过
       const indent = mt.replace(/\t/g, "  ").length;
-      // 代码备注：# 整行注释，或行内空白后的 # 到行尾为注释（Python 风格）
-      const line = raw.replace(/(^|[ \t])#.*$/, "").trim();
-      return { indent, line };
-    }).filter(function (x) { return x.line; });
+      ls.push({ indent, line: lt });
+    }
 
     // 取 [start,end) 范围内行缩进的最小值（子块的实际根缩进）
     function minIndent(start, end) {
@@ -298,6 +332,12 @@
         const cur = ls[i];
         if (cur.indent < indentGoal) break;          // 退回上层
         if (cur.indent > indentGoal) { i++; continue; } // 更深缩进由父层子块统一处理
+        if (cur.kind === "htmlBlock") {              // 原样 HTML 块：原子节点，按声明顺序放置
+          if (pendingIf) { out.push(pendingIf); pendingIf = null; }
+          out.push(cur);
+          i++;
+          continue;
+        }
         const st = classify(cur.line);
         if (st.kind === "cond" && st.type === "if") {
           if (pendingIf) out.push(pendingIf);
@@ -495,6 +535,9 @@
       } else if (n.kind === "region") {
         // 触发区域：渲染为可点击/长按的色块，其 body 子项在执行时展开显示
         out.push({ kind: "region", name: n.name, bodyItems: renderNodes(n.body, vars, ctx, []) });
+      } else if (n.kind === "htmlBlock") {
+        // 原样 HTML：不编译，直接注入最终导出
+        out.push({ kind: "htmlBlock", html: n.html });
       } else if (n.kind === "textline") {
         out.push({ kind: "textline", text: n.text });
       }
@@ -609,6 +652,10 @@
         return '<div class="hic-region" data-region="' + esc(it.name) + '">' +
           '<button type="button" class="hic-region-btn" data-name="' + esc(it.name) + '">' + esc(it.name) + ' 触发区域</button>' +
           '<div class="hic-region-body" hidden>' + inner + "</div></div>";
+      }
+      if (it.kind === "htmlBlock") {
+        // 原样 HTML：按声明顺序原样注入最终导出（不做转义与编译）
+        return it.html;
       }
       if (it.kind === "display" && it.mode === "point") {
         const x = Number(it.x) || 0, y = Number(it.y) || 0;

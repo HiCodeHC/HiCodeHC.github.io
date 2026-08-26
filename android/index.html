@@ -19,6 +19,11 @@
     </div>
     <div class="crumb" id="crumb" title="当前文件">—</div>
     <div class="actions">
+      <div class="ed-switch" id="edSwitch" title="切换 HIC 版本：M 轻量（仅 HIC 内核）/ R 标准（+Python 编译）/ X 全能（+Python +C++ 编译）。切换后预览与导出页面均按所选版本编译">
+        <button type="button" class="ed-btn" data-ed="m">M</button>
+        <button type="button" class="ed-btn" data-ed="r">R</button>
+        <button type="button" class="ed-btn on" data-ed="x">X</button>
+      </div>
       <button id="btnLive" class="btn ghost live" title="观看实时转译：立即把当前页面 HIC 代码转译为 HTML">✓ 实时转译</button>
       <div class="menu-wrap">
         <button id="btnExport" class="btn solid">导出 ▾</button>

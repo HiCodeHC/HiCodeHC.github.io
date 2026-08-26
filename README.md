@@ -34,6 +34,7 @@ HiCode（简称 **HC**）的诞生源于一个朴素的愿望：**让编程真�
   - `M · 轻量版`：仅含全套 HIC 内核。
   - `R · 标准版`：全套 HIC 内核 + **编译 Python 为 HTML**（`py:(… )end`）。
   - `X · 全能版`：全套 HIC 内核 + **编译 Python 与 C++ 为 HTML**（`py:(… )end` / `cpp:(… )end`）。
+  - 🌐 **网页端在线体验三版**：网页端 IDE 顶栏可随时切换 `M / R / X`（也可用 URL 参数直达：[M 版](https://HiCodeHC.github.io/ide/?edition=m) · [R 版](https://HiCodeHC.github.io/ide/?edition=r) · [X 版](https://HiCodeHC.github.io/ide/?edition=x)），切换后预览与导出页面均按所选版本编译，选择会被记忆到本地。
   - 🧩 **让 HIC 编译其他语言**：这里的“Python / C++ 能力”不是调用官方库，而是**让 HIC 支持编译这些语言并定义为 HTML**。HIC 内置自包含转译器，把块内源码编译成 HTML 输出，导出页 **不引用任何外部库 / CDN / 网址**，全程离线可用；M/R/X 按版本各自开放可编译的语言。
   - 🧩 编辑器新增「`+ Python`」「`+ C++`」代码片段按钮与关键字高亮；学习中心扩充至 17 章。
 - **v3.01（原生 HTML 块）**：上一版本。新增原生 HTML 块 `html:( … )end`、编辑器一键插入与关键字高亮；学习中心扩充至 16 章。
@@ -54,7 +55,7 @@ HiCode（简称 **HC**）的诞生源于一个朴素的愿望：**让编程真�
 ## 下载
 
 - 下载页：**[https://HiCodeHC.github.io/download/](https://HiCodeHC.github.io/download/)**
-- 可选 **安卓端（.apk）**、**Windows 电脑端（.exe）** 与 **网页端（在线）** 三种形态，每版再分 **M 轻量 / R 标准 / X 全能** 三档（见下载页 / GitHub Releases）；本地端基于网页端 IDE 封装的离线运行时，编译更快、体验一致。
+- 可选 **安卓端（.apk）**、**Windows 电脑端（.exe）** 与 **网页端（在线）** 三种形态，每版再分 **M 轻量 / R 标准 / X 全能** 三档（见下载页 / GitHub Releases）；本地端基于网页端 IDE 封装的离线运行时，编译更快、体验一致。各版本（M/R/X）打包为 .apk / .exe 的步骤见下载页「打包为 .apk / .exe」指引，可分别产出对应版本的安装包。
 - **GitHub Releases**：自 v3.01 起，每个新版本均基于 Git Tag 在 **[GitHub Releases](https://github.com/HiCodeHC/HiCodeHC.github.io/releases)** 默认发布（含三档离线单文件版 / 源码 / 原生安装包），可前往查看各版本的发布说明与附件。
 
 ## 官网

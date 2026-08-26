@@ -17,6 +17,9 @@
     var narrow = (window.innerWidth || document.documentElement.clientWidth) < 900;
     // 手机 / 安卓窄屏 → 手机端；电脑等大屏 → 电脑端
     var target = (mobile || narrow) ? "../android/" : "../windows/";
+    // 携带 ?edition=m/r/x 到目标端（下载页「在线体验三版」直达对应版本）
+    var q = window.location.search || "";
+    if (/[?&]edition=(m|r|x)/i.test(q)) target += q;
     try { localStorage.setItem("hicode_entry", target); } catch (e) {}
     window.location.replace(target);
   })();

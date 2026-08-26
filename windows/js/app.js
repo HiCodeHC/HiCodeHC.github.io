@@ -51,6 +51,7 @@
     addPage: $("addPage"),
     btnLive: $("btnLive"),
     btnExport: $("btnExport"),
+    edSwitch: $("edSwitch"),
     fileImg: $("fileImg"),
     fileHc: $("fileHc"),
     fileApp: $("fileApp"),
@@ -110,6 +111,47 @@
       if (opts.input && inp) inp.onkeydown = function (e) { if (e.key === "Enter") done(inp.value.trim()); if (e.key === "Escape") done(false); };
       if (opts.input && inp) setTimeout(function () { inp.focus(); inp.select(); }, 30);
     });
+  }
+
+  /* ---- 三版切换（M 轻量 / R 标准 / X 全能） ---- */
+  // 网页端可随时切换版本：切换后引擎可编译语言、预览与导出页面均按所选版本执行
+  const ED_NAME = { m: "M·轻量版", r: "R·标准版", x: "X·全能版" };
+  const ED_DESC = { m: "仅 HIC 内核", r: "内核 + Python 编译", x: "内核 + Python + C++ 编译" };
+  function edNorm(ed) {
+    const c = String(ed || "").toLowerCase()[0];
+    return (c === "m" || c === "r" || c === "x") ? c : "x";
+  }
+  function currentEdition() { return state.edition || "x"; }
+  // 把当前版本应用到：引擎(HC.setEdition)、全局标记(window.HIC_EDITION)、
+  // 顶栏版本徽标、切换器高亮、代码片段按钮（+ Python / + C++）显隐
+  function applyEditionUI() {
+    const ed = currentEdition();
+    if (typeof HC !== "undefined" && HC.setEdition) HC.setEdition(ed);
+    try { window.HIC_EDITION = ed; } catch (e) {}
+    const VT = document.getElementById("verTag");
+    if (VT) VT.textContent = "v3.66 · " + ED_NAME[ed];
+    if (el.edSwitch) Array.prototype.forEach.call(el.edSwitch.querySelectorAll(".ed-btn"), function (b) {
+      b.classList.toggle("on", b.getAttribute("data-ed") === ed);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".snippet"), function (b) {
+      const needEd = (b.getAttribute("data-ed") || "").toLowerCase();
+      if (!needEd) return;
+      let visible = false;
+      if (needEd === "rx") visible = (ed === "r" || ed === "x");
+      else if (needEd === "x") visible = (ed === "x");
+      b.style.display = visible ? "" : "none";
+    });
+  }
+  function setEdition(ed, silent) {
+    const v = edNorm(ed);
+    if (v === state.edition) return;
+    state.edition = v;
+    try { localStorage.setItem("HIC_EDITION_PREF", v); } catch (e) {}
+    applyEditionUI();
+    if (!silent) {
+      logConsole("output", "已切换到 " + ED_NAME[v] + "（" + ED_DESC[v] + "）；预览与导出页面将按此版本编译");
+      doLive();
+    }
   }
 
   /* ---- 首页引导 ---- */
@@ -811,16 +853,14 @@
     });
     // 可下载文件上传
     el.fileApp.onchange = onFileApp;
+    // 三版切换器：M 轻量 / R 标准 / X 全能（切换后立即按新版本重新转译）
+    if (el.edSwitch) el.edSwitch.addEventListener("click", function (e) {
+      const b = e.target.closest ? e.target.closest("[data-ed]") : null;
+      if (b) setEdition(b.getAttribute("data-ed"));
+    });
     // 快捷代码片段：触发区域 / use / 下载文件 / 原生HTML / 编译语言块
-    const _ed = (window.HIC_EDITION || "").toLowerCase(); // m=仅HIC r=+py x=+py+cpp
+    // （「+ Python / + C++」按钮随版本显隐由 applyEditionUI 统一处理）
     Array.prototype.forEach.call(document.querySelectorAll(".snippet"), function (b) {
-      const needEd = (b.getAttribute("data-ed") || "").toLowerCase();
-      if (needEd) {
-        let ok = false;
-        if (needEd === "rx") ok = (_ed === "r" || _ed === "x");
-        else if (needEd === "x") ok = (_ed === "x");
-        if (!ok) { b.style.display = "none"; }
-      }
       b.onclick = function () {
         const snip = b.getAttribute("data-snip");
         const code = el.code, s = code.selectionStart;
@@ -850,15 +890,20 @@
   function boot() {
     bind();
     bindNoBarPref();
-    // 三版发布：按 HIC_EDITION 设置引擎可编译语言并在顶栏显示版本号
-    const ed = (window.HIC_EDITION || "x").toLowerCase();
-    if (HC.setEdition) HC.setEdition(ed);
-    const ED_NAME = { m: "M·轻量版", r: "R·标准版", x: "X·全能版" }[ed] || "X·全能版";
-    const VT = document.getElementById("verTag");
-    if (VT) VT.textContent = "v3.66 · " + ED_NAME;
+    // 三版发布：网页端可直接切换 M/R/X。优先级：
+    //   ① URL 参数 ?edition=m|r|x（下载页「在线体验三版」直达）
+    //   ② localStorage 记忆的上次选择
+    //   ③ 默认 X 全能版
+    let ed = "x";
+    try {
+      const q = new URLSearchParams(window.location.search || "").get("edition");
+      ed = q || localStorage.getItem("HIC_EDITION_PREF") || "x";
+    } catch (e) {}
+    state.edition = edNorm(ed);
+    applyEditionUI();
     // 轻量编辑器：语法高亮 + 行号 + 自动缩进 + 括号补全
     if (window.HICED) window.hiced = HICED.create(el.code);
-    if (typeof HC !== "undefined" && HC.APP) logConsole("output", "HiCode " + HC.APP.version + " " + ED_NAME + "（HIC " + (ed === "m" ? "仅 HIC 内核" : ed === "r" ? "内核 + Python" : "内核 + Python + C++") + "）已启动 · 就绪");
+    if (typeof HC !== "undefined" && HC.APP) logConsole("output", "HiCode " + HC.APP.version + " " + ED_NAME[currentEdition()] + "（HIC " + ED_DESC[currentEdition()] + "）已启动 · 就绪");
     else logConsole("output", "HiCode IDE 已启动 · 就绪");
     if (!Store.hasAnyProject()) { showHome(); return; }
     showHome(); // 默认先回首页引导；也可自动恢复

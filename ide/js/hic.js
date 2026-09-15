@@ -80,6 +80,13 @@
       if (FULLWIDTH_OPS[c]) { out.push({ t: FULLWIDTH_OPS[c], v: FULLWIDTH_OPS[c] }); i++; continue; }
       if (c === "(") { out.push({ t: "(", v: c }); i++; continue; }
       if (c === ")") { out.push({ t: ")", v: c }); i++; continue; }
+      /* ---- H1.00 扩展：列表/字典字面量 token ---- */
+      if (c === "[") { out.push({ t: "[", v: c }); i++; continue; }
+      if (c === "]") { out.push({ t: "]", v: c }); i++; continue; }
+      if (c === "{") { out.push({ t: "{", v: c }); i++; continue; }
+      if (c === "}") { out.push({ t: "}", v: c }); i++; continue; }
+      if (c === ",") { out.push({ t: ",", v: c }); i++; continue; }
+      if (c === ":") { out.push({ t: ":", v: c }); i++; continue; }
       if ("+-*/%".indexOf(c) >= 0) { out.push({ t: c, v: c }); i++; continue; }
       const two = expr.substr(i, 2);
       if (two === "==" || two === "!=" || two === "<=" || two === ">=") { out.push({ t: two, v: two }); i += 2; continue; }
@@ -113,7 +120,12 @@
     const sL = String(l), sR = String(r);
     if (op === "==") return numL && numR ? l === r : sL === sR;
     if (op === "!=") return numL && numR ? l !== r : sL !== sR;
-    if (op === "in") return sR.indexOf(sL) >= 0; // 「x in container」：右侧含左侧
+    /* ---- H1.00 扩展：列表/字典 in 操作符 ---- */
+    if (op === "in") {
+      if (Array.isArray(r)) return r.indexOf(l) >= 0;
+      if (r && typeof r === "object") return l in r;
+      return sR.indexOf(sL) >= 0; // 「x in container」：右侧含左侧（子串匹配）
+    }
     const a = numL && numR ? l : sL;
     const b = numL && numR ? r : sR;
     if (op === "<") return a < b;
@@ -122,6 +134,58 @@
     if (op === ">=") return a >= b;
     return false;
   }
+
+  /* ---- H1.00 扩展：evalExpr 内置函数库 ---- */
+  const BUILTINS = {
+    len: function (x) {
+      if (x == null) return 0;
+      if (typeof x === "string") return x.length;
+      if (Array.isArray(x)) return x.length;
+      if (typeof x === "object") return Object.keys(x).length;
+      return String(x).length;
+    },
+    range: function () {
+      const args = [].slice.call(arguments);
+      const arr = [];
+      let start = 0, end = 0, step = 1;
+      if (args.length === 1) { end = Number(args[0]); }
+      else if (args.length === 2) { start = Number(args[0]); end = Number(args[1]); }
+      else { start = Number(args[0]); end = Number(args[1]); step = Number(args[2]) || 1; }
+      if (step > 0) { for (let v = start; v < end; v += step) arr.push(v); }
+      else if (step < 0) { for (let v = start; v > end; v += step) arr.push(v); }
+      return arr;
+    },
+    max: function () {
+      const args = [].slice.call(arguments);
+      if (!args.length) return 0;
+      if (args.length === 1 && Array.isArray(args[0])) return Math.max.apply(null, args[0]);
+      return Math.max.apply(null, args);
+    },
+    min: function () {
+      const args = [].slice.call(arguments);
+      if (!args.length) return 0;
+      if (args.length === 1 && Array.isArray(args[0])) return Math.min.apply(null, args[0]);
+      return Math.min.apply(null, args);
+    },
+    abs: function (x) { return Math.abs(Number(x)); },
+    round: function (x) { return Math.round(Number(x)); },
+    int: function (x) { return parseInt(x, 10); },
+    float: function (x) { return parseFloat(x); },
+    str: function (x) { return String(x == null ? "" : x); },
+    type: function (x) {
+      if (x === true || x === false) return "bool";
+      if (Array.isArray(x)) return "list";
+      if (typeof x === "object" && x !== null) return "dict";
+      if (typeof x === "number") return "num";
+      if (typeof x === "string") return "str";
+      return "";
+    },
+    contains: function (s, sub) {
+      if (typeof s !== "string" && !Array.isArray(s)) return false;
+      if (typeof s === "string") return String(s).indexOf(String(sub)) >= 0;
+      return s.indexOf(sub) >= 0;
+    }
+  };
 
   function evalExpr(expr, vars) {
     const toks = tokenize(expr);
@@ -134,14 +198,62 @@
       if (typeof v === "number") return v !== 0;
       return String(v).length > 0;
     }
+    /* ---- H1.00 扩展：primary 处理列表、字典、内置函数调用 ---- */
     function primary() {
       const t = next();
       if (!t) return "";
       if (t.t === "(") { const v = orExpr(); next(); return v; }
       if (t.t === "num") return t.v;
       if (t.t === "str") return t.v;
+      if (t.t === "[") {
+        // 列表字面量 [expr, expr, ...]
+        const arr = [];
+        if (!(peek() && peek().t === "]")) {
+          arr.push(orExpr());
+          while (peek() && peek().t === ",") { next(); arr.push(orExpr()); }
+        }
+        if (peek() && peek().t === "]") next();
+        return arr;
+      }
+      if (t.t === "{") {
+        // 字典字面量 { key: val, key: val }
+        const obj = {};
+        if (!(peek() && peek().t === "}")) {
+          let keyTok = peek();
+          if (keyTok && (keyTok.t === "str" || keyTok.t === "id" || keyTok.t === "num")) {
+            next();
+            const key = keyTok.t === "id" ? keyTok.v : keyTok.v;
+            if (peek() && peek().t === ":") next();
+            obj[key] = orExpr();
+          }
+          while (peek() && peek().t === ",") {
+            next();
+            keyTok = peek();
+            if (!keyTok || keyTok.t === "}") break;
+            if (keyTok.t === "str" || keyTok.t === "id" || keyTok.t === "num") {
+              next();
+              const key = keyTok.t === "id" ? keyTok.v : keyTok.v;
+              if (peek() && peek().t === ":") next();
+              obj[key] = orExpr();
+            }
+          }
+        }
+        if (peek() && peek().t === "}") next();
+        return obj;
+      }
       if (t.t === "id") {
         const w = t.v;
+        // 内置函数调用：id(args)
+        if (peek() && peek().t === "(" && BUILTINS[w]) {
+          next(); // 消费 (
+          const args = [];
+          if (!(peek() && peek().t === ")")) {
+            args.push(orExpr());
+            while (peek() && peek().t === ",") { next(); args.push(orExpr()); }
+          }
+          if (peek() && peek().t === ")") next();
+          try { return BUILTINS[w].apply(null, args); } catch (e) { return false; }
+        }
         if (w === "true") return true;
         if (w === "false") return false;
         if (w === "None") return "";
@@ -163,11 +275,18 @@
       }
       return v;
     }
+    /* ---- H1.00 扩展：字符串拼接（+ 操作数含字符串时用 String() 拼接）---- */
     function addSub() {
       let v = mulDiv();
       while (peek() && (peek().t === "+" || peek().t === "-")) {
         const op = next().t; const r = mulDiv();
-        v = Number(v) + (op === "+" ? Number(r) : -Number(r));
+        if (op === "+") {
+          if (typeof v === "string" || typeof r === "string") v = String(v) + String(r);
+          else v = Number(v) + Number(r);
+        } else {
+          if (typeof v === "string" || typeof r === "string") v = String(v) + String(r);
+          else v = Number(v) - Number(r);
+        }
       }
       return v;
     }
@@ -249,6 +368,25 @@
     // for 循环头：for 变量 in 迭代源:
     const form = line.match(/^for\s+([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s+in\s+(.+?)\s*:\s*$/i);
     if (form) return { kind: "for", var: form[1], iter: form[2].trim() };
+    /* ---- H1.00 扩展：新语句分类（while / break / continue / set / let / opset / say）---- */
+    // while 条件: 循环头
+    const whileM = line.match(/^while\s+(.+?)\s*:\s*$/i);
+    if (whileM) return { kind: "while", cond: whileM[1].replace(/:\s*$/, "").trim() };
+    // break / continue
+    if (/^break\s*$/.test(line)) return { kind: "break" };
+    if (/^continue\s*$/.test(line)) return { kind: "continue" };
+    // set 名 = 表达式 — 运行时赋值
+    const setM = line.match(/^set\s+([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s*=\s*(.+?)\s*$/);
+    if (setM) return { kind: "set", name: setM[1], expr: setM[2] };
+    // let 名 be 值 — 局部临时变量
+    const letM = line.match(/^let\s+([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s+be\s+(.+?)\s*$/);
+    if (letM) return { kind: "let", name: letM[1], value: letM[2] };
+    // 简写运算：名 add/sub/mul/div 表达式
+    const opsetM = line.match(/^([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s+(add|sub|mul|div)\s+(.+)$/i);
+    if (opsetM) return { kind: "opset", name: opsetM[1], op: opsetM[2].toLowerCase(), expr: opsetM[3].trim() };
+    // say 内容 — 输出文本
+    const sayM = line.match(/^say\s+(.*)$/);
+    if (sayM) return { kind: "say", text: sayM[1].trim() };
     const cond = parseCondHeader(line);
     if (cond) return { kind: "cond", ...cond };
     // 导向 to / fr
@@ -365,6 +503,13 @@
           const bodyEndFor = collectUntil(i, end, indentGoal);
           out.push({ kind: "for", var: st.var, iter: st.iter, body: build(i, bodyEndFor, minIndent(i, bodyEndFor)) });
           i = bodyEndFor;
+        /* ---- H1.00 扩展：while 块收集 ---- */
+        } else if (st.kind === "while") {
+          if (pendingIf) { out.push(pendingIf); pendingIf = null; }
+          i++;
+          const bodyEndW = collectUntil(i, end, indentGoal);
+          out.push({ kind: "while", cond: st.cond, body: build(i, bodyEndW, minIndent(i, bodyEndW)) });
+          i = bodyEndW;
         } else if (st.kind === "regionStart") {
           // 触发区域：cf NAME ... cf NAME stop。body 为区域内的代码块（点击/长按触发执行）
           if (pendingIf) { out.push(pendingIf); pendingIf = null; }
@@ -433,6 +578,35 @@
         collectVars(n.body, vars);
         n.chains.forEach(function (c) { collectVars(c.body, vars); });
         if (n.orphan) { /* orphan body already collected */ }
+      /* ---- H1.00 扩展：while / let / set / opset 变量收集 ---- */
+      } else if (n.kind === "while") {
+        collectVars(n.body, vars);
+      } else if (n.kind === "let") {
+        let val = "";
+        try { val = evalExpr(n.value, {}); } catch (e) { val = ""; }
+        if (val !== "" && !isNaN(Number(val))) val = Number(val);
+        vars[n.name] = { type: "ordinary", value: val, isImg: false };
+      } else if (n.kind === "set" || n.kind === "opset") {
+        let val = "";
+        try {
+          if (n.kind === "opset") {
+            const cur = vars[n.name] ? vars[n.name].value : 0;
+            const r = evalExpr(n.expr, vars);
+            const cn = Number(cur), rn = Number(r);
+            if (n.op === "add") val = cn + rn;
+            else if (n.op === "sub") val = cn - rn;
+            else if (n.op === "mul") val = cn * rn;
+            else if (n.op === "div") val = cn / rn;
+            else val = r;
+          } else {
+            val = evalExpr(n.expr, vars);
+          }
+        } catch (e) { val = ""; }
+        if (val !== "" && typeof val !== "number" && !isNaN(Number(val))) val = Number(val);
+        if (!vars[n.name]) vars[n.name] = { type: "ordinary", value: val, isImg: false };
+        else vars[n.name].value = val;
+      } else if (n.kind === "say" || n.kind === "break" || n.kind === "continue") {
+        // 不产生变量
       }
     });
     return vars;
@@ -506,6 +680,8 @@
 
   function renderNodes(nodes, vars, ctx, out) {
     nodes.forEach(function (n) {
+      /* ---- H1.00 扩展：break/continue 传播 ---- */
+      if (ctx && (ctx.breakFlag || ctx.continueFlag)) return;
       if (n.kind === "it") {
         out.push(n); // 声明保留（供变量面板）
       } else if (n.kind === "in") {
@@ -526,10 +702,13 @@
         // 逐个取值渲染循环体，循环变量按普通变量注入
         const vals = iterVals(n.iter, vars);
         vals.forEach(function (val) {
+          if (ctx && ctx.breakFlag) { ctx.breakFlag = false; return; }
           const prev = vars[n.var];
           vars[n.var] = { type: "ordinary", value: val, isImg: false };
           renderNodes(n.body, vars, ctx, out);
           if (prev) vars[n.var] = prev; else delete vars[n.var];
+          if (ctx && ctx.breakFlag) { ctx.breakFlag = false; return; }
+          if (ctx && ctx.continueFlag) { ctx.continueFlag = false; /* continue → 下一轮 */ }
         });
       } else if (n.kind === "cond") {
         // 求值 if；未匹配则依次 orif；都不匹配取 else
@@ -559,6 +738,52 @@
         out.push({ kind: "cppBlock", lang: "cpp", code: n.code });
       } else if (n.kind === "textline") {
         out.push({ kind: "textline", text: n.text });
+      /* ---- H1.00 扩展：break / continue / while / set / let / opset / say ---- */
+      } else if (n.kind === "break") {
+        if (ctx) ctx.breakFlag = true;
+        return;
+      } else if (n.kind === "continue") {
+        if (ctx) ctx.continueFlag = true;
+        return;
+      } else if (n.kind === "while") {
+        // 编译期 while 展开：条件动态求值，最多 50 次（安全上限，不是语言限制）
+        let safety = 0;
+        while (safety++ < 50) {
+          if (ctx && ctx.breakFlag) { ctx.breakFlag = false; break; }
+          let condVal = false;
+          try { condVal = evalExpr(n.cond, vars); } catch (e) {}
+          if (!condVal) break;
+          renderNodes(n.body, vars, ctx, out);
+          if (ctx && ctx.breakFlag) { ctx.breakFlag = false; break; }
+          if (ctx && ctx.continueFlag) { ctx.continueFlag = false; /* 继续下一轮 */ }
+        }
+      } else if (n.kind === "set" || n.kind === "opset") {
+        let val;
+        try {
+          if (n.kind === "opset") {
+            const cur = vars[n.name] ? vars[n.name].value : 0;
+            const r = evalExpr(n.expr, vars);
+            const cn = Number(cur), rn = Number(r);
+            if (n.op === "add") val = cn + rn;
+            else if (n.op === "sub") val = cn - rn;
+            else if (n.op === "mul") val = cn * rn;
+            else if (n.op === "div") val = cn / rn;
+            else val = r;
+          } else {
+            val = evalExpr(n.expr, vars);
+          }
+        } catch (e) { val = ""; }
+        if (!vars[n.name]) vars[n.name] = { type: "ordinary", value: val, isImg: false };
+        else vars[n.name].value = val;
+        // set 本身不输出 HTML
+      } else if (n.kind === "let") {
+        let val;
+        try { val = evalExpr(n.value, vars); } catch (e) { val = ""; }
+        vars[n.name] = { type: "ordinary", value: val, isImg: false };
+        // let 本身不输出 HTML
+      } else if (n.kind === "say") {
+        const text = interpolate(n.text, vars);
+        out.push({ kind: "say", text: text });
       }
     });
     return out;
@@ -713,6 +938,10 @@
           (href.sameDoc ? ' data-hc-goto="' + esc(href.pageKey) + '"' : "") + ">前往 " + esc(href.label || label) + " 页面 →</a></div>";
       }
       if (it.kind === "textline") {
+        return '<p class="hic-item hic-body">' + esc(it.text) + "</p>";
+      }
+      /* ---- H1.00 扩展：say 输出 ---- */
+      if (it.kind === "say") {
         return '<p class="hic-item hic-body">' + esc(it.text) + "</p>";
       }
       return "";

@@ -1,4 +1,4 @@
-package com.hicode.android;
+package com.simplelang.android;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,7 +7,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 /**
- * HiCode (HIC 语言) 本地开发环境 —— 原生 WebView 壳。
+ * Simple (SIMPLE 语言) 本地开发环境 —— 原生 WebView 壳。
  * 零第三方依赖：直接以 file:// 加载 assets/index.html（即对应档位的离线单文件）。
  */
 public class MainActivity extends Activity {

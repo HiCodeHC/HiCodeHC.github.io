@@ -1,10 +1,10 @@
 /* ============================================================
- * HC v1.00 —— 数据层 store.js
+ * SimpleLang v1.00 —— 数据层 store.js
  * 职责：
  *   1) 项目 / 页面 CRUD，localStorage 本地持久化
  *   2) 首次零项目引导判定（hasAnyProject / lastActive）
  *   3) .hc 文件导出 / 导入
- * 数据形态（localStorage 键：HICODE_DATA）：
+ * 数据形态（localStorage 键：SIMPLE_DATA）：
  *   {
  *     projects: { <projId>: { id, name, createdAt, updatedAt,
  *                    pages: { <pageId>: { id, name, code,
@@ -22,8 +22,8 @@
 })(typeof self !== "undefined" ? self : null, function () {
   "use strict";
 
-  const KEY = "HICODE_DATA";
-  const STORE_VERSION = "H1.00";
+  const KEY = "SIMPLE_DATA";
+  const STORE_VERSION = "S1.00";
 
   function uuid() {
     return "h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -209,7 +209,7 @@
     const p = getProject(projId);
     if (!p) return null;
     return JSON.stringify({
-      app: "HiCode", language: "HIC", format: "hc-project", version: STORE_VERSION,
+      app: "Simple", language: "SIMPLE", format: "hc-project", version: STORE_VERSION,
       project: p
     }, null, 2);
   }
@@ -217,7 +217,7 @@
     // 返回 { ok, error?, projectId?, name? }
     try {
       const obj = JSON.parse(text);
-      if (!obj || obj.app !== "HiCode" || !obj.project) return { ok: false, error: "不是有效的 .hc 文件（缺少 HiCode 标记）" };
+      if (!obj || obj.app !== "Simple" || !obj.project) return { ok: false, error: "不是有效的 .hc 文件（缺少 Simple 标记）" };
       const proj = obj.project;
       if (!proj || !proj.name || typeof proj.pages !== "object") return { ok: false, error: ".hc 文件内容不完整" };
       const d = load();

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="HiCode 在线开发环境 H1.00 入口 —— 自动根据设备检测进入手机端（安卓）或电脑端开发界面。" />
-<title>HiCode · H1.00 跳转中…</title>
+<meta name="description" content="Simple 在线开发环境 S1.00 入口 —— 自动根据设备检测进入手机端（安卓）或电脑端开发界面。" />
+<title>Simple · S1.00 跳转中…</title>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png" />
 <link rel="icon" href="/assets/favicon-16.png" sizes="16x16" type="image/png" />
@@ -23,7 +23,7 @@
     // 携带 ?edition=m/r/x 到目标端（下载页「在线体验三版」直达对应版本）
     var q = window.location.search || "";
     if (/[?&]edition=(m|r|x)/i.test(q)) target += q;
-    try { localStorage.setItem("hicode_entry", target); } catch (e) {}
+    try { localStorage.setItem("simplelang_entry", target); } catch (e) {}
     window.location.replace(target);
   })();
 </script>

@@ -4,7 +4,7 @@
 import io
 from py_mini_racer import MiniRacer
 
-files = [r"D:\hicode-ide\js\store.js", r"D:\hicode-ide\js\hic.js", r"D:\hicode-ide\js\app.js"]
+files = [r"D:\simplelang-ide\js\store.js", r"D:\simplelang-ide\js\hic.js", r"D:\simplelang-ide\js\app.js"]
 
 ok = True
 mr = MiniRacer()

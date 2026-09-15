@@ -1,6 +1,6 @@
 /* ============================================================
- * HC v1.00 在线 IDE —— 界面逻辑 app.js
- * 依赖：Store (store.js) + HC (hic.js)
+ * SimpleLang v1.00 在线 IDE —— 界面逻辑 app.js
+ * 依赖：Store (store.js) + SimpleLang (hic.js)
  * 职责：首页引导、项目/页面 CRUD、代码编辑、实时转译预览、
  *       变量面板（含 p 图片上传）、图形化画布定位、导出菜单。
  * ============================================================ */
@@ -68,7 +68,7 @@
   };
 
   /* ---- 工具 ---- */
-  function esc(s) { return HC.esc(s); }
+  function esc(s) { return SimpleLang.esc(s); }
 
   function currentProj() { return state.projId ? Store.getProject(state.projId) : null; }
   function currentPage() {
@@ -116,20 +116,20 @@
   /* ---- 三版切换（M 轻量 / R 标准 / X 全能） ---- */
   // 网页端可随时切换版本：切换后引擎可编译语言、预览与导出页面均按所选版本执行
   const ED_NAME = { m: "M·轻量版", r: "R·标准版", x: "X·全能版" };
-  const ED_DESC = { m: "仅 HIC 内核", r: "内核 + Python 编译", x: "内核 + Python + C++ 编译" };
+  const ED_DESC = { m: "仅 SIMPLE 内核", r: "内核 + Python 编译", x: "内核 + Python + C++ 编译" };
   function edNorm(ed) {
     const c = String(ed || "").toLowerCase()[0];
     return (c === "m" || c === "r" || c === "x") ? c : "x";
   }
   function currentEdition() { return state.edition || "x"; }
-  // 把当前版本应用到：引擎(HC.setEdition)、全局标记(window.HIC_EDITION)、
+  // 把当前版本应用到：引擎(SimpleLang.setEdition)、全局标记(window.SIMPLE_EDITION)、
   // 顶栏版本徽标、切换器高亮、代码片段按钮（+ Python / + C++）显隐
   function applyEditionUI() {
     const ed = currentEdition();
-    if (typeof HC !== "undefined" && HC.setEdition) HC.setEdition(ed);
-    try { window.HIC_EDITION = ed; } catch (e) {}
+    if (typeof SimpleLang !== "undefined" && SimpleLang.setEdition) SimpleLang.setEdition(ed);
+    try { window.SIMPLE_EDITION = ed; } catch (e) {}
     const VT = document.getElementById("verTag");
-    if (VT) VT.textContent = "H1.00 · " + ED_NAME[ed];
+    if (VT) VT.textContent = "S1.00 · " + ED_NAME[ed];
     if (el.edSwitch) Array.prototype.forEach.call(el.edSwitch.querySelectorAll(".ed-btn"), function (b) {
       b.classList.toggle("on", b.getAttribute("data-ed") === ed);
     });
@@ -146,7 +146,7 @@
     const v = edNorm(ed);
     if (v === state.edition) return;
     state.edition = v;
-    try { localStorage.setItem("HIC_EDITION_PREF", v); } catch (e) {}
+    try { localStorage.setItem("SIMPLE_EDITION_PREF", v); } catch (e) {}
     applyEditionUI();
     if (!silent) {
       logConsole("output", "已切换到 " + ED_NAME[v] + "（" + ED_DESC[v] + "）；预览与导出页面将按此版本编译");
@@ -269,7 +269,7 @@
   function liveHtml() {
     const proj = currentProj();
     if (!proj) return "<p>请先打开一个页面</p>";
-    try { return HC.buildProjectMergedHtml(proj, {}); }
+    try { return SimpleLang.buildProjectMergedHtml(proj, {}); }
     catch (e) { return "<pre>转译出错：" + esc(e.message) + "</pre>"; }
   }
   function doLive() {
@@ -279,7 +279,7 @@
     el.previewFrame.srcdoc = html;
     const p = currentPage();
     // 诊断：行内错误/警告
-    const diags = HC.diagnose(el.code.value || "");
+    const diags = SimpleLang.diagnose(el.code.value || "");
     const errs = diags.filter(function (d) { return d.level === "error"; });
     const warns = diags.filter(function (d) { return d.level === "warn"; });
     if (window.hiced) window.hiced.setDiagnostics(diags);
@@ -294,7 +294,7 @@
         logConsole("output", "问题已修复，转译成功 · 生成 " + html.length + " 字符");
       }
     }
-    const base = p ? ("已转译 " + esc(p.name) + " · " + html.length + " 字符 (HIC→HTML)") : "";
+    const base = p ? ("已转译 " + esc(p.name) + " · " + html.length + " 字符 (SIMPLE→HTML)") : "";
     let tail = "";
     el.statusbar.className = "statusbar" + (errs.length ? " err" : (warns.length ? " warn" : ""));
     if (errs.length || warns.length) {
@@ -336,7 +336,7 @@
     if (window.hiced) { el.code.scrollTop = Math.max(0, (line - 4) * 23); window.hiced.render(); }
   }
   function renderProblems(diags) {
-    diags = diags || HC.diagnose(el.code.value || "");
+    diags = diags || SimpleLang.diagnose(el.code.value || "");
     const errs = diags.filter(function (d) { return d.level === "error"; });
     const warns = diags.filter(function (d) { return d.level === "warn"; });
     if (el.cntAll) el.cntAll.textContent = diags.length;
@@ -365,7 +365,7 @@
     const upto = ta.value.slice(0, s);
     const line = upto.split("\n").length;
     const col = s - (upto.lastIndexOf("\n") + 1) + 1;
-    el.sbRight.textContent = "行 " + line + ", 列 " + col + " · UTF-8 · LF · HIC";
+    el.sbRight.textContent = "行 " + line + ", 列 " + col + " · UTF-8 · LF · SIMPLE";
   }
 
   /* ---- 输出面板：构建摘要 ---- */
@@ -377,11 +377,11 @@
       return;
     }
     const html = el.previewSrc.value || "";
-    const diags = HC.diagnose(el.code.value || "");
+    const diags = SimpleLang.diagnose(el.code.value || "");
     const errs = diags.filter(function (d) { return d.level === "error"; }).length;
     const warns = diags.filter(function (d) { return d.level === "warn"; }).length;
     let vars = {};
-    try { vars = HC.processPage({ name: pg.name, code: el.code.value, images: Store.getPageImages(state.projId, state.pageId) }, {}).vars; } catch (e) {}
+    try { vars = SimpleLang.processPage({ name: pg.name, code: el.code.value, images: Store.getPageImages(state.projId, state.pageId) }, {}).vars; } catch (e) {}
     const varc = Object.keys(vars).length;
     const ok = errs === 0;
     el.outputList.innerHTML = [
@@ -428,7 +428,7 @@
     const proj = currentProj(); const pg = currentPage();
     if (!proj || !pg) { el.varList.innerHTML = ""; el.varEmpty.hidden = false; return; }
     let vars = {};
-    try { vars = HC.processPage({ name: pg.name, code: el.code.value, images: Store.getPageImages(proj.id, pg.id), files: Store.getPageFiles(proj.id, pg.id) }, {}).vars; } catch (e) {}
+    try { vars = SimpleLang.processPage({ name: pg.name, code: el.code.value, images: Store.getPageImages(proj.id, pg.id), files: Store.getPageFiles(proj.id, pg.id) }, {}).vars; } catch (e) {}
     const keys = Object.keys(vars);
     el.varEmpty.hidden = keys.length > 0;
     el.varList.innerHTML = keys.map(function (k) {
@@ -549,7 +549,7 @@
   function insertPointCode() {
     if (!state.projId || !state.pageId) { setStatus("请先打开一个页面"); return; }
     const name = (el.graphVarName && el.graphVarName.value ? el.graphVarName.value.trim() : "点A").trim();
-    if (!HC.isName(name)) { setStatus("变量名不合法：需以字母/下划线/中文开头"); return; }
+    if (!SimpleLang.isName(name)) { setStatus("变量名不合法：需以字母/下划线/中文开头"); return; }
     if (state.graph.x == null || state.graph.y == null) { setStatus("请先在画布上点击确定坐标"); return; }
     const type = (el.graphType && el.graphType.value) || "text";
     const content = (el.graphContent && el.graphContent.value ? el.graphContent.value.trim() : "");
@@ -623,18 +623,18 @@
   }
   function projectsMapOf(list) {
     const m = {};
-    list.forEach(function (p) { m[p.name] = { slug: HC.slugify(p.name), pages: {} }; Object.keys(p.pages).forEach(function (pid) { m[p.name].pages[p.pages[pid].name] = true; }); });
+    list.forEach(function (p) { m[p.name] = { slug: SimpleLang.slugify(p.name), pages: {} }; Object.keys(p.pages).forEach(function (pid) { m[p.name].pages[p.pages[pid].name] = true; }); });
     return m;
   }
   function exportHc() {
     const proj = currentProj(); if (!proj) return;
     const text = Store.exportHcProject(proj.id);
-    HC.download(text, HC.slugify(proj.name) + ".hc");
+    SimpleLang.download(text, SimpleLang.slugify(proj.name) + ".hc");
     logConsole("output", "已导出 .hc 项目「" + proj.name + "」");
-    toastOn("已导出 .hc", '项目「' + esc(proj.name) + '」已导出为 <b>' + esc(HC.slugify(proj.name)) + '.hc</b>，下次可直接导入继续开发。');
+    toastOn("已导出 .hc", '项目「' + esc(proj.name) + '」已导出为 <b>' + esc(SimpleLang.slugify(proj.name)) + '.hc</b>，下次可直接导入继续开发。');
   }
   // 导出时是否保留顶部题目标识（"项目名 · 页面名" 横幅）。默认保留；用户可勾选"不包含"。
-  const NO_BAR_KEY = "hicode_noexportbar";
+  const NO_BAR_KEY = "simplelang_noexportbar";
   function noBarPref() {
     return el.optNoBar ? el.optNoBar.checked : false;
   }
@@ -648,31 +648,31 @@
   function exportSingle() {
     const proj = currentProj(); const pg = currentPage();
     if (!proj || !pg) return;
-    if (HC.usesDownload(proj)) { warnZipOnly(); return; }
-    const html = HC.buildSinglePageHtml(proj, pg, { noBar: noBarPref() });
-    HC.download(html, HC.slugify(pg.name) + ".html");
+    if (SimpleLang.usesDownload(proj)) { warnZipOnly(); return; }
+    const html = SimpleLang.buildSinglePageHtml(proj, pg, { noBar: noBarPref() });
+    SimpleLang.download(html, SimpleLang.slugify(pg.name) + ".html");
     logConsole("output", "已导出单个页面「" + pg.name + "」为 .html");
   }
   function exportZip() {
     const list = allProjects(); if (!list.length) return;
-    const entries = HC.buildZipEntries(list, { noBar: noBarPref() });
+    const entries = SimpleLang.buildZipEntries(list, { noBar: noBarPref() });
     // 普通页面条目用 .html；可下载文件(app)条目用 .data（二进制）
     const files = entries.map(function (e) { return { name: e.name, data: (e.data ? e.data : e.html) }; });
-    const blob = new Blob([HC.zipFiles(files).buffer], { type: "application/zip" });
-    HC.download(blob, "HiCode-export.zip");
+    const blob = new Blob([SimpleLang.zipFiles(files).buffer], { type: "application/zip" });
+    SimpleLang.download(blob, "Simple-export.zip");
     logConsole("output", "已导出 " + entries.length + " 个资源（含可下载文件）为 .zip");
-    toastOn("已导出 .zip", "已将全部 " + entries.length + " 个页面/文件打包为 <b>HiCode-export.zip</b>。");
+    toastOn("已导出 .zip", "已将全部 " + entries.length + " 个页面/文件打包为 <b>Simple-export.zip</b>。");
   }
   function warnZipOnly() {
     toastOn("仅支持 .zip 导出", '当前项目使用了可下载文件变量（<code>it 名 app</code> + <code>名 in d</code>）。为保证下载功能生效，请改用 <b>导出全部页面 · 打包 .zip</b>。');
   }
   function exportMerge() {
     const list = allProjects(); if (!list.length) return;
-    for (let i = 0; i < list.length; i++) if (HC.usesDownload(list[i])) { warnZipOnly(); return; }
-    const html = HC.buildAllMergedHtml(list, projectsMapOf(list), { noBar: noBarPref() });
-    HC.download(html, "HiCode-merged.html");
+    for (let i = 0; i < list.length; i++) if (SimpleLang.usesDownload(list[i])) { warnZipOnly(); return; }
+    const html = SimpleLang.buildAllMergedHtml(list, projectsMapOf(list), { noBar: noBarPref() });
+    SimpleLang.download(html, "Simple-merged.html");
     logConsole("output", "已导出全部项目为合并 .html");
-    toastOn("已导出合并 .html", "全部项目已合并为一个 <b>HiCode-merged.html</b>" + (noBarPref() ? "（已去除顶部题目标识）" : "，含顶部导航") + "。");
+    toastOn("已导出合并 .html", "全部项目已合并为一个 <b>Simple-merged.html</b>" + (noBarPref() ? "（已去除顶部题目标识）" : "，含顶部导航") + "。");
   }
 
   /* ---- 导入 ---- */
@@ -706,7 +706,7 @@
     const missing = [];
     Object.keys(proj.pages).forEach(function (pid) {
       try {
-        const nodes = HC.parse(proj.pages[pid].code || "");
+        const nodes = SimpleLang.parse(proj.pages[pid].code || "");
         (function walk(nds) {
           nds.forEach(function (n) {
             if (n.kind === "nav" && n.cross && !known[n.toProj]) missing.push(n.toProj);
@@ -747,7 +747,7 @@
       const t = e.target && e.target.closest ? e.target.closest("[data-jump]") : null;
       if (!t) return;
       const level = t.getAttribute("data-jump") === "err" ? "error" : "warn";
-      const diags = HC.diagnose(el.code.value || "");
+      const diags = SimpleLang.diagnose(el.code.value || "");
       const hit = diags.find(function (d) { return d.level === level; });
       if (!hit || !el.code) return;
       const lines = el.code.value.split("\n");
@@ -871,11 +871,11 @@
         } else if (snip === "app") {
           insertAtCursor("it 下载包 app\n下载包 in d");
         } else if (snip === "html") {
-          insertAtCursor("html:(\n    <div class=\"myself\" style=\"padding:16px;border:1px solid rgba(255,230,190,.2);border-radius:12px;\">\n        在此处写原生 HTML（HIC 不编译）\n    </div>\n)end");
+          insertAtCursor("html:(\n    <div class=\"myself\" style=\"padding:16px;border:1px solid rgba(255,230,190,.2);border-radius:12px;\">\n        在此处写原生 HTML（SIMPLE 不编译）\n    </div>\n)end");
         } else if (snip === "py") {
-          insertAtCursor("py:(\n    # 在此处写 Python，HIC 会把括号内代码编译为 HTML\n    print('你好，HIC Python')\n)end");
+          insertAtCursor("py:(\n    # 在此处写 Python，SIMPLE 会把括号内代码编译为 HTML\n    print('你好，SIMPLE Python')\n)end");
         } else if (snip === "cpp") {
-          insertAtCursor("cpp:(\n    // 在此处写 C++，HIC 会把括号内代码编译为 HTML\n    #include <iostream>\n    using namespace std;\n    int main() {\n        cout << \"你好，HIC C++\";\n        return 0;\n    }\n)end");
+          insertAtCursor("cpp:(\n    // 在此处写 C++，SIMPLE 会把括号内代码编译为 HTML\n    #include <iostream>\n    using namespace std;\n    int main() {\n        cout << \"你好，SIMPLE C++\";\n        return 0;\n    }\n)end");
         }
         doLive(); debounceSave();
       };
@@ -893,20 +893,20 @@
     // 三版发布：网页端可直接切换 M/R/X。优先级：
     //   ① URL 参数 ?edition=m|r|x（下载页「在线体验三版」直达）
     //   ② localStorage 记忆的上次选择
-    //   ③ 离线单文件在 <head> 注入的 window.HIC_EDITION（发布形态固定档位）
+    //   ③ 离线单文件在 <head> 注入的 window.SIMPLE_EDITION（发布形态固定档位）
     //   ④ 默认 X 全能版
     let ed = "";
     try {
       const q = new URLSearchParams(window.location.search || "").get("edition");
-      ed = q || localStorage.getItem("HIC_EDITION_PREF") || "";
+      ed = q || localStorage.getItem("SIMPLE_EDITION_PREF") || "";
     } catch (e) { ed = ""; }
-    if (!ed && window.HIC_EDITION) ed = String(window.HIC_EDITION);
+    if (!ed && window.SIMPLE_EDITION) ed = String(window.SIMPLE_EDITION);
     state.edition = edNorm(ed || "x");
     applyEditionUI();
     // 轻量编辑器：语法高亮 + 行号 + 自动缩进 + 括号补全
     if (window.HICED) window.hiced = HICED.create(el.code);
-    if (typeof HC !== "undefined" && HC.APP) logConsole("output", "HiCode " + HC.APP.version + " " + ED_NAME[currentEdition()] + "（HIC " + ED_DESC[currentEdition()] + "）已启动 · 就绪");
-    else logConsole("output", "HiCode IDE 已启动 · 就绪");
+    if (typeof SimpleLang !== "undefined" && SimpleLang.APP) logConsole("output", "Simple " + SimpleLang.APP.version + " " + ED_NAME[currentEdition()] + "（SIMPLE " + ED_DESC[currentEdition()] + "）已启动 · 就绪");
+    else logConsole("output", "Simple IDE 已启动 · 就绪");
     if (!Store.hasAnyProject()) { showHome(); return; }
     showHome(); // 默认先回首页引导；也可自动恢复
   }

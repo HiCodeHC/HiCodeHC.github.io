@@ -1,4 +1,4 @@
-const HC = require("/workspace/repo/ide/js/hic.js");
+const SimpleLang = require("/workspace/repo/ide/js/hic.js");
 
 // 1) 生成含 py 块与 cpp 块的导出页
 const page = {
@@ -8,12 +8,12 @@ const page = {
     "py:(",
     "  def hi(name):",
     "      return 'Hello, ' + name",
-    "  # 注释：不应被当作 HIC 备注",
+    "  # 注释：不应被当作 SIMPLE 备注",
     "  print('py-开始')",
     "  for i in range(3):",
     "      print('n=', i)",
     "  if 2 > 1 and 3 > 2:",
-    "      print(hi('HIC'))",
+    "      print(hi('SIMPLE'))",
     ")end",
     "cpp:(",
     "  #include <iostream>",
@@ -30,7 +30,7 @@ const page = {
   images: {}, files: {}
 };
 
-const html = HC.buildSinglePageHtml({ name: "我的项目" }, page);
+const html = SimpleLang.buildSinglePageHtml({ name: "我的项目" }, page);
 
 for (const bad of ["pyodide", "jsdelivr", "loadPyodide", "github.io", "cdn.jsdelivr", "https://cdn"]) {
   if (html.indexOf(bad) >= 0) {
@@ -40,10 +40,10 @@ for (const bad of ["pyodide", "jsdelivr", "loadPyodide", "github.io", "cdn.jsdel
 }
 console.log("✓ 导出页不引用任何外部官方库 / CDN / 网址");
 if (html.indexOf("pyToJs") < 0 || html.indexOf("cppToJs") < 0) {
-  console.log("✗ 未内置 HIC 自包含转译宿主");
+  console.log("✗ 未内置 SIMPLE 自包含转译宿主");
   process.exit(1);
 }
-console.log("✓ 内置 HIC 自包含 Python/C++ 转译宿主");
+console.log("✓ 内置 SIMPLE 自包含 Python/C++ 转译宿主");
 // 2) 抽取内嵌宿主脚本并用假 DOM 执行（取最后一个 <script>，即页面 body 末尾的扩展编译器宿主）
 const scriptBody = html.split("<script>").slice(1).map(function (s) { return s.slice(0, s.indexOf("</script>")); }).pop();
 const scriptBodyTrimmed = (scriptBody || "").replace(/^\n/, "");
@@ -75,7 +75,7 @@ function extract(code, tag) {
 const pyEl = fakeEl("py", extract(page.code, "py:("));
 const cppEl = fakeEl("cpp", extract(page.code, "cpp:("));
 
-global.window = { HIC_EDITION: "x" };
+global.window = { SIMPLE_EDITION: "x" };
 global.document = {
   querySelectorAll: function (sel) { return sel === ".hic-ext" ? [pyEl, cppEl] : []; }
 };
@@ -95,7 +95,7 @@ console.log("---- 行(缩进|内容) ----\n" + ((global.window.__pyln||[]).join(
 const pyOut = pyEl.__runEl.textContent;
 console.log("Python 输出: " + JSON.stringify(pyOut));
 console.log("Python 状态: " + pyEl.__state.textContent);
-const expectPy = ["py-开始", "n= 0", "n= 1", "n= 2", "Hello, HIC"].join("\n");
+const expectPy = ["py-开始", "n= 0", "n= 1", "n= 2", "Hello, SIMPLE"].join("\n");
 if (pyOut === expectPy) console.log("✓ Python 转译输出正确");
 else { console.log("✗ Python 输出不符\n期望: " + JSON.stringify(expectPy)); process.exit(1); }
 

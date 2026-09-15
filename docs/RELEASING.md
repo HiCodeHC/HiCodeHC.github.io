@@ -1,6 +1,6 @@
-# HiCode 发布规范（RELEASING）
+# Simple 发布规范（RELEASING）
 
-> 本文档固化 HiCode 的版本发布流程。每次发布照此执行，保证三档版本、归档、Git Tag 与 GitHub Release 资产的一致性。
+> 本文档固化 Simple 的版本发布流程。每次发布照此执行，保证三档版本、归档、Git Tag 与 GitHub Release 资产的一致性。
 > 执行中遇到本文档未覆盖的细节，由发布执行者自行决定，不回头反复确认。
 
 ## 一、三档版本定义与命名
@@ -9,14 +9,14 @@
 
 | 档位 | 名称 | 能力 |
 | --- | --- | --- |
-| `M` | 轻量版 | 仅全套 HIC 内核 |
+| `M` | 轻量版 | 仅全套 SIMPLE 内核 |
 | `R` | 标准版 | 内核 + 编译 Python 为 HTML（`py:(…)end`） |
 | `X` | 全能版 | 内核 + 编译 Python 与 C++ 为 HTML（`py:(…)end` / `cpp:(…)end`） |
 
 命名约定：
 
 - **Git Tag**：`v{版本号}`（如 `v3.66`），锚定发布时的 main。
-- **离线单文件**：`HiCode-v{版本号}{M|R|X}-offline.html`（如 `HiCode-v3.66X-offline.html`）。
+- **离线单文件**：`Simple-v{版本号}{M|R|X}-offline.html`（如 `Simple-v3.66X-offline.html`）。
 - **归档目录**：`old/v{旧版本号}/`（如 `old/v3.01/`）。
 - **网页端三版在线体验**：`/ide/?edition=m|r|x` 直达对应档位，顶栏可随时切换，选择记忆在本地。
 
@@ -31,7 +31,7 @@
 
 版本号出现在以下位置，需一并对齐（当前以 v3.66 为例）：
 
-- `ide/js/hic.js` — `HC.APP.version`
+- `ide/js/hic.js` — `SimpleLang.APP.version`
 - `windows/index.html` / `android/index.html` — 顶栏 `verTag` 文案
 - `download/build/build-offline.js` — 输出文件名与标题中的版本号
 - `README.md` — 「当前版本」小节与「下载」链接
@@ -43,7 +43,7 @@
 node download/build/build-offline.js
 ```
 
-脚本以 `windows/` 为内核，按 M/R/X 注入 `window.HIC_EDITION`，产出三份自包含单文件至 `download/`。脚本内置校验：若仍有未内联的外部资源会直接报错退出。
+脚本以 `windows/` 为内核，按 M/R/X 注入 `window.SIMPLE_EDITION`，产出三份自包含单文件至 `download/`。脚本内置校验：若仍有未内联的外部资源会直接报错退出。
 
 ### 4. 提交并推送
 
@@ -64,7 +64,7 @@ git push origin v{版本号}
 
 - 以 Tag `v{版本号}` 创建 Release，标题与 Tag 同名。
 - Release 说明：三档差异（M/R/X）+ 本版更新点。
-- 上传三档离线单文件 `HiCode-v{版本号}{M,R,X}-offline.html` 作为资产。
+- 上传三档离线单文件 `Simple-v{版本号}{M,R,X}-offline.html` 作为资产。
 
 ### 7. 验证
 

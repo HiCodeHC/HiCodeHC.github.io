@@ -3,19 +3,19 @@ plugins {
 }
 
 android {
-    namespace 'com.hicode.android'
+    namespace 'com.simplelang.android'
     compileSdk 34
 
     defaultConfig {
         // 由命令行 -PappId / -PappLabel 注入，逐档打包
-        applicationId project.findProperty('appId') ?: 'com.hicode.android.x'
+        applicationId project.findProperty('appId') ?: 'com.simplelang.android.x'
         minSdk 24
         targetSdk 34
         versionCode 366
         versionName "3.66"
 
         manifestPlaceholders = [
-            appLabel: project.findProperty('appLabel') ?: 'HiCode'
+            appLabel: project.findProperty('appLabel') ?: 'Simple'
         ]
     }
 

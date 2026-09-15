@@ -2,7 +2,7 @@ const { app, BrowserWindow, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
-app.setName("HiCode");
+app.setName("Simple");
 let win = null;
 
 function createWindow() {
@@ -12,7 +12,7 @@ function createWindow() {
     minWidth: 860,
     minHeight: 600,
     autoHideMenuBar: true,
-    title: "HiCode",
+    title: "Simple",
     backgroundColor: "#171310",
     webPreferences: {
       contextIsolation: true,
@@ -25,7 +25,7 @@ function createWindow() {
   if (fs.existsSync(index)) {
     win.loadFile(index);
   } else {
-    win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent("<h1 style='font-family:sans-serif;color:#d9ae6b'>HiCode 未找到页面文件：index.html</h1>"));
+    win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent("<h1 style='font-family:sans-serif;color:#d9ae6b'>Simple 未找到页面文件：index.html</h1>"));
   }
 
   // 预览 iframe 打开外部链接时用系统浏览器，不嵌套

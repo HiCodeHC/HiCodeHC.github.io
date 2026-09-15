@@ -6,14 +6,14 @@ const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
-const ROOT = process.env.HICODE_SITE || "/workspace/hicodehc-site"; // 仓库根
+const ROOT = process.env.SIMPLE_SITE || "/workspace/hicodehc-site"; // 仓库根
 const OFF = path.join(ROOT, "download");            // 离线单文件目录
 const MAIN = path.resolve(__dirname, "electron", "main.js");
 const OUT = path.resolve(__dirname, "out");
 const EDITIONS = [
-  { key: "M", label: "M·轻量版", file: "HiCode-v3.66M-offline.html" },
-  { key: "R", label: "R·标准版", file: "HiCode-v3.66R-offline.html" },
-  { key: "X", label: "X·全能版", file: "HiCode-v3.66X-offline.html" }
+  { key: "M", label: "M·轻量版", file: "Simple-S1.00M-offline.html" },
+  { key: "R", label: "R·标准版", file: "Simple-S1.00R-offline.html" },
+  { key: "X", label: "X·全能版", file: "Simple-S1.00X-offline.html" }
 ];
 
 if (fs.existsSync(OUT)) fs.rmSync(OUT, { recursive: true, force: true });
@@ -36,7 +36,7 @@ function buildDir(ed) {
 // 一次安装依赖
 if (!fs.existsSync(path.join(sharedNM, "electron"))) {
   const basePkg = {
-    name: "hicode-desktop-build",
+    name: "simplelang-desktop-build",
     version: "3.66.0",
     private: true,
     devDependencies: {
@@ -54,15 +54,15 @@ for (const ed of EDITIONS) {
   try { fs.symlinkSync(sharedNM, path.join(dir, "node_modules"), "dir"); }
   catch (e) { /* 已存在忽略 */ }
   const pkg = {
-    name: "hicode-desktop-" + ed.key.toLowerCase(),
+    name: "simplelang-desktop-" + ed.key.toLowerCase(),
     version: "3.66.0",
-    description: "HiCode (HIC) 本地开发环境 " + ed.label,
+    description: "Simple (SIMPLE) 本地开发环境 " + ed.label,
     main: "main.js",
     author: "hicodehc",
     license: "MIT",
     build: {
-      appId: "com.hicode.desktop." + ed.key.toLowerCase(),
-      productName: "HiCode-v3.66" + ed.key,
+      appId: "com.simplelang.desktop." + ed.key.toLowerCase(),
+      productName: "Simple-S1.00" + ed.key,
       files: ["main.js", "index.html", "package.json"],
       directories: { output: path.join(OUT, "dist-" + ed.key) },
       win: {

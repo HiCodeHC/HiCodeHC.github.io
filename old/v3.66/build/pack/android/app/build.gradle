@@ -1,0 +1,34 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.hicode.android'
+    compileSdk 34
+
+    defaultConfig {
+        // 由命令行 -PappId / -PappLabel 注入，逐档打包
+        applicationId project.findProperty('appId') ?: 'com.hicode.android.x'
+        minSdk 24
+        targetSdk 34
+        versionCode 366
+        versionName "3.66"
+
+        manifestPlaceholders = [
+            appLabel: project.findProperty('appLabel') ?: 'HiCode'
+        ]
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    packagingOptions {
+        jniLibs { useLegacyPackaging = true }
+    }
+}

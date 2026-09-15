@@ -129,7 +129,7 @@
     if (typeof HC !== "undefined" && HC.setEdition) HC.setEdition(ed);
     try { window.HIC_EDITION = ed; } catch (e) {}
     const VT = document.getElementById("verTag");
-    if (VT) VT.textContent = "v3.66 · " + ED_NAME[ed];
+    if (VT) VT.textContent = "H1.00 · " + ED_NAME[ed];
     if (el.edSwitch) Array.prototype.forEach.call(el.edSwitch.querySelectorAll(".ed-btn"), function (b) {
       b.classList.toggle("on", b.getAttribute("data-ed") === ed);
     });

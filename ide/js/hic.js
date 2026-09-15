@@ -11,12 +11,12 @@
 })(typeof self !== 'undefined' ? self : null, function () {
   "use strict";
 
-  const APP = { version: "v3.66", name: "HiCode", lang: "HIC" };
+  const APP = { version: "H1.00", name: "HiCode", lang: "HIC" };
   // 当前发布形态：r=标准(+py) / m=轻量(仅hic) / x=全能(+py+cpp)。
   // 导出的 HTML 会在 head 写入 window.HIC_EDITION，由内建编译器宿主据此决定编译哪些语言。
   let EDITION = "x"; // 源码/网页在线版默认全能(X)；离线单文件按 R/M/X 各自注入。可用 HC.setEdition() 覆盖。
   function setEdition(e) { EDITION = String(e || "").toLowerCase()[0] === "r" ? "r" : String(e || "").toLowerCase()[0] === "m" ? "m" : "x"; }
-  // v3.66 三版发布：R(标准,+py) / M(轻量,仅hic) / X(全能,+py+cpp)。
+  // H1.00 三版发布：R(标准,+py) / M(轻量,仅hic) / X(全能,+py+cpp)。
   // 引擎统一解析全部语言块，具体版本决定「哪些语言可被 HIC 编译进 HTML」以及打包形态。
   // 块语法：html:(…)end（原样 HTML）、py:(…)end（HIC 编译 Python→HTML）、cpp:(…)end（HIC 编译 C++→HTML）
   const BLOCK_LANG = { html: "html", py: "py", py3: "py", cpp: "cpp", cxx: "cpp" };

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="HiCode (HC) —— 前后端一体化、多端可开发的解释型编程语言，让小白也能轻松上手。" />
-<title>HiCode · 人人都能开发的编程语言</title>
+<meta name="description" content="HiCode (HC) —— 前后端一体化、多端可开发的解释型编程语言。图形化搭前端、简易代码写后端，零基础也能上手。" />
+<title>HiCode · H1.00 · 人人都能开发的编程语言</title>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png" />
 <link rel="icon" href="/assets/favicon-16.png" sizes="16x16" type="image/png" />
@@ -15,19 +15,20 @@
     --surface: rgba(255, 255, 255, .035);
     --surface-strong: rgba(255, 255, 255, .06);
     --line: rgba(255, 255, 255, .08);
-    --line-strong: rgba(255, 255, 255, .16);
+    --line-strong: rgba(255, 255, 255, .18);
     --text: #f5f5f7;
     --muted: #a1a1a6;
     --dim: #6e6e73;
     --accent: #c7a56b;
     --accent-ink: #171309;
+    --accent-soft: rgba(199, 165, 107, .14);
+    --good: #7ec99b;
     --radius: 14px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     background: var(--bg);
-    background-image: radial-gradient(80% 50% at 50% 0%, rgba(255, 255, 255, .05), transparent 60%);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
     line-height: 1.8;
@@ -37,139 +38,228 @@
   a { color: inherit; text-decoration: none; }
   ::selection { background: rgba(199, 165, 107, .28); }
 
-  .container { width: min(1000px, 90%); margin: 0 auto; }
+  /* ===== 背景光 ===== */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(60% 40% at 50% 0%, rgba(199, 165, 107, .12), transparent 60%),
+      radial-gradient(40% 30% at 85% 20%, rgba(120, 90, 50, .08), transparent 50%),
+      radial-gradient(50% 30% at 10% 80%, rgba(199, 165, 107, .06), transparent 55%);
+    transform-origin: center top;
+    will-change: transform;
+  }
+  .container { width: min(1040px, 90%); margin: 0 auto; position: relative; z-index: 1; }
 
+  /* ===== 导航 ===== */
+  header { position: sticky; top: 0; z-index: 30; padding: 14px 0;
+    background: rgba(10, 10, 12, .62);
+    -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid var(--line);
+    transition: background .3s; }
+  header.scrolled { background: rgba(10, 10, 12, .85); }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 6px 0; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; letter-spacing: .5px; color: var(--text); }
+  .brand img { width: 34px; height: 34px; border-radius: 9px; object-fit: cover; }
+  .brand .ver { font-size: 11.5px; font-weight: 700; letter-spacing: 1px; color: var(--accent);
+    background: var(--accent-soft); padding: 3px 9px; border-radius: 6px; margin-left: 4px; }
+  .nav-links { display: flex; gap: 28px; color: var(--muted); font-size: 14px; position: relative; }
+  .nav-links a { transition: color .2s; position: relative; padding: 4px 0; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active { color: var(--text); }
+  .nav-links a.active::after {
+    content: ""; position: absolute; bottom: -4px; left: 0; right: 0; height: 1.5px;
+    background: var(--accent); border-radius: 2px;
+  }
+  .nav-cta { padding: 9px 22px; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
+    font-size: 14px; font-weight: 600; transition: opacity .2s, transform .2s; }
+  .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
+
+  /* ===== Hero ===== */
+  .hero { padding: 130px 0 140px; position: relative; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 60px; align-items: center; }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .hero .badge { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13.5px;
+    padding: 6px 15px; border: 1px solid var(--line); border-radius: 999px; }
+  .hero .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(1.4); } }
+  .hero h1 { margin: 26px 0 0; max-width: 620px; font-size: clamp(42px, 6.4vw, 80px); line-height: 1.08;
+    font-weight: 800; letter-spacing: -.5px; }
+  .hero h1 .accent { color: var(--accent); }
+  .hero h1 .line { display: block; }
+  .hero .sub { margin-top: 26px; max-width: 520px; color: var(--muted); font-size: 16px; line-height: 1.85; }
+  .hero .sub b { color: var(--text); font-weight: 600; }
+  .hero .ctas { margin-top: 38px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn { padding: 13px 30px; border-radius: 999px; font-size: 14.5px; font-weight: 600; transition: opacity .2s, transform .2s, border-color .2s; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); }
+  .btn.primary:hover { opacity: .9; transform: translateY(-1px); }
+  .btn.secondary { border: 1px solid var(--line-strong); color: var(--text); }
+  .btn.secondary:hover { border-color: rgba(255, 255, 255, .34); }
+
+  /* Hero 代码墙 */
+  .code-wall {
+    background: rgba(0, 0, 0, .4);
+    border: 1px solid var(--line-strong);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .05);
+    transform: perspective(1000px) rotateY(-3deg) rotateX(2deg);
+    transition: transform .4s cubic-bezier(.22,.68,.28,1), box-shadow .4s;
+    will-change: transform;
+  }
+  .code-wall:hover {
+    box-shadow: 0 40px 90px rgba(0, 0, 0, .55), 0 0 60px rgba(199, 165, 107, .08), inset 0 1px 0 rgba(255, 255, 255, .06);
+  }
+  .code-head { display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+    background: rgba(255, 255, 255, .03); border-bottom: 1px solid var(--line); }
+  .code-head .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .code-head .dot.r { background: #ff5f57; }
+  .code-head .dot.y { background: #febc2e; }
+  .code-head .dot.g { background: #28c840; }
+  .code-head .title { color: var(--dim); font-size: 12.5px; margin-left: 8px; font-family: "Cascadia Code", Consolas, monospace; }
+  .code-body { padding: 22px 20px 24px; font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 13px; line-height: 1.85; color: #d9d4c8; overflow-x: auto; }
+  .code-body .ln { color: var(--dim); display: inline-block; width: 28px; text-align: right; margin-right: 14px; user-select: none; }
+  .kw { color: #c7a56b; }        /* keyword */
+  .fn { color: #7ec99b; }        /* function */
+  .str { color: #e8b87c; }       /* string */
+  .cm { color: var(--dim); font-style: italic; } /* comment */
+  .var { color: #9ec6e8; }       /* variable */
+  .num { color: #d99a8e; }       /* number */
+  .type { color: #b6a3d9; }      /* type */
+
+  /* 统计条 */
+  .stats { margin-top: 48px; display: flex; gap: 28px; flex-wrap: wrap; }
+  .stat { display: flex; align-items: baseline; gap: 8px; }
+  .stat .n { font-size: 28px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 13px; color: var(--muted); letter-spacing: .5px; }
+
+  /* ===== 板块通用 ===== */
+  section { padding: 110px 0; position: relative; }
+  section + section { border-top: 1px solid var(--line); }
+  .sec-head { margin-bottom: 56px; max-width: 640px; }
+  .sec-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+  .sec-head .eyebrow { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
+  .sec-head h2 { margin: 12px 0 10px; font-size: clamp(26px, 3.4vw, 40px); font-weight: 800; letter-spacing: -.3px; }
+  .sec-head p { color: var(--muted); font-size: 15.5px; line-height: 1.85; }
+
+  /* 卡片 */
   .glass {
     position: relative;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 12px 32px rgba(0, 0, 0, .28);
-    color: var(--text);
-    transition: border-color .25s, transform .25s;
+    transition: border-color .3s, transform .3s, background .3s;
   }
+  .glass:hover { border-color: var(--line-strong); background: var(--surface-strong); }
 
-  /* ===== 导航 ===== */
-  header { position: sticky; top: 0; z-index: 30; padding: 14px 0;
-    background: rgba(10, 10, 12, .72);
-    -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid var(--line); }
-  .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 6px 0; }
-  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; letter-spacing: .5px; color: var(--text); }
-  .brand img { width: 34px; height: 34px; border-radius: 9px; object-fit: cover; }
-  .nav-links { display: flex; gap: 32px; color: var(--muted); font-size: 14.5px; }
-  .nav-links a { transition: color .2s; }
-  .nav-links a:hover { color: var(--text); }
-  .nav-cta { padding: 9px 22px; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
-    font-size: 14px; font-weight: 600; transition: opacity .2s, transform .2s; }
-  .nav-cta:hover { opacity: .88; }
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 860px) { .features { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .features { grid-template-columns: 1fr; } }
+  .feat { padding: 32px 28px; }
+  .feat .ico { font-size: 28px; margin-bottom: 14px; }
+  .feat h3 { font-size: 17.5px; margin-bottom: 6px; font-weight: 700; }
+  .feat p { color: var(--muted); font-size: 14px; line-height: 1.75; }
+  .feat code { background: var(--accent-soft); color: var(--accent); padding: 1px 7px; border-radius: 5px; font-size: .85em; font-family: "Cascadia Code", Consolas, monospace; }
 
-  /* ===== Hero ===== */
-  .hero { padding: 150px 0 170px; }
-  .hero .badge { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px;
-    padding: 7px 16px; border: 1px solid var(--line); border-radius: 999px; }
-  .hero .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-  .hero h1 { margin: 28px 0 0; max-width: 760px; font-size: clamp(40px, 6vw, 76px); line-height: 1.12;
-    font-weight: 800; letter-spacing: .5px; }
-  .hero h1 .accent { color: var(--accent); }
-  .hero .sub { margin-top: 28px; max-width: 580px; color: var(--muted); font-size: 17px; }
-  .hero .sub b { color: var(--text); font-weight: 600; }
-  .hero .ctas { margin-top: 44px; display: flex; gap: 16px; flex-wrap: wrap; }
-  .btn { padding: 14px 34px; border-radius: 999px; font-size: 15px; font-weight: 600; transition: opacity .2s, transform .2s, border-color .2s; }
-  .btn.primary { background: var(--accent); color: var(--accent-ink); }
-  .btn.primary:hover { opacity: .9; transform: translateY(-1px); }
-  .btn.secondary { border: 1px solid var(--line-strong); color: var(--text); }
-  .btn.secondary:hover { border-color: rgba(255, 255, 255, .34); }
-  .hero .hint { margin-top: 40px; font-size: 13px; color: var(--dim); }
-  .hero .hint a { color: var(--muted); border-bottom: 1px dashed currentColor; }
-  .hero .hint a:hover { color: var(--text); }
+  /* 代码预览区 */
+  .showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  @media (max-width: 860px) { .showcase { grid-template-columns: 1fr; } }
+  .showcase-card { padding: 36px 30px; }
+  .showcase-card .tag { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .showcase-card h3 { margin: 10px 0 8px; font-size: 20px; font-weight: 700; }
+  .showcase-card > p { color: var(--muted); font-size: 14.5px; line-height: 1.8; margin-bottom: 18px; }
+  .mini-code {
+    background: rgba(0, 0, 0, .38); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px; font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 12.5px; line-height: 1.8; color: #d9d4c8; overflow-x: auto;
+  }
+  .mini-code .ln { color: var(--dim); display: inline-block; width: 22px; text-align: right; margin-right: 10px; user-select: none; }
 
-  /* ===== 板块 ===== */
-  section { padding: 120px 0; }
-  section + section { border-top: 1px solid var(--line); }
-  .sec-head { margin-bottom: 64px; max-width: 640px; }
-  .sec-head.center { margin-left: auto; margin-right: auto; text-align: center; }
-  .sec-head .eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); }
-  .sec-head h2 { margin: 14px 0 12px; font-size: clamp(26px, 3.4vw, 38px); font-weight: 800; letter-spacing: .5px; }
-  .sec-head p { color: var(--muted); font-size: 16px; }
+  /* 人群 */
+  .people { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 860px) { .people { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .people { grid-template-columns: 1fr; } }
+  .person { padding: 26px 24px; }
+  .person .em { font-size: 26px; margin-bottom: 12px; }
+  .person h3 { font-size: 16px; margin: 10px 0 6px; font-weight: 700; }
+  .person p { color: var(--muted); font-size: 13.5px; line-height: 1.7; }
 
-  /* 特点 / 技术 / 人群卡片 */
-  .features, .tech { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; }
-  .people { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
-  .feat, .tech-item, .person { transition: border-color .25s, transform .25s; }
-  .feat:hover, .tech-item:hover, .person:hover { border-color: var(--line-strong); transform: translateY(-3px); }
-  .feat { padding: 32px 30px; }
-  .feat .ico, .tech-item .ico, .person .em { font-size: 26px; margin-bottom: 18px; }
-  .feat h3 { font-size: 19px; margin-bottom: 8px; font-weight: 700; }
-  .feat p, .person p, .tech-item p { color: var(--muted); font-size: 14.5px; }
-  .person { padding: 30px 28px; }
-  .person h3 { font-size: 18px; margin: 14px 0 8px; font-weight: 700; }
-  .tech-item { padding: 32px 30px; }
-  .tech-item h3 { font-size: 18px; margin-bottom: 8px; font-weight: 700; }
-  .tech-item .tag { font-size: 12px; color: var(--dim); margin-bottom: 14px; display: block; width: fit-content;
-    border: 1px solid var(--line); border-radius: 999px; padding: 2px 12px; text-transform: uppercase; letter-spacing: 1px; }
+  /* 路线图 */
+  .roadmap { max-width: 680px; margin: 0 auto; }
+  .phase { display: grid; grid-template-columns: 60px 1fr; gap: 22px; padding: 14px 0 36px; border-top: 1px solid var(--line); }
+  .phase:first-of-type { border-top: none; }
+  .phase .node { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 15px; font-weight: 800; flex-shrink: 0; }
+  .phase.now .node { background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 30px rgba(199, 165, 107, .35); }
+  .phase.done .node { background: rgba(126, 201, 155, .18); color: var(--good); }
+  .phase.todo .node { background: var(--surface); color: var(--dim); border: 1px dashed var(--line-strong); }
+  .phase .step-tag { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .phase h3 { font-size: 18px; font-weight: 700; margin: 4px 0 4px; }
+  .phase p { color: var(--muted); font-size: 14.5px; line-height: 1.75; }
+  .phase.now::after { content: "当前阶段"; font-size: 11px; color: var(--accent); letter-spacing: 1.5px;
+    border: 1px solid var(--accent); padding: 2px 10px; border-radius: 999px; margin-left: 10px; vertical-align: middle; }
 
-  .quote { max-width: 640px; margin: 90px auto 0; text-align: center; }
-  .quote p { font-size: clamp(20px, 2.6vw, 26px); font-weight: 600; line-height: 1.7; color: var(--text); }
-  .quote .who { margin-top: 18px; color: var(--dim); font-size: 14px; }
-
-  /* ===== 路线图 ===== */
-  .roadmap { max-width: 640px; margin: 0 auto; padding-left: 20px; border-left: 1px solid var(--line); }
-  .phase { display: flex; gap: 26px; padding: 8px 0 52px; }
-  .phase:last-child { padding-bottom: 0; }
-  .phase .node { flex: 0 0 52px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent);
-    color: var(--accent-ink); display: grid; place-items: center; font-size: 16px; font-weight: 700; }
-  .phase h3 { font-size: 20px; font-weight: 700; margin: 2px 0 6px; }
-  .phase .step-tag { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
-  .phase p { color: var(--muted); font-size: 15px; }
-
-  /* ===== 常见问题 ===== */
-  .faq-list { max-width: 680px; margin: 0 auto; display: grid; gap: 14px; }
+  /* FAQ */
+  .faq-list { max-width: 700px; margin: 0 auto; display: grid; gap: 12px; }
+  details.faq { padding: 0 26px; }
   details.faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center;
-    gap: 16px; padding: 22px 28px; font-size: 16px; font-weight: 600; }
+    gap: 16px; padding: 20px 0; font-size: 15.5px; font-weight: 600; }
   details.faq summary::-webkit-details-marker { display: none; }
-  details.faq[open] { border-color: var(--line-strong); }
-  details.faq summary .pl { color: var(--accent); font-size: 20px; font-weight: 400; }
-  details.faq .a { padding: 0 28px 24px; color: var(--muted); font-size: 15px; }
+  details.faq[open] summary { border-bottom: 1px solid var(--line); }
+  details.faq summary .pl { color: var(--accent); font-size: 20px; font-weight: 400; transition: transform .3s; }
+  details.faq[open] summary .pl { transform: rotate(45deg); }
+  details.faq .a { padding: 0; color: var(--muted); font-size: 14.5px; line-height: 1.85;
+    display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s ease; }
+  details.faq[open] .a { padding: 18px 0 22px; grid-template-rows: 1fr; }
+  details.faq .a * { overflow: hidden; }
+  details.faq .a code { background: var(--accent-soft); color: var(--accent); padding: 1px 7px; border-radius: 5px; font-family: "Cascadia Code", Consolas, monospace; }
 
-  /* ===== 页脚 ===== */
-  footer { padding: 110px 0 50px; border-top: 1px solid var(--line); }
+  /* CTA 结尾条 */
+  .end-cta { padding: 100px 0 60px; text-align: center; }
+  .end-cta h2 { font-size: clamp(24px, 3vw, 34px); font-weight: 800; margin-bottom: 14px; }
+  .end-cta p { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
+
+  /* 页脚 */
+  footer { padding: 80px 0 46px; border-top: 1px solid var(--line); }
   .foot { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.3fr; gap: 40px; }
   @media (max-width: 860px) { .foot { grid-template-columns: 1fr 1fr; } }
-  .foot h4 { font-size: 14px; margin-bottom: 18px; color: var(--text); }
+  .foot h4 { font-size: 13px; margin-bottom: 14px; color: var(--text); letter-spacing: .5px; }
   .foot ul { list-style: none; }
-  .foot li, .foot p { color: var(--muted); font-size: 14px; margin-bottom: 10px; }
+  .foot li, .foot p { color: var(--muted); font-size: 13.5px; margin-bottom: 8px; }
   .foot a:hover { color: var(--text); }
   .foot .email { color: var(--accent); }
-  .disclaim { margin-top: 64px; padding: 28px 0 0; border-top: 1px solid var(--line);
-    color: var(--dim); font-size: 12.5px; line-height: 2; }
+  .disclaim { margin-top: 50px; padding-top: 24px; border-top: 1px solid var(--line);
+    color: var(--dim); font-size: 12px; line-height: 2; }
   .disclaim b { color: var(--muted); }
 
   /* ===== 渐显 ===== */
-  [data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity 1s cubic-bezier(.22,.68,.28,1), transform 1s cubic-bezier(.22,.68,.28,1); }
+  [data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .9s cubic-bezier(.22,.68,.28,1), transform .9s cubic-bezier(.22,.68,.28,1); }
   [data-reveal].is-visible { opacity: 1; transform: none; }
-  .stagger-box > * { opacity: 0; transform: translateY(26px); transition: opacity .9s cubic-bezier(.22,.68,.28,1), transform .9s cubic-bezier(.22,.68,.28,1); }
+  [data-reveal-slow] { opacity: 0; transform: translateY(28px); transition: opacity 1.2s cubic-bezier(.22,.68,.28,1), transform 1.2s cubic-bezier(.22,.68,.28,1); }
+  [data-reveal-slow].is-visible { opacity: 1; transform: none; }
+  .stagger-box > * { opacity: 0; transform: translateY(26px); transition: opacity .8s cubic-bezier(.22,.68,.28,1), transform .8s cubic-bezier(.22,.68,.28,1); }
   .stagger-box > *.is-visible { opacity: 1; transform: none; }
 
   @media (max-width: 820px) {
     .nav-links { display: none; }
-    .hero { padding: 90px 0 110px; }
-    section { padding: 80px 0; }
+    .hero { padding: 90px 0 100px; }
+    section { padding: 70px 0; }
   }
 </style>
 </head>
 <body>
-<header>
+
+<header id="topbar">
   <div class="container nav">
-    <div class="brand"><img src="assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span></div>
-    <nav class="nav-links">
-      <a href="#features">产品特点</a>
-      <a href="#people">适用人群</a>
-      <a href="#tech">技术预览</a>
-      <a href="#roadmap">路线图</a>
-      <a href="#faq">常见问题</a>
-      <a href="learn/">学习中心</a>
-      <a href="disclaimer.html">免责声明</a>
+    <div class="brand"><img src="/assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span><span class="ver">H1.00</span></div>
+    <nav class="nav-links" id="navLinks">
+      <a href="#features" data-scroll>特点</a>
+      <a href="#showcase" data-scroll>代码预览</a>
+      <a href="#people" data-scroll>人群</a>
+      <a href="#roadmap" data-scroll>路线图</a>
+      <a href="#faq" data-scroll>常见问题</a>
+      <a href="learn/">学习</a>
+      <a href="disclaimer.html">免责</a>
     </nav>
     <a class="nav-cta" href="download/">下载</a>
   </div>
@@ -178,23 +268,59 @@
 <main>
   <!-- ===== Hero ===== -->
   <section class="hero">
-    <div class="container">
-      <div class="badge" data-reveal><span class="dot"></span> HiCode · 前后端一体化编程语言</div>
-      <h1 data-reveal>打造属于每个人的<br /><span class="accent">一站式编程语言</span></h1>
-      <p class="sub" data-reveal>
-        HiCode（简称 HC）让前端与后端在同一套语言中协同开发。用图形界面搭建前端，用接近自然的简易代码编写后端。
-        告别复杂的工程配置，<b>小白也能轻松上手</b>，把想法变成真正的应用。
-      </p>
-      <div class="ctas" data-reveal>
-        <a class="btn primary" href="download/">下载 HiCode</a>
-        <a class="btn secondary" href="ide/">网页端体验</a>
-        <a class="btn secondary" href="learn/">学习中心</a>
-        <a class="btn secondary github" href="https://github.com/HiCodeHC/HiCodeHC.github.io" target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-          GitHub 开源
-        </a>
+    <div class="container hero-grid">
+      <div>
+        <div class="badge" data-reveal><span class="dot"></span> H1.00 · 三档发布 · Python / C++ 编译为 HTML</div>
+        <h1 data-reveal>让创造应用的能力<br /><span class="accent">回归每个人</span></h1>
+        <p class="sub" data-reveal>
+          HiCode 是一套<b>前后端一体化</b>的解释型语言。用图形界面搭前端、用简易代码写后端，
+          <b>小白也能从第一行代码跑到第一个应用</b>。网页 / 安卓 / Windows 三端任选。
+        </p>
+        <div class="ctas" data-reveal>
+          <a class="btn primary" href="download/">下载 HiCode</a>
+          <a class="btn secondary" href="ide/?edition=x">⚡ 网页端体验</a>
+          <a class="btn secondary" href="learn/">📖 学习中心</a>
+          <a class="btn secondary" href="https://github.com/HiCodeHC/HiCodeHC.github.io" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            GitHub
+          </a>
+        </div>
+        <div class="stats" data-reveal>
+          <div class="stat"><span class="n">H1.00</span><span class="l">当前版本</span></div>
+          <div class="stat"><span class="n">M / R / X</span><span class="l">三档能力</span></div>
+          <div class="stat"><span class="n" data-count="3">0</span><span class="l">平台（网页 · 安卓 · Windows）</span></div>
+        </div>
       </div>
-      <div class="hint" data-reveal>网页端 v3.66 已开放（M 轻量 / R 标准 / X 全能三版 · 编译 Python / C++ 为 HTML · 原生 HTML 块 · 图形化前端开发 · 触发区域 · URL图片 · 文件下载）· 学习中心已同步 · 安卓 / 电脑 / 网页三端可选 · <a href="https://github.com/HiCodeHC/HiCodeHC.github.io" target="_blank" rel="noopener">项目开源 · GitHub 仓库</a> · <a href="old/">历史版本</a></div>
+
+      <!-- 代码墙 -->
+      <div class="code-wall" data-reveal-slow>
+        <div class="code-head">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="title">hello.hc — HiCode H1.00</span>
+        </div>
+        <div class="code-body" id="heroCode">
+<span class="ln">1</span><span class="cm">// HiCode 的第一行代码</span><br/>
+<span class="ln">2</span><span class="kw">var</span> <span class="var">title</span> = <span class="str">"你好，世界"</span><br/>
+<span class="ln">3</span><span class="kw">var</span> <span class="var">msg</span> = <span class="str">"点击我试一下"</span><br/>
+<span class="ln">4</span><br/>
+<span class="ln">5</span><span class="cm">// 前端：图形化定位</span><br/>
+<span class="ln">6</span><span class="fn">place</span> <span class="var">title</span> <span class="fn">at</span> (<span class="num">50%</span>, <span class="num">30%</span>)<br/>
+<span class="ln">7</span><span class="fn">place</span> <span class="var">msg</span> <span class="fn">at</span> (<span class="num">50%</span>, <span class="num">50%</span>)<br/>
+<span class="ln">8</span><br/>
+<span class="ln">9</span><span class="cm">// 后端：事件驱动</span><br/>
+<span class="ln">10</span><span class="fn">cf</span> <span class="var">msg</span><br/>
+<span class="ln">11</span>&nbsp;&nbsp;<span class="kw">let</span> <span class="var">count</span> <span class="kw">be</span> <span class="num">0</span><br/>
+<span class="ln">12</span>&nbsp;&nbsp;<span class="var">count</span> <span class="kw">add</span> <span class="num">1</span><br/>
+<span class="ln">13</span>&nbsp;&nbsp;<span class="fn">say</span> <span class="str">"你已经点击了 "</span> + <span class="var">count</span> + <span class="str">" 次"</span><br/>
+<span class="ln">14</span><span class="fn">stop</span><br/>
+<span class="ln">15</span><br/>
+<span class="ln">16</span><span class="cm">// X 版：把 Python 编译为 HTML</span><br/>
+<span class="ln">17</span><span class="kw">py:</span><br/>
+<span class="ln">18</span>&nbsp;&nbsp;<span class="kw">def</span> <span class="fn">fib</span>(<span class="var">n</span>):<br/>
+<span class="ln">19</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="var">n</span> <span class="kw">if</span> <span class="var">n</span> <span class="kw">&lt;=</span> <span class="num">1</span> <span class="kw">else</span> <span class="var">fib</span>(<span class="var">n</span><span class="kw">-</span><span class="num">1</span>) <span class="kw">+</span> <span class="var">fib</span>(<span class="var">n</span><span class="kw">-</span><span class="num">2</span>)<br/>
+<span class="ln">20</span><span class="kw">end</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -203,16 +329,41 @@
     <div class="container">
       <div class="sec-head" data-reveal>
         <div class="eyebrow">Core Features</div>
-        <h2>产品特点</h2>
-        <p>让编程回归简单 —— 前后端一起写，跨端一起跑。</p>
+        <h2>一套语言，贯通前后端</h2>
+        <p>HiCode 的核心设计：<b>少即是多</b>——用最简单的语法，覆盖最完整的开发链路。</p>
       </div>
       <div class="features stagger-box">
-        <div class="feat glass"><div class="ico">🧩</div><h3>前后端同时开发</h3><p>一套语言打通前后端，数据交换与逻辑复用不再繁琐，开发节奏大幅提速。</p></div>
-        <div class="feat glass"><div class="ico">🎨</div><h3>图形化界面建前端</h3><p>拖拽、点选即可搭建前端界面，所见即所得，摆脱手写样式的门槛。</p></div>
-        <div class="feat glass"><div class="ico">💬</div><h3>简易语言写后端</h3><p>使用接近自然语言的简易代码描述业务逻辑，小白也能读懂并写出后端。</p></div>
-        <div class="feat glass"><div class="ico">📱</div><h3>多平台可开发</h3><p>支持网页、安卓与 Windows 平台，一次编写，多端运行。</p></div>
-        <div class="feat glass"><div class="ico">🧭</div><h3>零基础易上手</h3><p>为新手量身设计，无需复杂环境配置，从第一行代码到第一个应用快速起步。</p></div>
-        <div class="feat glass"><div class="ico">🚀</div><h3>解释型语言</h3><p>即时运行、即时反馈，让学习与调试真正变得轻松而顺畅。</p></div>
+        <div class="feat glass"><div class="ico">🧩</div><h3>前后端同时开发</h3><p>同一套 HIC 语法写界面与逻辑，数据天然互通，不再来回切换语言与框架。</p></div>
+        <div class="feat glass"><div class="ico">🎨</div><h3>图形化搭前端</h3><p><code>place 名 at (x, y)</code> 声明式定位 + 界面元素配置，所见即所得。</p></div>
+        <div class="feat glass"><div class="ico">💬</div><h3>简易语法写后端</h3><p><code>cf 名 … stop</code> 事件块、<code>let … be</code> 赋值、<code>say</code> 输出——自然语言般的逻辑。</p></div>
+        <div class="feat glass"><div class="ico">🔧</div><h3>编译 Python / C++</h3><p>R / X 版支持 <code>py:( … )end</code>、<code>cpp:( … )end</code>，把它们编译为 HTML，零外部依赖。</p></div>
+        <div class="feat glass"><div class="ico">📱</div><h3>一次编写 · 三端运行</h3><p>网页端在线体验、Windows 便携 .exe、Android .apk——同一个离线单文件内核。</p></div>
+        <div class="feat glass"><div class="ico">⚡</div><h3>解释型 · 即时反馈</h3><p>写一行跑一行，预览随改随更，不用重启、不用重新编译整个项目。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 代码预览 ===== -->
+  <section id="showcase">
+    <div class="container">
+      <div class="sec-head" data-reveal>
+        <div class="eyebrow">Live Syntax</div>
+        <h2>感受一下 HIC 的语法</h2>
+        <p>左边是图形化前端定位，右边是事件驱动的后端逻辑——它们在同一个文件里。</p>
+      </div>
+      <div class="showcase">
+        <div class="showcase-card glass" data-reveal>
+          <span class="tag">Frontend</span>
+          <h3>声明式定位</h3>
+          <p>用 <code>place</code> 把变量放到屏幕上，图形化编辑器也能直接拖拽。</p>
+          <div class="mini-code"><span class="ln">1</span><span class="kw">var</span> <span class="var">name</span> = <span class="str">"HiCode"</span><br/><span class="ln">2</span><span class="kw">var</span> <span class="var">logo</span> = <span class="str">"logo.png"</span><br/><span class="ln">3</span><br/><span class="ln">4</span><span class="fn">place</span> <span class="var">logo</span> <span class="fn">at</span> (<span class="num">10%</span>, <span class="num">20%</span>)<br/><span class="ln">5</span><span class="fn">place</span> <span class="var">name</span> <span class="fn">at</span> (<span class="num">50%</span>, <span class="num">20%</span>)</div>
+        </div>
+        <div class="showcase-card glass" data-reveal>
+          <span class="tag">Backend</span>
+          <h3>事件驱动逻辑</h3>
+          <p>用 <code>cf</code> 声明触发区域——点击、长按，执行其中的代码块。</p>
+          <div class="mini-code"><span class="ln">1</span><span class="kw">var</span> <span class="var">clicks</span> = <span class="num">0</span><br/><span class="ln">2</span><span class="kw">var</span> <span class="var">btn</span> = <span class="str">"点我"</span><br/><span class="ln">3</span><span class="fn">place</span> <span class="var">btn</span> <span class="fn">at</span> (<span class="num">50%</span>, <span class="num">60%</span>)<br/><span class="ln">4</span><br/><span class="ln">5</span><span class="fn">cf</span> <span class="var">btn</span><br/><span class="ln">6</span>&nbsp;&nbsp;<span class="var">clicks</span> <span class="kw">add</span> <span class="num">1</span><br/><span class="ln">7</span>&nbsp;&nbsp;<span class="fn">say</span> <span class="str">"已点击 "</span> + <span class="var">clicks</span><br/><span class="ln">8</span><span class="fn">stop</span></div>
+        </div>
       </div>
     </div>
   </section>
@@ -223,34 +374,13 @@
       <div class="sec-head center" data-reveal>
         <div class="eyebrow">Who It's For</div>
         <h2>HiCode 适合谁</h2>
-        <p>无论你是编程新人，还是资深开发者，都能从 HiCode 中受益。</p>
+        <p>无论你是编程新人还是资深开发者，都能找到属于你的使用方式。</p>
       </div>
       <div class="people stagger-box">
-        <div class="person glass"><div class="em">🎓</div><h3>编程小白 / 学生</h3><p>零基础也能靠图形界面 + 简易代码起步，把课堂所学落到真实项目。</p></div>
-        <div class="person glass"><div class="em">💼</div><h3>职场人 / 业务人员</h3><p>不懂技术也想提效？用 HiCode 快速搭建内部工具与原型，解决手头难题。</p></div>
-        <div class="person glass"><div class="em">👥</div><h3>小团队 / 独立开发者</h3><p>前端后端一人搞定，降低协作成本，更快验证想法、迭代产品。</p></div>
-        <div class="person glass"><div class="em">🧑‍💻</div><h3>资深开发者</h3><p>了解、参与一款新语言的建造成长，贡献开源，共建新一代开发方式。</p></div>
-      </div>
-      <div class="quote" data-reveal>
-        <p>“让创造应用的能力，不再只属于少数掌握复杂技术的人。”</p>
-        <div class="who">—— HiCode 团队的初心</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 技术预览 ===== -->
-  <section id="tech">
-    <div class="container">
-      <div class="sec-head" data-reveal>
-        <div class="eyebrow">Technical Preview</div>
-        <h2>技术预览（规划中）</h2>
-        <p>以下是 HiCode 正在规划的核心技术方向，具体以最终发布为准。</p>
-      </div>
-      <div class="tech stagger-box">
-        <div class="tech-item glass"><span class="tag">规划中</span><div class="ico">🖱️</div><h3>图形化前端设计器</h3><p>拖拽组件、点选配置生成前端界面与布局，所见即所得。</p></div>
-        <div class="tech-item glass"><span class="tag">规划中</span><div class="ico">⚙️</div><h3>解释型后端运行时</h3><p>面向业务逻辑的简易语法，即时解释执行，快速反馈与迭代。</p></div>
-        <div class="tech-item glass"><span class="tag">规划中</span><div class="ico">🔩</div><h3>统一前后端数据桥</h3><p>用同一套语言与数据模型连接界面与逻辑，数据交换更顺畅。</p></div>
-        <div class="tech-item glass"><span class="tag">规划中</span><div class="ico">🧱</div><h3>多端运行时</h3><p>面向网页、安卓（WebView）与 Windows 的运行与打包方案。</p></div>
+        <div class="person glass"><div class="em">🎓</div><h3>编程小白 / 学生</h3><p>零基础也能靠图形 + 简易代码起步，把课堂所学落到真实项目。</p></div>
+        <div class="person glass"><div class="em">💼</div><h3>职场人 / 业务</h3><p>不懂技术也想提效？快速搭建内部工具与原型，解决手头难题。</p></div>
+        <div class="person glass"><div class="em">👥</div><h3>独立开发者</h3><p>前端后端一人搞定，降低协作成本，更快验证想法、迭代产品。</p></div>
+        <div class="person glass"><div class="em">🧑‍💻</div><h3>资深开发者</h3><p>了解、参与一款新语言的建造成长，贡献开源，共建新开发方式。</p></div>
       </div>
     </div>
   </section>
@@ -260,103 +390,222 @@
     <div class="container">
       <div class="sec-head center" data-reveal>
         <div class="eyebrow">Roadmap</div>
-        <h2>开发路线图</h2>
-        <p>HiCode 将分阶段逐步推进，欢迎关注与参与。</p>
+        <h2>从 H1.00 到未来</h2>
+        <p>H1.00 是里程碑——语言核心、三档能力、三端打包全部就位。</p>
       </div>
       <div class="roadmap">
-        <div class="phase" data-reveal><div class="node">01</div><div><div class="step-tag">Phase 1 · Define</div><h3>语言与愿景</h3><p>确立产品理念、语言核心设计思路与图形化开发方向，搭建官网与社区。</p></div></div>
-        <div class="phase" data-reveal><div class="node">02</div><div><div class="step-tag">Phase 2 · Prototype</div><h3>核心原型</h3><p>实现图形化前端设计器与后端解释器的早期可运行原型，打通基础开发流程。</p></div></div>
-        <div class="phase" data-reveal><div class="node">03</div><div><div class="step-tag">Phase 3 · Multi-end</div><h3>多端适配</h3><p>完善网页端，并逐步支持安卓（WebView）与 Windows 平台。</p></div></div>
-        <div class="phase" data-reveal><div class="node">04</div><div><div class="step-tag">Phase 4 · Open Source</div><h3>对外开放与共建</h3><p>正式开放源代码、文档与学习中心，邀请社区共同参与迭代成长。</p></div></div>
+        <div class="phase done" data-reveal><div class="node">✓</div><div><div class="step-tag">Phase 1 · v0.x – v1.x</div><h3>语言定义与原型</h3><p>确立 HIC 语法与图形化方向，从玩具原型到可运行的解释器。</p></div></div>
+        <div class="phase done" data-reveal><div class="node">✓</div><div><div class="step-tag">Phase 2 · v2.00</div><h3>图形化前端 + 触发区域</h3><p><code>cf</code> 事件块、图片变量、文件下载——前端不再只是纯文本。</p></div></div>
+        <div class="phase done" data-reveal><div class="node">✓</div><div><div class="step-tag">Phase 3 · v3.01 – v3.66</div><h3>原生 HTML + 三档发布</h3><p><code>html:( … )end</code> 原样注入 HTML；Python / C++ 编译为 HTML；首次 .apk / .exe 打包。</p></div></div>
+        <div class="phase now" data-reveal><div class="node">H1</div><div><div class="step-tag">Phase 4 · H1.00 <span style="color:var(--accent);">Now</span></div><h3>架构重塑与开源共建</h3><p>版本号跃迁至 H1.00，官网艺术化重设计，发布规范固化，社区建设启动。</p></div></div>
+        <div class="phase todo" data-reveal><div class="node">H2</div><div><div class="step-tag">Phase 5 · Future</div><h3>LSP / 包管理器 / 更多</h3><p>语言服务器自动补全、包管理器、更丰富的标准库——欢迎社区贡献。</p></div></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== 常见问题 ===== -->
+  <!-- ===== FAQ ===== -->
   <section id="faq">
     <div class="container">
       <div class="sec-head center" data-reveal>
         <div class="eyebrow">FAQ</div>
         <h2>常见问题</h2>
-        <p>关于 HiCode 你可能有这些疑问。</p>
+        <p>关于 HiCode H1.00 你可能想知道的事。</p>
       </div>
       <div class="faq-list stagger-box">
-        <details class="faq glass"><summary>HiCode 现在可以下载使用吗？<span class="pl">+</span></summary><div class="a">网页端 v3.01 已开放，可直接在线编写 HIC 代码、实时转译为网页并导出。v3.01 新增<b>原生 HTML 块</b>（<code>html:( … )end</code>，括号内的 HTML 不参与编译、原样注入最终导出的 HTML，可嵌入任意网页元素）。此前 v2.00 已加入<b>图形化前端开发</b>：触发区域色块（<code>cf 名 … cf 名 stop</code>，点击或长按即触发执行该段代码）、图片变量直接填 URL、可下载文件变量（<code>it 名 app</code> + <code>名 in d</code>）、Python 标准库导入（<code>use</code>）。下载页提供<b>安卓端、电脑端与网页端</b>三种形态：安卓端（.apk）与电脑端（.exe）以「离线单文件版」为内核，断网也能编译。你也可前往 <a href="old/">历史版本</a> 查看此前的版本。</div></details>
-        <details class="faq glass"><summary>完全没有编程基础，真的能上手吗？<span class="pl">+</span></summary><div class="a">这正是 HiCode 的设计目标：用图形化界面创建前端、用接近自然的简易代码编写后端，尽量降低技术门槛，让小白也能迈出第一步。</div></details>
-        <details class="faq glass"><summary>HiCode 是免费使用的吗？是否开源？<span class="pl">+</span></summary><div class="a">是的，HiCode 以开源方式发布，遵循相应的开源许可协议。我们会坚持开放、可自由使用与二次开发的原则。</div></details>
-        <details class="faq glass"><summary>支持哪些开发平台？<span class="pl">+</span></summary><div class="a">我们规划支持网页、安卓（WebView）与 Windows 三大平台，一次编写、多端运行。具体支持程度以最终发布为准。</div></details>
-        <details class="faq glass"><summary>我可以如何参与 HiCode 的成长？<span class="pl">+</span></summary><div class="a">欢迎通过产品建议邮箱 hicodehc@outlook.com 提出想法与建议，后续开源后也可通过社区贡献代码、文档与案例。</div></details>
+        <details class="faq glass"><summary>HiCode H1.00 现在可以下载使用吗？<span class="pl">+</span></summary>
+          <div class="a">可以。H1.00 提供 <b>M 轻量</b> / <b>R 标准</b> / <b>X 全能</b> 三档，支持网页端在线体验、Windows 便携 .exe、Android .apk 三种形态。X 版可把 <code>py:( … )end</code>、<code>cpp:( … )end</code> 编译为 HTML，零外部依赖。下载页有全部入口。</div></details>
+        <details class="faq glass"><summary>完全没有编程基础，真的能上手吗？<span class="pl">+</span></summary>
+          <div class="a">这正是 HiCode 的设计目标：图形化界面创建前端、接近自然的简易代码编写后端。学习中心有分章节教程与可下载的练习文件，跟着走一遍就能写出第一个应用。</div></details>
+        <details class="faq glass"><summary>HiCode 是免费的吗？开源吗？<span class="pl">+</span></summary>
+          <div class="a">是的，HiCode 以开源方式发布，代码托管在 GitHub。我们坚持开放、可自由使用与二次开发的原则。</div></details>
+        <details class="faq glass"><summary>M / R / X 三档有什么区别？该选哪个？<span class="pl">+</span></summary>
+          <div class="a"><b>M 轻量</b>：仅 HIC 内核，最精简，适合纯 HIC 开发。<br/><b>R 标准</b>：+ Python 编译为 HTML，适合想在 HIC 里嵌入 Python 的用户。<br/><b>X 全能</b>：+ Python + C++ 编译为 HTML，最完整。<br/>不确定就从 X 开始，网页端顶栏随时可切换。</div></details>
+        <details class="faq glass"><summary>我可以如何参与 HiCode 的成长？<span class="pl">+</span></summary>
+          <div class="a">欢迎通过 <a href="mailto:hicodehc@outlook.com" style="color:var(--accent);">hicodehc@outlook.com</a> 提出想法与建议，或直接在 GitHub 仓库提 Issue / Pull Request。</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 结尾 CTA ===== -->
+  <section class="end-cta">
+    <div class="container" data-reveal>
+      <h2>从 H1.00 开始，写你的第一个 HIC 程序</h2>
+      <p>下载、打开、写一行代码——只需 30 秒</p>
+      <div class="ctas" style="justify-content:center;">
+        <a class="btn primary" href="download/">下载 HiCode</a>
+        <a class="btn secondary" href="ide/?edition=x">⚡ 网页端直接试</a>
       </div>
     </div>
   </section>
 </main>
 
 <!-- ===== 页脚 ===== -->
-<footer id="footer">
+<footer>
   <div class="container">
     <div class="foot">
       <div>
-        <div class="brand" style="margin-bottom:14px;"><img src="assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span></div>
-        <p style="margin-top:4px;">前后端一体化、多端可开发的编程语言。<br/>让编程回归简单。</p>
+        <div class="brand" style="margin-bottom:12px;"><img src="/assets/hicode-logo.jpg" alt="HiCode" /><span>HiCode</span></div>
+        <p style="margin-top:2px;">前后端一体化、多端可开发的编程语言。<br/>让编程回归简单。</p>
       </div>
       <div>
-        <h4>资源</h4>
+        <h4>产品</h4>
         <ul>
-          <li><a href="download/">下载 HiCode</a></li>
-          <li><a href="ide/">网页端体验</a></li>
+          <li><a href="download/">下载 H1.00</a></li>
+          <li><a href="ide/?edition=x">网页端体验</a></li>
           <li><a href="learn/">学习中心</a></li>
-          <li><a href="disclaimer.html">免责声明</a></li>
-          <li><a href="#">官方文档</a></li>
+          <li><a href="download/">三档对比</a></li>
         </ul>
       </div>
       <div>
         <h4>项目</h4>
         <ul>
-          <li><a href="https://github.com/HiCodeHC/HiCodeHC.github.io" target="_blank" rel="noopener">GitHub 仓库</a></li>
-          <li><a href="#">开源许可证</a></li>
+          <li><a href="https://github.com/HiCodeHC/HiCodeHC.github.io" target="_blank" rel="noopener">GitHub</a></li>
           <li><a href="old/">历史版本</a></li>
-          <li><a href="#">参与共建</a></li>
+          <li><a href="docs/RELEASING.md">发布规范</a></li>
+          <li><a href="disclaimer.html">免责声明</a></li>
         </ul>
       </div>
       <div>
-        <h4>联系我们</h4>
+        <h4>联系</h4>
         <ul>
-          <li>产品建议邮箱：<br/><a class="email" href="mailto:hicodehc@outlook.com">hicodehc@outlook.com</a></li>
+          <li><a class="email" href="mailto:hicodehc@outlook.com">hicodehc@outlook.com</a></li>
         </ul>
       </div>
     </div>
 
     <div class="disclaim" data-reveal>
-      <b>免责声明：</b> HiCode 目前仍处于持续开发与完善阶段。本站所展示的功能、特性、下载入口及文档链接中，尚未上线的内容仅用于产品愿景展示，不代表最终形态。HiCode 按“现状”提供，本项目及其贡献者不对因使用本站或相关软件所造成的任何直接或间接损失承担责任。<br/>
+      <b>免责声明：</b> HiCode 按"现状"提供，本项目及其贡献者不对因使用本站或相关软件所造成的任何直接或间接损失承担责任。<br/>
       <b>名称说明：</b>「hicode」「hc」「HC」「HcLogo」均为本项目的内部名称与标识，<b>并非注册商标</b>。若相关名称或图形与任何第三方已合法注册的商标存在相同或近似，请通过 <a class="email" href="mailto:hicodehc@outlook.com">hicodehc@outlook.com</a> 联系我们。<br/>
-      <b>开源许可：</b> HiCode 项目以开源方式发布，遵循相应的开源许可协议（具体以仓库内 LICENSE 文件为准）。<br/>
-      <b>版权信息：</b> © <span id="year"></span> HiCode（HC）项目团队 · 保留相关权利 · <a href="disclaimer.html" style="color:var(--accent);border-bottom:1px dashed rgba(199,165,107,.5);">阅读《完整免责声明》</a>。
+      <b>版权：</b> © <span id="year"></span> HiCode（HC）项目团队 · 保留相关权利 · <a href="disclaimer.html" style="color:var(--accent);border-bottom:1px dashed rgba(199,165,107,.5);">阅读完整免责声明</a>。
     </div>
   </div>
 </footer>
 
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add("is-visible"); io.unobserve(e.target); }
-    });
-  }, { threshold: 0.1 });
-  document.querySelectorAll("[data-reveal]").forEach(el => io.observe(el));
 
-  /* 卡片组错峰渐显 */
-  document.querySelectorAll(".stagger-box").forEach(box => {
-    const kids = Array.prototype.slice.call(box.children);
-    const ob = new IntersectionObserver((entries, self) => {
-      entries.forEach(en => {
-        if (en.isIntersecting) {
-          kids.forEach((k, i) => { k.style.transitionDelay = (i * 70) + "ms"; k.classList.add("is-visible"); });
-          self.disconnect();
+  /* ---- 导航吸顶背景 + 滚动指示器 ---- */
+  const topbar = document.getElementById("topbar");
+  const navLinks = document.getElementById("navLinks");
+  const sections = document.querySelectorAll("section[id]");
+
+  const onScroll = () => {
+    const y = window.scrollY;
+    topbar.classList.toggle("scrolled", y > 30);
+
+    let current = "";
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.querySelectorAll("a[data-scroll]").forEach(a => {
+      a.classList.toggle("active", a.getAttribute("href") === "#" + current);
+    });
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* ---- 渐显动画：延迟 observe 确保布局完成，已在视口内的元素给 120ms 延迟触发 ---- */
+  requestAnimationFrame(() => {
+    const revealEls = document.querySelectorAll("[data-reveal], [data-reveal-slow]");
+    const alreadyInView = [];
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-visible");
+          io.unobserve(e.target);
         }
       });
-    }, { threshold: 0.12 });
-    ob.observe(box);
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    revealEls.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        alreadyInView.push(el);
+      } else {
+        io.observe(el);
+      }
+    });
+    if (alreadyInView.length) {
+      alreadyInView.forEach((el, i) => {
+        setTimeout(() => { el.classList.add("is-visible"); }, 120 + i * 80);
+      });
+    }
   });
+
+  /* ---- Stagger 动画 ---- */
+  requestAnimationFrame(() => {
+    document.querySelectorAll(".stagger-box").forEach(box => {
+      const kids = Array.prototype.slice.call(box.children);
+      const r = box.getBoundingClientRect();
+      const inView = r.top < window.innerHeight && r.bottom > 0;
+      const play = () => {
+        kids.forEach((k, i) => {
+          k.style.transitionDelay = (i * 80) + "ms";
+          k.classList.add("is-visible");
+        });
+      };
+      if (inView) {
+        setTimeout(play, 150);
+      } else {
+        const ob = new IntersectionObserver((entries, self) => {
+          entries.forEach(en => {
+            if (en.isIntersecting) { play(); self.disconnect(); }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+        ob.observe(box);
+      }
+    });
+  });
+
+  /* ---- Hero 代码墙 3D hover ---- */
+  const codeWall = document.querySelector(".code-wall");
+  if (codeWall) {
+    codeWall.addEventListener("mousemove", (e) => {
+      const r = codeWall.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      codeWall.style.transform = `perspective(900px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+    });
+    codeWall.addEventListener("mouseleave", () => {
+      codeWall.style.transform = "perspective(900px) rotateY(0) rotateX(0)";
+    });
+  }
+
+  /* ---- 背景光视差 ---- */
+  const bg = document.body;
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        bg.style.setProperty("--parallax-y", (y * 0.15) + "px");
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  /* ---- Stats 数字脉动：滚动到视口内时从 0 递增到目标值 ---- */
+  const nums = document.querySelectorAll("[data-count]");
+  if (nums.length) {
+    const animateCount = (el) => {
+      const target = parseInt(el.getAttribute("data-count"), 10) || 0;
+      const dur = 900;
+      const start = performance.now();
+      const tick = (now) => {
+        const p = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const nio = new IntersectionObserver((entries, self) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { animateCount(e.target); self.unobserve(e.target); }
+      });
+    }, { threshold: 0.4 });
+    nums.forEach(n => nio.observe(n));
+  }
 </script>
 </body>
 </html>

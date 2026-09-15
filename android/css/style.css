@@ -358,25 +358,34 @@ body { overflow: hidden; }
 code { font-size: .9em; }
 
 /* ---- 顶栏：紧凑 + 汉堡按钮 ---- */
-.topbar { gap: 8px; padding: 8px 10px; }
+.topbar { gap: 6px; padding: 7px 10px; flex-wrap: nowrap; overflow: hidden; }
 .btn-tree {
-  width: 38px; height: 38px; flex: 0 0 38px; border-radius: 10px; font-size: 19px; line-height: 1;
+  width: 36px; height: 36px; flex: 0 0 36px; border-radius: 10px; font-size: 18px; line-height: 1;
   color: var(--muted); background: var(--glass); border: 1px solid var(--line); display: grid; place-items: center;
 }
 .btn-tree:hover { color: var(--accent); border-color: var(--accent); }
-.brand { gap: 7px; }
-.brand-name { font-size: 15px; }
-.brand .ver { font-size: 10px; padding: 2px 6px; }
-.actions { gap: 6px; }
-.actions .btn { padding: 8px 12px; font-size: 12.5px; }
-.crumb { font-size: 11px; }
+.brand { gap: 5px; min-width: 0; flex: 0 0 auto; }
+.brand-name { font-size: 15px; white-space: nowrap; }
+.brand .ver { font-size: 10px; padding: 1px 6px; flex: 0 0 auto; }
+.crumb { flex: 0 1 auto; min-width: 0; max-width: 90px; font-size: 11px; }
+.actions { gap: 5px; flex: 0 0 auto; display: flex; align-items: center; min-width: 0; }
+
+/* ed-switch 紧凑化，三按钮防撑 */
+.ed-switch { gap: 1px; padding: 2px; }
+.ed-switch .ed-btn { min-width: 24px; padding: 4px 7px; font-size: 11.5px; letter-spacing: .3px; }
+
+/* ✓ 实时转译：在极窄屏缩为纯图标模式 */
+.btn.live { padding: 7px 10px; font-size: 12px; white-space: nowrap; }
+
+/* 导出按钮：减少文字（移 ▾），更紧凑 */
+#btnExport.btn.solid { padding: 7px 10px; font-size: 12px; }
 
 /* 导出下拉：窄屏下铺满可读 */
 .menu { position: fixed; left: 12px; right: 12px; top: 54px; width: auto; min-width: 0; }
 .menu button { padding: 12px 12px; font-size: 14px; }
 
 /* ---- 布局单列，侧栏改为左侧滑出抽屉 ---- */
-.layout { height: calc(100vh - 54px); }
+.layout { height: calc(100vh - 54px); display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
 .drawer-scrim { position: fixed; inset: 0; z-index: 55; background: rgba(40, 30, 15, .42); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
 body.drawer-open { overflow: hidden; }
 .tree {
@@ -391,18 +400,18 @@ body.drawer-open { overflow: hidden; }
 .tree-item .ops { display: flex; gap: 4px; }
 .tree-item .ops span { padding: 2px 6px; font-size: 15px; }
 .tree-empty { font-size: 13px; margin-top: 22px; }
-.workspace { width: 100%; min-width: 0; }
+.workspace { width: 100%; min-width: 0; min-height: 0; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 /* ---- 顶部面板：代码 / 预览 / 画布 ---- */
 .tabs { padding: 8px 10px 0; gap: 2px; }
 .tab { flex: 1; text-align: center; padding: 10px 4px; font-size: 13px; white-space: nowrap; }
-.pane { padding: 10px; }
+.pane { padding: 10px; flex: 1; min-height: 0; overflow: hidden; }
 .editor-head { gap: 6px; }
 .shortcut { display: none !important; }
 .editor-snippets { gap: 6px; }
-.editor-snippets .snippet { padding: 7px 11px; font-size: 12px; }
+.editor-snippets .snippet { padding: 8px 12px; font-size: 12px; white-space: nowrap; touch-action: manipulation; }
 .codearea, .editor-highlight, .editor-gutter { font-size: 13px; line-height: 1.6; }
-.editor-wrap { --gutter: 40px; }
+.editor-wrap { --gutter: 40px; min-height: 0; }
 .editor-wrap textarea.codearea { padding-left: calc(40px + 11px); }
 .editor-highlight { padding-left: calc(40px + 11px); }
 .editor-mark { left: 40px; }
@@ -455,16 +464,47 @@ body.drawer-open { overflow: hidden; }
 .statusbar { margin: 8px 10px 10px; padding: 5px 10px; font-size: 11px; }
 .sb-right { font-size: 10.5px; }
 
-/* ---- 窄屏（≤400px）进一步压缩，避免横向溢出 ---- */
-@media (max-width: 400px) {
+/* ---- 极窄屏（≤360px）：隐藏次要文本，仅保留核心操作 ---- */
+@media (max-width: 360px) {
+  .brand-name { font-size: 13px; }
+  .brand .ver { font-size: 9px; padding: 1px 5px; }
+  .crumb { max-width: 60px; }
+  .btn.live { padding: 7px 8px; font-size: 11px; }
+  .btn.live::before { content: ""; } /* 保持占位 */
+  #btnExport.btn.solid { padding: 7px 8px; font-size: 11.5px; }
+  .ed-switch .ed-btn { min-width: 22px; padding: 3px 6px; font-size: 11px; }
+  .btn-tree { width: 32px; height: 32px; flex-basis: 32px; font-size: 17px; border-radius: 9px; }
+  .topbar { padding: 6px 7px; gap: 5px; }
+  .pane { padding: 8px 7px 10px; }
+  .editor-snippets .snippet { padding: 6px 8px; font-size: 11px; }
+  .bottom-panel { margin: 6px 7px 0; flex-basis: 38vh; }
+  .statusbar { margin: 6px 7px 8px; }
+}
+
+/* ---- 超窄屏（≤320px）：再砍一刀 ---- */
+@media (max-width: 320px) {
+  .brand-name { display: none; }
+  .crumb { max-width: 0; overflow: hidden; }
+  .brand { gap: 3px; }
+  .brand .ver { font-size: 9px; padding: 1px 5px; }
+  .btn.live { display: none; }            /* 实时转译图标隐藏 */
+  .ed-switch .ed-btn { min-width: 20px; padding: 3px 5px; font-size: 10.5px; }
+  #btnExport.btn.solid { padding: 7px 9px; font-size: 11px; }
+  .bottom-panel { flex-basis: 34vh; }
+  .tabs { padding: 6px 6px 0; }
+  .tab { padding: 8px 2px; font-size: 12px; }
+  .home-card { padding: 24px 16px; }
+  .home-card h1 { font-size: 21px; }
+}
+
+/* ---- 窄屏（≤400px）：过渡优化 ---- */
+@media (max-width: 400px) and (min-width: 321px) {
   .topbar { padding: 7px 8px; gap: 6px; }
   .btn-tree { width: 34px; height: 34px; flex-basis: 34px; }
-  .brand { gap: 5px; min-width: 0; }
-  .brand-name { font-size: 14px; white-space: nowrap; overflow: hidden; max-width: 72px; text-overflow: ellipsis; }
+  .brand-name { font-size: 14px; }
   .brand .ver { font-size: 9.5px; padding: 1px 5px; }
-  .crumb { max-width: 84px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .crumb { max-width: 80px; }
   .actions .btn { padding: 7px 10px; font-size: 12px; }
-  .actions .btn:first-of-type { letter-spacing: 0; }
   .pane { padding: 8px 8px 10px; }
   .tabs { padding: 6px 8px 0; gap: 1px; }
   .tab { padding: 9px 3px; font-size: 12.5px; letter-spacing: -.2px; }
@@ -476,21 +516,11 @@ body.drawer-open { overflow: hidden; }
   .editor-wrap textarea.codearea { padding-left: calc(34px + 9px); }
   .editor-highlight { padding-left: calc(34px + 9px); }
   .editor-mark { left: 34px; }
-  .bottom-panel { margin: 6px 8px 0; flex-basis: 42vh; }
+  .bottom-panel { margin: 6px 8px 0; flex-basis: 40vh; }
   .btab { font-size: 12px; padding: 8px 10px; }
   .statusbar { margin: 6px 8px 8px; }
   .home-card { padding: 26px 18px; }
   .home-card h1 { font-size: 23px; }
   .menu { left: 8px; right: 8px; top: 50px; }
   .graph-canvas { min-height: 50vh; }
-}
-
-/* ---- 极窄屏（≤340px）：隐藏次要文本，仅保留核心操作 ---- */
-@media (max-width: 340px) {
-  .brand-name { display: none; }
-  .crumb { max-width: 40px; }
-  .preview-bar .preview-fname { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .graph-tools label { font-size: 12px; }
-  .console-filter { display: none; }
-  .home-actions .btn.big { padding: 13px 12px; font-size: 14px; }
 }

@@ -12,8 +12,8 @@ function createWindow() {
     minWidth: 860,
     minHeight: 600,
     autoHideMenuBar: true,
-    title: "Simple",
-    backgroundColor: "#171310",
+    title: "Simple v3.88",
+    backgroundColor: "#0a0a0c",
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,

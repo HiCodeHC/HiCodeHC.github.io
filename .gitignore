@@ -11,3 +11,4 @@ pkg/build/
 *.log
 .DS_Store
 *.bak
+build/pack/out/

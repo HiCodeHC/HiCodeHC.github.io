@@ -37,7 +37,7 @@ function buildDir(ed) {
 if (!fs.existsSync(path.join(sharedNM, "electron"))) {
   const basePkg = {
     name: "simplelang-desktop-build",
-    version: "3.66.0",
+    version: "3.88.0",
     private: true,
     devDependencies: {
       electron: "^31.7.7",
@@ -55,7 +55,7 @@ for (const ed of EDITIONS) {
   catch (e) { /* 已存在忽略 */ }
   const pkg = {
     name: "simplelang-desktop-" + ed.key.toLowerCase(),
-    version: "3.66.0",
+    version: "3.88.0",
     description: "Simple (SIMPLE) 本地开发环境 " + ed.label,
     main: "main.js",
     author: "hicodehc",
@@ -67,6 +67,7 @@ for (const ed of EDITIONS) {
       directories: { output: path.join(OUT, "dist-" + ed.key) },
       win: {
         target: ["portable"],
+        icon: "/workspace/hicodehc-site/assets/simplelogo.ico",
         signAndEditExecutable: false // 无证书不签名/不注入版本信息，避免拉取 winCodeSign（免 wine）
       },
       portable: {},

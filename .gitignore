@@ -10,3 +10,4 @@ pkg/node_modules/
 pkg/build/
 *.log
 .DS_Store
+*.bak

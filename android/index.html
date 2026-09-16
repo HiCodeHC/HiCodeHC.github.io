@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Simple · 手机开发环境 S1.00（安卓端）</title>
+<title>Simple · 手机开发环境 S1.01（安卓端）</title>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png" />
 <link rel="icon" href="/assets/favicon-16.png" sizes="16x16" type="image/png" />
@@ -18,18 +18,14 @@
     <div class="brand" id="btnHome" title="返回首页">
       <span class="logo-dot"></span>
       <span class="brand-name">Simple</span>
-      <span class="ver" id="verTag">S1.00 · 手机端</span>
+      <span class="ver" id="verTag">S1.01 · 手机端</span>
     </div>
     <div class="crumb" id="crumb" title="当前文件">—</div>
     <div class="actions">
-      <div class="ed-switch" id="edSwitch" title="切换 SIMPLE 版本：M 轻量（仅 SIMPLE 内核）/ R 标准（+Python 编译）/ X 全能（+Python +C++ 编译）。切换后预览与导出页面均按所选版本编译">
-        <button type="button" class="ed-btn" data-ed="m">M</button>
-        <button type="button" class="ed-btn" data-ed="r">R</button>
-        <button type="button" class="ed-btn on" data-ed="x">X</button>
-      </div>
-      <button id="btnLive" class="btn ghost live" title="观看实时转译：立即把当前页面 SIMPLE 代码转译为 HTML">✓ 实时转译</button>
+      <button id="btnRun" class="btn solid" title="实时转译（▶ 运行）">▶</button>
+      <button class="mini" id="btnSnippets" title="插入代码片段">{}</button>
       <div class="menu-wrap">
-        <button id="btnExport" class="btn solid">导出 ▾</button>
+        <button id="btnExport" class="btn ghost">导出 ▾</button>
         <div class="menu" id="exportMenu">
           <div class="menu-title">导出当前项目</div>
           <button data-act="hc">导出 .hc（可导入继续开发）</button>
@@ -43,6 +39,17 @@
       </div>
     </div>
   </header>
+
+  <!-- ===== 代码片段抽屉 ===== -->
+  <div class="menu snippet-menu" id="snippetMenu">
+    <div class="menu-title">插入代码片段</div>
+    <button type="button" class="snippet" data-snip="region">+ 触发区域</button>
+    <button type="button" class="snippet" data-snip="use">+ 标准库 use</button>
+    <button type="button" class="snippet" data-snip="app">+ 下载文件</button>
+    <button type="button" class="snippet" data-snip="html">+ 原生 HTML</button>
+    <button type="button" class="snippet" data-snip="py" data-ed="rx">+ Python</button>
+    <button type="button" class="snippet" data-snip="cpp" data-ed="x">+ C++</button>
+  </div>
 
   <div class="layout">
     <!-- ===== 移动端侧栏抽屉遮罩 ===== -->
@@ -153,7 +160,7 @@
               <div class="console-welcome">
                 <span class="cw-logo">H</span>
                 <div class="cw-text">
-                  <span class="cw-title">Simple · SIMPLE 手机开发环境 S1.00（安卓端）</span>
+                  <span class="cw-title">Simple · SIMPLE 手机开发环境 S1.01（安卓端）</span>
                   <span class="cw-sub">SIMPLE 引擎已就绪 · 正在加载编辑器…</span>
                 </div>
               </div>
@@ -190,6 +197,11 @@
 
       <div class="statusbar" id="statusbar">
         <span class="sb-left" id="sbLeft">就绪</span>
+        <span class="ed-switch mini-ed" id="edSwitch" title="切换 SIMPLE 版本：M 轻量 / R 标准（+Python）/ X 全能（+Python +C++）">
+          <button type="button" class="ed-btn" data-ed="m">M</button>
+          <button type="button" class="ed-btn" data-ed="r">R</button>
+          <button type="button" class="ed-btn on" data-ed="x">X</button>
+        </span>
         <span class="sb-right" id="sbRight">行 1, 列 1 · UTF-8 · LF · SIMPLE</span>
       </div>
     </main>

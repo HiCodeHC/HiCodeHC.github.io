@@ -129,7 +129,7 @@
     if (typeof SimpleLang !== "undefined" && SimpleLang.setEdition) SimpleLang.setEdition(ed);
     try { window.SIMPLE_EDITION = ed; } catch (e) {}
     const VT = document.getElementById("verTag");
-    if (VT) VT.textContent = "S1.00 · " + ED_NAME[ed];
+    if (VT) VT.textContent = "S1.01 · " + ED_NAME[ed];
     if (el.edSwitch) Array.prototype.forEach.call(el.edSwitch.querySelectorAll(".ed-btn"), function (b) {
       b.classList.toggle("on", b.getAttribute("data-ed") === ed);
     });

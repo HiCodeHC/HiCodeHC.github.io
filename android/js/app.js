@@ -49,7 +49,7 @@
     modalBody: $("modalBody"),
     addProject: $("addProject"),
     addPage: $("addPage"),
-    btnLive: $("btnLive"),
+    btnRun: $("btnRun"), btnSnippets: $("btnSnippets"), snippetMenu: $("snippetMenu"), btnLive: $("btnLive"),
     btnExport: $("btnExport"),
     edSwitch: $("edSwitch"),
     fileImg: $("fileImg"),
@@ -129,7 +129,7 @@
     if (typeof SimpleLang !== "undefined" && SimpleLang.setEdition) SimpleLang.setEdition(ed);
     try { window.SIMPLE_EDITION = ed; } catch (e) {}
     const VT = document.getElementById("verTag");
-    if (VT) VT.textContent = "S1.00 · " + ED_NAME[ed];
+    if (VT) VT.textContent = "S1.01 · " + ED_NAME[ed];
     if (el.edSwitch) Array.prototype.forEach.call(el.edSwitch.querySelectorAll(".ed-btn"), function (b) {
       b.classList.toggle("on", b.getAttribute("data-ed") === ed);
     });
@@ -756,11 +756,14 @@
       el.code.setSelectionRange(pos, pos);
       if (window.hiced) { el.code.scrollTop = (hit.line - 4) * 23; window.hiced.render(); }
     });
-    el.btnLive.onclick = function () {
+    // ▶ 运行（原 btnLive 实时转译）
+    if (el.btnRun) el.btnRun.onclick = function () {
       doLive();
       document.querySelector('[data-tab="preview"]').click();
       setStatus("已实时转译当前页面");
     };
+    // btnLive 兼容（某些发布形态仍引用）
+    if (el.btnLive) el.btnLive.onclick = el.btnRun ? el.btnRun.onclick : function () { doLive(); };
     // 顶部工作区 tab
     Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (t) {
       t.onclick = function () {
@@ -786,7 +789,16 @@
     });
     // 导出下拉
     el.btnExport.onclick = function () { el.exportMenu.classList.toggle("open"); };
-    document.addEventListener("click", function (e) { if (!e.target.closest(".menu-wrap")) el.exportMenu.classList.remove("open"); });
+    // snippet 抽屉
+    if (el.btnSnippets) el.btnSnippets.onclick = function (e) {
+      e.stopPropagation();
+      if (el.exportMenu) el.exportMenu.classList.remove("open");
+      el.snippetMenu.classList.toggle("open");
+    };
+    document.addEventListener("click", function (e) {
+      if (!e.target.closest(".menu-wrap")) el.exportMenu.classList.remove("open");
+      if (el.snippetMenu && !e.target.closest("#snippetMenu") && !e.target.closest("#btnSnippets")) el.snippetMenu.classList.remove("open");
+    });
     Array.prototype.forEach.call(el.exportMenu.querySelectorAll("button"), function (b) {
       b.onclick = function () {
         el.exportMenu.classList.remove("open");
@@ -862,6 +874,7 @@
     // （「+ Python / + C++」按钮随版本显隐由 applyEditionUI 统一处理）
     Array.prototype.forEach.call(document.querySelectorAll(".snippet"), function (b) {
       b.onclick = function () {
+        if (el.snippetMenu) el.snippetMenu.classList.remove("open");
         const snip = b.getAttribute("data-snip");
         const code = el.code, s = code.selectionStart;
         if (snip === "region") {

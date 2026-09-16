@@ -11,12 +11,12 @@
 })(typeof self !== 'undefined' ? self : null, function () {
   "use strict";
 
-  const APP = { version: "S1.00", name: "Simple", lang: "SIMPLE" };
+  const APP = { version: "S1.01", name: "Simple", lang: "SIMPLE" };
   // 当前发布形态：r=标准(+py) / m=轻量(仅hic) / x=全能(+py+cpp)。
   // 导出的 HTML 会在 head 写入 window.SIMPLE_EDITION，由内建编译器宿主据此决定编译哪些语言。
   let EDITION = "x"; // 源码/网页在线版默认全能(X)；离线单文件按 R/M/X 各自注入。可用 SimpleLang.setEdition() 覆盖。
   function setEdition(e) { EDITION = String(e || "").toLowerCase()[0] === "r" ? "r" : String(e || "").toLowerCase()[0] === "m" ? "m" : "x"; }
-  // S1.00 三版发布：R(标准,+py) / M(轻量,仅hic) / X(全能,+py+cpp)。
+  // S1.01 三版发布：R(标准,+py) / M(轻量,仅hic) / X(全能,+py+cpp)。
   // 引擎统一解析全部语言块，具体版本决定「哪些语言可被 SIMPLE 编译进 HTML」以及打包形态。
   // 块语法：html:(…)end（原样 HTML）、py:(…)end（SIMPLE 编译 Python→HTML）、cpp:(…)end（SIMPLE 编译 C++→HTML）
   const BLOCK_LANG = { html: "html", py: "py", py3: "py", cpp: "cpp", cxx: "cpp" };
@@ -80,7 +80,7 @@
       if (FULLWIDTH_OPS[c]) { out.push({ t: FULLWIDTH_OPS[c], v: FULLWIDTH_OPS[c] }); i++; continue; }
       if (c === "(") { out.push({ t: "(", v: c }); i++; continue; }
       if (c === ")") { out.push({ t: ")", v: c }); i++; continue; }
-      /* ---- S1.00 扩展：列表/字典字面量 token ---- */
+      /* ---- S1.01 扩展：列表/字典字面量 token ---- */
       if (c === "[") { out.push({ t: "[", v: c }); i++; continue; }
       if (c === "]") { out.push({ t: "]", v: c }); i++; continue; }
       if (c === "{") { out.push({ t: "{", v: c }); i++; continue; }
@@ -120,7 +120,7 @@
     const sL = String(l), sR = String(r);
     if (op === "==") return numL && numR ? l === r : sL === sR;
     if (op === "!=") return numL && numR ? l !== r : sL !== sR;
-    /* ---- S1.00 扩展：列表/字典 in 操作符 ---- */
+    /* ---- S1.01 扩展：列表/字典 in 操作符 ---- */
     if (op === "in") {
       if (Array.isArray(r)) return r.indexOf(l) >= 0;
       if (r && typeof r === "object") return l in r;
@@ -135,7 +135,7 @@
     return false;
   }
 
-  /* ---- S1.00 扩展：evalExpr 内置函数库 ---- */
+  /* ---- S1.01 扩展：evalExpr 内置函数库 ---- */
   const BUILTINS = {
     len: function (x) {
       if (x == null) return 0;
@@ -198,7 +198,7 @@
       if (typeof v === "number") return v !== 0;
       return String(v).length > 0;
     }
-    /* ---- S1.00 扩展：primary 处理列表、字典、内置函数调用 ---- */
+    /* ---- S1.01 扩展：primary 处理列表、字典、内置函数调用 ---- */
     function primary() {
       const t = next();
       if (!t) return "";
@@ -275,7 +275,7 @@
       }
       return v;
     }
-    /* ---- S1.00 扩展：字符串拼接（+ 操作数含字符串时用 String() 拼接）---- */
+    /* ---- S1.01 扩展：字符串拼接（+ 操作数含字符串时用 String() 拼接）---- */
     function addSub() {
       let v = mulDiv();
       while (peek() && (peek().t === "+" || peek().t === "-")) {
@@ -368,14 +368,14 @@
     // for 循环头：for 变量 in 迭代源:
     const form = line.match(/^for\s+([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s+in\s+(.+?)\s*:\s*$/i);
     if (form) return { kind: "for", var: form[1], iter: form[2].trim() };
-    /* ---- S1.00 扩展：新语句分类（while / break / continue / set / let / opset / say）---- */
+    /* ---- S1.01 扩展：新语句分类（while / break / continue / set / let / opset / say）---- */
     // while 条件: 循环头
     const whileM = line.match(/^while\s+(.+?)\s*:\s*$/i);
     if (whileM) return { kind: "while", cond: whileM[1].replace(/:\s*$/, "").trim() };
     // break / continue
     if (/^break\s*$/.test(line)) return { kind: "break" };
     if (/^continue\s*$/.test(line)) return { kind: "continue" };
-    /* ---- S1.00 扩展：fn 定义 / fn end / call / return / raise ---- */
+    /* ---- S1.01 扩展：fn 定义 / fn end / call / return / raise ---- */
     const fnStart = line.match(/^fn\s+([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s*\(([^)]*)\)\s*:\s*$/i);
     if (fnStart) {
       const params = fnStart[2].split(",").map(function (s) { return s.trim(); }).filter(Boolean);
@@ -461,7 +461,7 @@
     for (let li = 0; li < rawLines.length; li++) {
       const raw = rawLines[li];
       const mt = raw.match(/^[ \t]*/)[0];
-      /* ---- S1.00 扩展：// 多行注释 ---- */
+      /* ---- S1.01 扩展：// 多行注释 ---- */
       const lt = raw.replace(/(^|[ \t])\/\/.*$/, "").replace(/(^|[ \t])#.*$/, "").trim();
       if (/^(html|py|py3|cpp|cxx)\s*:\s*\(\s*$/i.test(lt)) {
         const lang = mapLang(lt.match(/^([a-z0-9]+)\s*:/i)[1]);
@@ -519,14 +519,14 @@
           const bodyEndFor = collectUntil(i, end, indentGoal);
           out.push({ kind: "for", var: st.var, iter: st.iter, body: build(i, bodyEndFor, minIndent(i, bodyEndFor)) });
           i = bodyEndFor;
-        /* ---- S1.00 扩展：while 块收集 ---- */
+        /* ---- S1.01 扩展：while 块收集 ---- */
         } else if (st.kind === "while") {
           if (pendingIf) { out.push(pendingIf); pendingIf = null; }
           i++;
           const bodyEndW = collectUntil(i, end, indentGoal);
           out.push({ kind: "while", cond: st.cond, body: build(i, bodyEndW, minIndent(i, bodyEndW)) });
           i = bodyEndW;
-        /* ---- S1.00 扩展：fn 块收集 ---- */
+        /* ---- S1.01 扩展：fn 块收集 ---- */
         } else if (st.kind === "fnStart") {
           if (pendingIf) { out.push(pendingIf); pendingIf = null; }
           const fnName = st.name; const fnParams = st.params;
@@ -615,7 +615,7 @@
         collectVars(n.body, vars);
         n.chains.forEach(function (c) { collectVars(c.body, vars); });
         if (n.orphan) { /* orphan body already collected */ }
-      /* ---- S1.00 扩展：fnStart 跳过 body（编译期内联时才处理）---- */
+      /* ---- S1.01 扩展：fnStart 跳过 body（编译期内联时才处理）---- */
       } else if (n.kind === "while") {
         collectVars(n.body, vars);
       } else if (n.kind === "fnStart") {
@@ -719,7 +719,7 @@
     return 0;
   }
 
-  /* ---- S1.00 扩展：函数表收集（编译期内联用）---- */
+  /* ---- S1.01 扩展：函数表收集（编译期内联用）---- */
   function collectFns(nodes, out) {
     const o = out || {};
     // 简化：仅收集顶层 fn，不进 fn body 内部（不支持嵌套高阶函数）
@@ -737,7 +737,7 @@
 
   function renderNodes(nodes, vars, ctx, out) {
     nodes.forEach(function (n) {
-      /* ---- S1.00 扩展：break/continue/return/raise 传播 ---- */
+      /* ---- S1.01 扩展：break/continue/return/raise 传播 ---- */
       if (ctx && (ctx.breakFlag || ctx.continueFlag || ctx.returnFlag || ctx.raiseFlag)) return;
       if (n.kind === "it") {
         out.push(n); // 声明保留（供变量面板）
@@ -759,7 +759,7 @@
         // 逐个取值渲染循环体，循环变量按普通变量注入
         const vals = iterVals(n.iter, vars);
         vals.forEach(function (val) {
-          /* ---- S1.00 扩展：循环内 break/continue/return/raise 传播 ---- */
+          /* ---- S1.01 扩展：循环内 break/continue/return/raise 传播 ---- */
           if (ctx && (ctx.breakFlag || ctx.returnFlag || ctx.raiseFlag)) { ctx.breakFlag = false; return; }
           const prev = vars[n.var];
           vars[n.var] = { type: "ordinary", value: val, isImg: false };
@@ -796,7 +796,7 @@
         out.push({ kind: "cppBlock", lang: "cpp", code: n.code });
       } else if (n.kind === "textline") {
         out.push({ kind: "textline", text: n.text });
-      /* ---- S1.00 扩展：break / continue / while / set / let / opset / say / fn / call / return / raise ---- */
+      /* ---- S1.01 扩展：break / continue / while / set / let / opset / say / fn / call / return / raise ---- */
       } else if (n.kind === "break") {
         if (ctx) ctx.breakFlag = true;
         return;
@@ -839,7 +839,7 @@
         // 编译期 while 展开：条件动态求值，最多 50 次（安全上限，不是语言限制）
         let safety = 0;
         while (safety++ < 50) {
-          /* ---- S1.00 扩展：while 内 break/return/raise 传播 ---- */
+          /* ---- S1.01 扩展：while 内 break/return/raise 传播 ---- */
           if (ctx && (ctx.breakFlag || ctx.returnFlag || ctx.raiseFlag)) { ctx.breakFlag = false; break; }
           let condVal = false;
           try { condVal = evalExpr(n.cond, vars); } catch (e) {}
@@ -899,7 +899,7 @@
         v.value = (f && f.dataURL) || "";
       }
     });
-    /* ---- S1.00 扩展：收集函数表并传入 renderNodes ---- */
+    /* ---- S1.01 扩展：收集函数表并传入 renderNodes ---- */
     const FN_TABLE = collectFns(nodes, {});
     const items = renderNodes(nodes, vars, { fnTable: FN_TABLE }, []);
     return { vars, items };
@@ -953,7 +953,7 @@
     ".hic-ext-out{margin-top:8px;padding:12px 16px;border-radius:12px;background:rgba(217,174,107,.08);border:1px dashed rgba(217,174,107,.35);}",
     ".hic-ext-state{font-size:12.5px;color:#8d7f63;}",
     ".hic-ext-run{margin:0;padding-top:6px;font:13px/1.6 ui-monospace,Consolas,Menlo,monospace;color:#d9ae6b;white-space:pre-wrap;word-break:break-word;}",
-    /* ---- S1.00 扩展：raise 样式 ---- */
+    /* ---- S1.01 扩展：raise 样式 ---- */
     ".hic-raise{color:#c05a5a;font-weight:700;}",
     "@media(max-width:700px){.hic-text{font-size:32px;}}"
   ].join("\n");
@@ -1035,7 +1035,7 @@
       if (it.kind === "textline") {
         return '<p class="hic-item hic-body">' + esc(it.text) + "</p>";
       }
-      /* ---- S1.00 扩展：say / raise 输出 ---- */
+      /* ---- S1.01 扩展：say / raise 输出 ---- */
       if (it.kind === "say") {
         return '<p class="hic-item hic-body">' + esc(it.text) + "</p>";
       }

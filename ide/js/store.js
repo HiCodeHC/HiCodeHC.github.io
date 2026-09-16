@@ -23,7 +23,7 @@
   "use strict";
 
   const KEY = "SIMPLE_DATA";
-  const STORE_VERSION = "S1.00";
+  const STORE_VERSION = "S1.01";
 
   function uuid() {
     return "h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);

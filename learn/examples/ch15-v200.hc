@@ -1,5 +1,5 @@
 {
-  "app": "HiCode",
+  "app": "Simple",
   "language": "HIC",
   "format": "hc-project",
   "version": "v2.00",

@@ -135,7 +135,7 @@ const built = SimpleLang.buildSinglePageHtml({ name: "demo" }, p2);
 ok(built.indexOf('class="hic-href"') >= 0, "链接渲染含 hic-href");
 ok(built.indexOf("hic-sub") >= 0, "副标题渲染含 hic-sub");
 
-// ---- 12. v1.00 人性化编译：单等号 + 全角/数学运算符 ----
+// ---- 12. v3.88 人性化编译：单等号 + 全角/数学运算符 ----
 ok(SimpleLang.evalExpr("age = 18", { age: { value: 18 } }) === true, "单等号 = 当作 == 比较");
 ok(SimpleLang.evalExpr("age = 19", { age: { value: 18 } }) === false, "单等号 = 比较为假");
 ok(SimpleLang.evalExpr("2 \uFF0B 3", {}) === 5, "全角加 ＋");
@@ -150,7 +150,7 @@ ok(SimpleLang.evalExpr("2 \u2260 3", {}) === true, "≠ 当作 !=");
 ok(SimpleLang.evalExpr("\uFF082 \uFF0B 3\uFF09\u00D7 4", {}) === 20, "全角括号与混合运算符");
 ok(SimpleLang.evalExpr("年龄 = 18", { "年龄": { value: 18 } }) === true, "中文变量 + 单等号");
 
-// ---- 13. v1.00 代码备注（# 整行 / 行尾注释）----
+// ---- 13. v3.88 代码备注（# 整行 / 行尾注释）----
 const p3 = SimpleLang.processPage({
   name: "note",
   code: [

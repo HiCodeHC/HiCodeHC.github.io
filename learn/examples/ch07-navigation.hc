@@ -1,8 +1,8 @@
 {
-  "app": "HiCode",
+  "app": "Simple",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v1.00",
+  "version": "v3.88",
   "project": {
     "id": "ch07-navigation.hc",
     "name": "第07章 页面跳转",

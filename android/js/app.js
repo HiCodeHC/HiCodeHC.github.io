@@ -1,5 +1,5 @@
 /* ============================================================
- * SimpleLang v1.00 在线 IDE —— 界面逻辑 app.js
+ * SimpleLang v3.88 在线 IDE —— 界面逻辑 app.js
  * 依赖：Store (store.js) + SimpleLang (hic.js)
  * 职责：首页引导、项目/页面 CRUD、代码编辑、实时转译预览、
  *       变量面板（含 p 图片上传）、图形化画布定位、导出菜单。
@@ -129,7 +129,7 @@
     if (typeof SimpleLang !== "undefined" && SimpleLang.setEdition) SimpleLang.setEdition(ed);
     try { window.SIMPLE_EDITION = ed; } catch (e) {}
     const VT = document.getElementById("verTag");
-    if (VT) VT.textContent = "S1.01 · " + ED_NAME[ed];
+    if (VT) VT.textContent = "v3.88 · " + ED_NAME[ed];
     if (el.edSwitch) Array.prototype.forEach.call(el.edSwitch.querySelectorAll(".ed-btn"), function (b) {
       b.classList.toggle("on", b.getAttribute("data-ed") === ed);
     });

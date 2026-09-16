@@ -12,17 +12,17 @@ GRADLE_USER_HOME="${GRADLE_USER_HOME:-/workspace/.gradle}"
 
 mkdir -p "$ASSETS"
 for KEY in M R X; do
-  file="Simple-S1.01${KEY}-offline.html"
+  file="Simple-v3.88${KEY}-offline.html"
   [ -f "$OFF/$file" ] || { echo "缺少 $file"; exit 1; }
   cp "$OFF/$file" "$ASSETS/index.html"
   echo "▶ 构建 $KEY apk …"
   ( cd "$SRC" && GRADLE_USER_HOME="$GRADLE_USER_HOME" \
       /root/.local/share/mise/shims/gradle assembleDebug \
       -PappId=com.simplelang.android.$(echo $KEY | tr A-Z a-z) \
-      -PappLabel="Simple-S1.01${KEY}" )
+      -PappLabel="Simple-v3.88${KEY}" )
   apk=$(find "$OUT_DIR" -name "app-debug.apk" | head -1)
   [ -n "$apk" ] || { echo "$KEY 打包失败：未找到 app-debug.apk"; exit 1; }
-  cp "$apk" "$OFF/Simple-S1.01${KEY}-android.apk"
-  echo "✓ $KEY → Simple-S1.01${KEY}-android.apk（$(du -m "$OFF/Simple-S1.01${KEY}-android.apk" | cut -f1) MB）"
+  cp "$apk" "$OFF/Simple-v3.88${KEY}-android.apk"
+  echo "✓ $KEY → Simple-v3.88${KEY}-android.apk（$(du -m "$OFF/Simple-v3.88${KEY}-android.apk" | cut -f1) MB）"
 done
-echo "全部 apk 完成：" ; ls -la "$OFF"/Simple-S1.01?-android.apk
+echo "全部 apk 完成：" ; ls -la "$OFF"/Simple-v3.88?-android.apk

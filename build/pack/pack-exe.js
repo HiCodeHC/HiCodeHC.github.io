@@ -11,9 +11,9 @@ const OFF = path.join(ROOT, "download");            // 离线单文件目录
 const MAIN = path.resolve(__dirname, "electron", "main.js");
 const OUT = path.resolve(__dirname, "out");
 const EDITIONS = [
-  { key: "M", label: "M·轻量版", file: "Simple-S1.01M-offline.html" },
-  { key: "R", label: "R·标准版", file: "Simple-S1.01R-offline.html" },
-  { key: "X", label: "X·全能版", file: "Simple-S1.01X-offline.html" }
+  { key: "M", label: "M·轻量版", file: "Simple-v3.88M-offline.html" },
+  { key: "R", label: "R·标准版", file: "Simple-v3.88R-offline.html" },
+  { key: "X", label: "X·全能版", file: "Simple-v3.88X-offline.html" }
 ];
 
 if (fs.existsSync(OUT)) fs.rmSync(OUT, { recursive: true, force: true });
@@ -62,7 +62,7 @@ for (const ed of EDITIONS) {
     license: "MIT",
     build: {
       appId: "com.simplelang.desktop." + ed.key.toLowerCase(),
-      productName: "Simple-S1.01" + ed.key,
+      productName: "Simple-v3.88" + ed.key,
       files: ["main.js", "index.html", "package.json"],
       directories: { output: path.join(OUT, "dist-" + ed.key) },
       win: {

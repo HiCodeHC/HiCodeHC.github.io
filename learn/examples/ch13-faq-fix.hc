@@ -1,8 +1,8 @@
 {
-  "app": "HiCode",
+  "app": "Simple",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v1.00",
+  "version": "v3.88",
   "project": {
     "id": "ch13-faq-fix.hc",
     "name": "第13章 常见问题（修复对照）",

@@ -1,8 +1,8 @@
 {
-  "app": "HiCode",
+  "app": "Simple",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v1.00",
+  "version": "v3.88",
   "project": {
     "id": "ch10-export.hc",
     "name": "第10章 转译与导出",

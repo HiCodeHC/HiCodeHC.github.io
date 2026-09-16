@@ -1,5 +1,5 @@
 /* ============================================================
- * SimpleLang v1.00 在线 IDE 样式 —— 浅色液态玻璃风格
+ * SimpleLang v3.88 在线 IDE 样式 —— 浅色液态玻璃风格
  * ============================================================ */
 :root {
   --bg: #0a0a0c;
@@ -130,7 +130,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   background: #0f0f12; color: #f5ecdd; outline: none;
 }
 .codearea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.codearea.src { flex: none; height: 100%; white-space: pre; width: 100%; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 12.5px; line-height: 1.6; color: #f5ecdd; background: #0f0f12; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
+.codearea.src { flex: none; height: 100%; white-space: pre; width: 100%; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 12.5px; line-height: 1.6; color: #ffffff; background: #0f0f12; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
 .preview-tools { display: inline-flex; gap: 8px; }
 
 /* ---- 轻量编辑器：高亮层 + 行号 ---- */
@@ -138,7 +138,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .editor-wrap textarea.codearea {
   position: relative; z-index: 4; width: 100%; height: 100%;
   padding-left: calc(var(--gutter) + 13px);
-  background: transparent; color: transparent; caret-color: #f5ecdd;
+  background: transparent; color: transparent; caret-color: #ffffff;
   -webkit-text-fill-color: transparent; white-space: pre; overflow: auto; tab-size: 4;
 }
 .editor-highlight {
@@ -146,7 +146,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   margin: 0; padding: 16px 16px 16px calc(var(--gutter) + 13px);
   pointer-events: none; overflow: hidden; white-space: pre; tab-size: 4;
   font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  color: #f5ecdd; background: #0f0f12;
+  color: #ffffff; background: #0f0f12;
 }
 .editor-gutter {
   position: absolute; left: 0; top: 0; bottom: 0; width: var(--gutter); z-index: 3;
@@ -155,20 +155,20 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   color: rgba(255,255,255,.30); border-right: 1px solid var(--line); background: #141418;
 }
 .editor-mark { position: absolute; left: var(--gutter); top: 0; right: 0; bottom: 0; z-index: 2; pointer-events: none; overflow: hidden; }
-.ed-diag { position: absolute; height: 0; border-bottom: 2px solid transparent; border-radius: 2px; }
-.ed-diag-err { border-color: #e07a7a; animation: diaFade .3s; }
-.ed-diag-warn { border-bottom-style: dashed; border-color: #e0b85a; }
+.ed-diag { display: none !important; }
+.ed-diag-err { display: none !important; }
+.ed-diag-warn { display: none !important; }
 @keyframes diaFade { from { opacity: 0; } to { opacity: 1; } }
 /* 高亮配色 */
-.editor-highlight .tk.kw { color: #d9ae6b; font-weight: 700; }
-.editor-highlight .tk.interp { color: #e0a96b; font-weight: 700; }
-.editor-highlight .tk.ty { color: #8bc4d9; }
-.editor-highlight .tk.id { color: #c7a56b; }
-.editor-highlight .tk.str { color: #a8c88a; }
-.editor-highlight .tk.num { color: #e0a96b; }
-.editor-highlight .tk.op { color: #9a9589; }
-.editor-highlight .tk.bl { color: #e07a7a; font-weight: 800; letter-spacing: .3px; }
-.editor-highlight .tk.cm { color: rgba(255,255,255,.35); font-style: italic; }
+.editor-highlight .tk.kw { color: #ffffff; font-weight: 700; }
+.editor-highlight .tk.interp { color: #ffffff; font-weight: 700; }
+.editor-highlight .tk.ty { color: #ffffff; }
+.editor-highlight .tk.id { color: #ffffff; }
+.editor-highlight .tk.str { color: #ffffff; }
+.editor-highlight .tk.num { color: #ffffff; }
+.editor-highlight .tk.op { color: #ffffff; }
+.editor-highlight .tk.bl { color: #ffffff; font-weight: 800; letter-spacing: .3px; }
+.editor-highlight .tk.cm { color: rgba(255,255,255,.55); font-style: italic; }
 /* ---- 状态栏（专业 IDE 风格：左右分段） ---- */
 .statusbar {
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
@@ -380,3 +380,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .export-opt:hover { color: var(--accent); }
 .export-opt input { margin-right: 6px; width: 15px; height: 15px; vertical-align: -2px; accent-color: var(--accent); cursor: pointer; }
+/* ---- v3.88: 真实图片品牌图标 ---- */
+.brand-img { width: 26px; height: 26px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 12px rgba(199,165,107,.25); }
+.home-logo-img { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; box-shadow: 0 8px 22px rgba(199,165,107,.35); }

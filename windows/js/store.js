@@ -1,5 +1,5 @@
 /* ============================================================
- * SimpleLang v1.00 —— 数据层 store.js
+ * SimpleLang v3.88 —— 数据层 store.js
  * 职责：
  *   1) 项目 / 页面 CRUD，localStorage 本地持久化
  *   2) 首次零项目引导判定（hasAnyProject / lastActive）
@@ -23,7 +23,7 @@
   "use strict";
 
   const KEY = "SIMPLE_DATA";
-  const STORE_VERSION = "S1.01";
+  const STORE_VERSION = "v3.88";
 
   function uuid() {
     return "h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);

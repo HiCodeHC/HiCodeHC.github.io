@@ -1,5 +1,5 @@
 /* ============================================================
- * SimpleLang v1.00 —— 轻量代码编辑器 editor.js
+ * SimpleLang v3.88 —— 轻量代码编辑器 editor.js
  * 在原生 <textarea> 之上叠加「语法高亮层 + 行号栏」，保留原生编辑
  * 体验（光标/选中/撤销/粘贴），仅额外提供：
  *   1) 语法高亮  2) 行号  3) 回车自动缩进  4) 括号/引号自动补全
@@ -172,12 +172,14 @@
     }
     // 行内错误/警告标记：diags = [{line,col,msg,level}]
     function setDiagnostics(diags) {
+      return; // v3.88 移除行内红线/黄虚线下划线
       mark.innerHTML = "";
       if (!diags || !diags.length) return;
       const lh = parseFloat(getComputedStyle(textarea).lineHeight) || 23;
       const gw = gutter.offsetWidth || 0;
       const fd = document.createDocumentFragment();
       diags.forEach(function (d) {
+      return; // v3.88 移除行内红线/黄虚线下划线
         const elm = document.createElement("div");
         elm.className = "ed-diag ed-diag-" + (d.level === "error" ? "err" : "warn");
         elm.title = "第 " + d.line + " 行：" + (d.msg || "");

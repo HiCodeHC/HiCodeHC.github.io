@@ -1,8 +1,8 @@
 {
-  "app": "HiCode",
+  "app": "Simple",
   "language": "HIC",
   "format": "hc-project",
-  "version": "v1.00",
+  "version": "v3.88",
   "project": {
     "id": "ch14-graphical.hc",
     "name": "第14章 图形化定位",

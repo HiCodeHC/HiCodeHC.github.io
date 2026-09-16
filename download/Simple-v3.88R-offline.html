@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<script>window.SIMPLE_EDITION='x';</script>
+<script>window.SIMPLE_EDITION='r';</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Simple · 本地开发环境 S1.01X（X·全能版）</title>
+<title>Simple · 本地开发环境 v3.88R（R·标准版）</title>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png" />
 <link rel="icon" href="/assets/favicon-16.png" sizes="16x16" type="image/png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 <style>
 /* ============================================================
- * SimpleLang v1.00 在线 IDE 样式 —— 浅色液态玻璃风格
+ * SimpleLang v3.88 在线 IDE 样式 —— 浅色液态玻璃风格
  * ============================================================ */
 :root {
-  --bg: #f3eee6;
-  --panel: rgba(255, 252, 245, .72);
-  --line: rgba(90, 70, 40, .14);
-  --text: #3a2f1e;
-  --muted: #6b5f49;
-  --dim: #9a8c73;
-  --accent: #c2965c;
-  --accent-strong: #b38545;
-  --accent-soft: rgba(194, 150, 92, .16);
-  --good: #4c9a6a;
-  --bad: #c05a5a;
+  --bg: #0a0a0c;
+  --panel: rgba(255, 255, 255, .045);
+  --line: rgba(255, 255, 255, .085);
+  --text: #f5ecdd;
+  --muted: #b4a488;
+  --dim: #86775d;
+  --accent: #c7a56b;
+  --accent-strong: #d9ae6b;
+  --accent-soft: rgba(199, 165, 107, .14);
+  --good: #7ec99b;
+  --bad: #e07a7a;
   --radius: 14px;
-  --glass: linear-gradient(150deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .28));
+  --glass: linear-gradient(150deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
   font-size: 14.5px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,12 +35,12 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(70% 60% at 12% 8%, rgba(228, 196, 150, .30), transparent 60%),
-    radial-gradient(60% 55% at 90% 90%, rgba(200, 160, 120, .20), transparent 58%),
+    radial-gradient(70% 60% at 12% 8%, rgba(199, 165, 107, .10), transparent 60%),
+    radial-gradient(60% 55% at 90% 90%, rgba(199, 165, 107, .06), transparent 58%),
     var(--bg);
   overflow: hidden;
 }
-code { background: rgba(120, 90, 50, .1); padding: 1px 6px; border-radius: 6px; font-size: .92em; }
+code { background: rgba(199, 165, 107, .10); padding: 1px 6px; border-radius: 6px; font-size: .92em; }
 .hidden { display: none !important; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 
@@ -50,13 +50,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   transition: opacity .18s, transform .15s, box-shadow .2s; border: 1px solid transparent;
 }
 .btn:hover { opacity: .92; transform: translateY(-1px); }
-.btn.solid { background: var(--accent); color: #fff; box-shadow: 0 8px 22px rgba(179, 133, 69, .35); }
+.btn.solid { background: var(--accent); color: #fff; box-shadow: 0 8px 22px rgba(217,174,107,.35); }
 .btn.solid:hover { background: var(--accent-strong); }
 .btn.ghost { background: transparent; border-color: var(--line); color: var(--muted); }
 .btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
 .btn.soft { background: var(--accent-soft); color: var(--accent-strong); }
 .btn.big { padding: 12px 30px; font-size: 15px; }
-.btn.live { box-shadow: inset 0 0 0 1px rgba(76, 154, 106, .4); color: var(--good); border-color: transparent; }
+.btn.live { box-shadow: inset 0 0 0 1px rgba(126, 201, 155, .4); color: var(--good); border-color: transparent; }
 .mini { width: 26px; height: 26px; border-radius: 8px; font-size: 17px; line-height: 1; color: var(--muted); }
 .mini:hover { background: var(--accent-soft); color: var(--accent-strong); }
 
@@ -69,23 +69,23 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
 .logo-dot { width: 26px; height: 26px; border-radius: 8px;
-  background: linear-gradient(140deg, #e2b878, #b38545); box-shadow: 0 4px 12px rgba(179,133,69,.4); }
+  background: linear-gradient(140deg, #e8c48a, #b38545); box-shadow: 0 4px 12px rgba(217,174,107,.5); }
 .logo-dot.lg { width: 44px; height: 44px; border-radius: 12px; }
 .brand-name { font-weight: 800; font-size: 17px; }
 .ver { font-size: 11.5px; color: var(--muted); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; }
 .crumb { flex: 1; min-width: 0; color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
 .actions { display: flex; gap: 10px; align-items: center; }
 /* ===== M/R/X 三版切换器 ===== */
-.ed-switch { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 252, 245, .6); }
+.ed-switch { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.06); }
 .ed-switch .ed-btn { min-width: 28px; padding: 5px 9px; border: none; border-radius: 999px; background: transparent; color: var(--dim); font-size: 12px; font-weight: 800; letter-spacing: .5px; cursor: pointer; transition: background .15s, color .15s; }
 .ed-switch .ed-btn:hover { color: var(--accent-strong); }
-.ed-switch .ed-btn.on { background: linear-gradient(140deg, #e2b878, #b38545); color: #fff; box-shadow: 0 3px 10px rgba(179, 133, 69, .35); }
+.ed-switch .ed-btn.on { background: linear-gradient(140deg, #e8c48a, #b38545); color: #fff; box-shadow: 0 3px 10px rgba(217,174,107,.35); }
 .menu-wrap { position: relative; }
 .menu {
   position: absolute; right: 0; top: calc(100% + 8px); min-width: 250px; z-index: 40;
   background: var(--glass); border: 1px solid var(--line); border-radius: 12px; padding: 8px;
   -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
-  box-shadow: 0 18px 46px rgba(60, 45, 20, .2);
+  box-shadow: 0 18px 46px rgba(0,0,0,.5);
   display: none;
 }
 .menu.open { display: block; }
@@ -108,8 +108,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   display: flex; align-items: center; gap: 6px; padding: 7px 9px; border-radius: 9px;
   cursor: pointer; font-size: 13.5px; color: var(--muted); border: 1px solid transparent;
 }
-.tree-item:hover { background: rgba(120,90,50,.07); }
-.tree-item.on { background: var(--accent-soft); color: var(--accent-strong); font-weight: 700; border-color: rgba(179,133,69,.2); }
+.tree-item:hover { background: rgba(255,255,255,.05); }
+.tree-item.on { background: var(--accent-soft); color: var(--accent-strong); font-weight: 700; border-color: rgba(217,174,107,.25); }
 .tree-item .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tree-item .ops { display: none; gap: 2px; }
 .tree-item:hover .ops, .tree-item.on .ops { display: flex; }
@@ -123,7 +123,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .tabs { display: flex; gap: 4px; padding: 10px 14px 0; }
 .tab { padding: 8px 16px; border-radius: 10px 10px 0 0; font-size: 13.5px; color: var(--muted); background: transparent; }
 .tab:hover { color: var(--accent); }
-.tab.on { background: var(--panel); color: var(--accent-strong); font-weight: 700; box-shadow: 0 -6px 18px rgba(120,90,50,.06); }
+.tab.on { background: var(--panel); color: var(--accent-strong); font-weight: 700; box-shadow: 0 -6px 18px rgba(255,255,255,.05); }
 .pane { display: none; flex: 1; min-height: 0; padding: 12px 14px 14px; flex-direction: column; }
 .pane.on { display: flex; }
 .editor-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
@@ -139,18 +139,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .codearea {
   flex: 1; min-height: 0; resize: none; border: 1px solid var(--line); border-radius: var(--radius);
   padding: 16px; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  background: #ffffff; color: #2d2416; outline: none;
+  background: #0f0f12; color: #f5ecdd; outline: none;
 }
 .codearea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.codearea.src { flex: none; height: 100%; white-space: pre; width: 100%; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 12.5px; line-height: 1.6; color: #cfd6dd; background: #1b1f27; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
+.codearea.src { flex: none; height: 100%; white-space: pre; width: 100%; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 12.5px; line-height: 1.6; color: #ffffff; background: #0f0f12; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
 .preview-tools { display: inline-flex; gap: 8px; }
 
 /* ---- 轻量编辑器：高亮层 + 行号 ---- */
-.editor-wrap { --gutter: 52px; position: relative; flex: 1; min-height: 0; background: #ffffff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.editor-wrap { --gutter: 52px; position: relative; flex: 1; min-height: 0; background: #0f0f12; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .editor-wrap textarea.codearea {
   position: relative; z-index: 4; width: 100%; height: 100%;
   padding-left: calc(var(--gutter) + 13px);
-  background: transparent; color: transparent; caret-color: #2d2416;
+  background: transparent; color: transparent; caret-color: #ffffff;
   -webkit-text-fill-color: transparent; white-space: pre; overflow: auto; tab-size: 4;
 }
 .editor-highlight {
@@ -158,29 +158,29 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   margin: 0; padding: 16px 16px 16px calc(var(--gutter) + 13px);
   pointer-events: none; overflow: hidden; white-space: pre; tab-size: 4;
   font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  color: #2d2416; background: #ffffff;
+  color: #ffffff; background: #0f0f12;
 }
 .editor-gutter {
   position: absolute; left: 0; top: 0; bottom: 0; width: var(--gutter); z-index: 3;
   overflow: hidden; padding: 16px 10px 16px 0; text-align: right; user-select: none;
   font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65;
-  color: rgba(120,90,50,.38); border-right: 1px solid var(--line); background: #f6f2ea;
+  color: rgba(255,255,255,.30); border-right: 1px solid var(--line); background: #141418;
 }
 .editor-mark { position: absolute; left: var(--gutter); top: 0; right: 0; bottom: 0; z-index: 2; pointer-events: none; overflow: hidden; }
-.ed-diag { position: absolute; height: 0; border-bottom: 2px solid transparent; border-radius: 2px; }
-.ed-diag-err { border-color: #d9534f; animation: diaFade .3s; }
-.ed-diag-warn { border-bottom-style: dashed; border-color: #d9a632; }
+.ed-diag { display: none !important; }
+.ed-diag-err { display: none !important; }
+.ed-diag-warn { display: none !important; }
 @keyframes diaFade { from { opacity: 0; } to { opacity: 1; } }
 /* 高亮配色 */
-.editor-highlight .tk.kw { color: #8a5a2b; font-weight: 700; }
-.editor-highlight .tk.interp { color: #b0572d; font-weight: 700; }
-.editor-highlight .tk.ty { color: #2d6a8a; }
-.editor-highlight .tk.id { color: #2d2416; }
-.editor-highlight .tk.str { color: #2e7d4f; }
-.editor-highlight .tk.num { color: #b0572d; }
-.editor-highlight .tk.op { color: #8a8a7a; }
-.editor-highlight .tk.bl { color: #c6786a; font-weight: 800; letter-spacing: .3px; }
-.editor-highlight .tk.cm { color: rgba(120,90,50,.5); font-style: italic; }
+.editor-highlight .tk.kw { color: #ffffff; font-weight: 700; }
+.editor-highlight .tk.interp { color: #ffffff; font-weight: 700; }
+.editor-highlight .tk.ty { color: #ffffff; }
+.editor-highlight .tk.id { color: #ffffff; }
+.editor-highlight .tk.str { color: #ffffff; }
+.editor-highlight .tk.num { color: #ffffff; }
+.editor-highlight .tk.op { color: #ffffff; }
+.editor-highlight .tk.bl { color: #ffffff; font-weight: 800; letter-spacing: .3px; }
+.editor-highlight .tk.cm { color: rgba(255,255,255,.55); font-style: italic; }
 /* ---- 状态栏（专业 IDE 风格：左右分段） ---- */
 .statusbar {
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
@@ -188,22 +188,22 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-size: 12px; color: var(--muted);
   background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
 }
-.statusbar.err .sb-left { color: #d9534f; }
-.statusbar.warn .sb-left { color: #d9a632; }
+.statusbar.err .sb-left { color: #e07a7a; }
+.statusbar.warn .sb-left { color: #e0b85a; }
 .sb-left { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .sb-left::before { content: ""; flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 6px rgba(76,154,106,.5); }
-.statusbar.err .sb-left::before { background: #d9534f; box-shadow: 0 0 6px rgba(217,83,79,.5); }
-.statusbar.warn .sb-left::before { background: #d9a632; box-shadow: 0 0 6px rgba(217,166,50,.5); }
+.statusbar.err .sb-left::before { background: #e07a7a; box-shadow: 0 0 6px rgba(224,122,122,.5); }
+.statusbar.warn .sb-left::before { background: #e0b85a; box-shadow: 0 0 6px rgba(224,184,90,.5); }
 .sb-right { flex: 0 0 auto; color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.statusbar .errcount { color: #d9534f; font-weight: 700; cursor: pointer; }
-.statusbar .warncount { color: #d9a632; font-weight: 700; cursor: pointer; }
+.statusbar .errcount { color: #e07a7a; font-weight: 700; cursor: pointer; }
+.statusbar .warncount { color: #e0b85a; font-weight: 700; cursor: pointer; }
 
 /* ---- tab 徽标（问题数量） ---- */
 .tab-badge {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 16px; height: 16px; margin-left: 5px; padding: 0 4px;
   font-size: 10.5px; font-weight: 700; border-radius: 999px;
-  background: #c05a5a; color: #fff; vertical-align: middle;
+  background: #e07a7a; color: #fff; vertical-align: middle;
 }
 
 /* ---- 底部面板（专业 IDE：问题 / 输出 / 变量 停靠区） ---- */
@@ -225,8 +225,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .output-row { display: flex; gap: 12px; padding: 2px 0; white-space: nowrap; }
 .output-row .k { flex: 0 0 auto; min-width: 74px; color: var(--dim); }
 .output-row .ok { color: var(--good); font-weight: 700; }
-.output-row .err { color: #c05a5a; font-weight: 700; }
-.output-row .warn { color: #d9a632; font-weight: 700; }
+.output-row .err { color: #e07a7a; font-weight: 700; }
+.output-row .warn { color: #e0b85a; font-weight: 700; }
 
 /* ---- 控制台面板（终端风格活动日志） ---- */
 .console-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
@@ -240,7 +240,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .console-filter button.on { background: var(--accent-soft); color: var(--accent-strong); border-color: var(--accent); font-weight: 700; }
 .console-output { flex: 1; min-height: 0; overflow-y: auto; font-family: "Cascadia Code", Consolas, "Courier New", monospace; font-size: 12.5px; line-height: 1.7; }
 .console-welcome { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 8px; border-radius: 10px; background: var(--accent-soft); border: 1px solid var(--line); }
-.cw-logo { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; font-weight: 800; color: #fff; background: linear-gradient(140deg, #e2b878, #b38545); box-shadow: 0 4px 12px rgba(179,133,69,.4); }
+.cw-logo { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; font-weight: 800; color: #fff; background: linear-gradient(140deg, #e8c48a, #b38545); box-shadow: 0 4px 12px rgba(217,174,107,.5); }
 .cw-title { display: block; font-weight: 700; color: var(--text); font-size: 13px; }
 .cw-sub { display: block; font-size: 12px; color: var(--dim); }
 .console-log { display: flex; flex-direction: column; gap: 2px; }
@@ -248,13 +248,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .console-line .cl-time { flex: 0 0 auto; color: var(--dim); font-variant-numeric: tabular-nums; }
 .console-line .cl-tag { flex: 0 0 auto; width: 40px; font-weight: 700; font-size: 11px; }
 .console-line.output .cl-tag { color: var(--good); }
-.console-line.warning .cl-tag { color: #d9a632; }
-.console-line.error .cl-tag { color: #c05a5a; }
+.console-line.warning .cl-tag { color: #e0b85a; }
+.console-line.error .cl-tag { color: #e07a7a; }
 .console-line .cl-text { color: var(--text); }
-.console-line.error .cl-text { color: #c05a5a; }
+.console-line.error .cl-text { color: #e07a7a; }
 .console-empty { color: var(--dim); text-align: center; margin-top: 18px; }
 .console-status-line { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 12px; color: var(--dim); }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 6px rgba(76,154,106,.55); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 6px rgba(126,201,155,.45); }
 .status-dot.idle { background: var(--good); }
 .status-dot.busy { background: var(--accent); }
 .console-ver { margin-left: auto; }
@@ -277,13 +277,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .prob-item:hover { border-color: var(--accent); background: var(--accent-soft); }
 .prob-item .pi-icon { width: 18px; text-align: center; font-weight: 800; }
-.prob-item.err .pi-icon { color: #c05a5a; }
-.prob-item.warn .pi-icon { color: #d9a632; }
+.prob-item.err .pi-icon { color: #e07a7a; }
+.prob-item.warn .pi-icon { color: #e0b85a; }
 .prob-item .pi-msg { flex: 1; min-width: 0; font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .prob-item .pi-line { flex: 0 0 auto; font-size: 12px; color: var(--dim); }
 .prob-empty { text-align: center; color: var(--dim); margin-top: 30px; font-size: 13px; }
 .preview-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: var(--muted); }
-.preview-frame { flex: 1; width: 100%; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+.preview-frame { flex: 1; width: 100%; border: 1px solid var(--line); border-radius: var(--radius); background: #141418; }
 
 /* ---- 变量面板 ---- */
 .var-help { font-size: 13px; color: var(--muted); line-height: 1.8; background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
@@ -296,7 +296,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .var-row .vn { font-weight: 700; font-size: 13.5px; }
 .var-row .vt { font-size: 12px; color: var(--dim); }
 .var-row .val { flex: 1; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.var-row .thumb { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; border: 1px solid var(--line); background: #eee; }
+.var-row .thumb { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; border: 1px solid var(--line); background: #1a1a1e; }
 .img-actions { display: flex; gap: 6px; }
 .img-actions button { padding: 6px 10px; border-radius: 8px; font-size: 12px; border: 1px solid var(--line); color: var(--muted); }
 .img-actions button.primary { border-color: var(--accent); color: var(--accent-strong); background: var(--accent-soft); }
@@ -310,10 +310,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .graph-tools label { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
 .graph-tools input[type="text"] {
   padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); font-size: 13px;
-  outline: none; background: rgba(255,255,255,.7); color: #2d2416; width: 120px;
+  outline: none; background: rgba(255,255,255,.06); color: #f5ecdd; width: 120px;
 }
 .graph-tools input[type="text"]:focus { border-color: var(--accent); }
-.graph-tools select { padding: 7px 8px; border-radius: 8px; border: 1px solid var(--line); font-size: 13px; background: rgba(255,255,255,.7); color: #2d2416; outline: none; }
+.graph-tools select { padding: 7px 8px; border-radius: 8px; border: 1px solid var(--line); font-size: 13px; background: rgba(255,255,255,.06); color: #f5ecdd; outline: none; }
 .graph-stage { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .graph-canvas {
   position: relative; flex: 1; min-height: 300px; border: 1px solid var(--line); border-radius: var(--radius);
@@ -321,7 +321,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     linear-gradient(to right, rgba(120, 90, 50, .07) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(120, 90, 50, .07) 1px, transparent 1px);
   background-size: 24px 24px;
-  background-color: rgba(255,255,255,.42);
+  background-color: rgba(255,255,255,.04);
   cursor: crosshair; overflow: hidden;
 }
 .graph-gridhint {
@@ -338,7 +338,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .home {
   position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-  background: linear-gradient(160deg, rgba(243,238,230,.8), rgba(243,238,230,.94));
+  background: rgba(10,10,12,.88);
 }
 .home-card { text-align: center; padding: 44px 52px; background: var(--glass); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 70px rgba(60,45,20,.18); max-width: 520px; }
 .home-card h1 { margin: 16px 0 6px; font-size: 30px; }
@@ -351,10 +351,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ---- 弹窗 ---- */
 .modal { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; background: rgba(40,30,15,.35); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
-.modal-card { width: min(430px, 92vw); background: var(--glass); border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 24px 60px rgba(40,30,15,.3); text-align: center; }
+.modal-card { width: min(430px, 92vw); background: var(--glass); border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 24px 60px rgba(0,0,0,.55); text-align: center; }
 .modal-title { font-size: 16px; font-weight: 800; margin-bottom: 14px; }
 .modal-body { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
-.modal-body input[type="text"] { width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 14px; outline: none; margin-top: 4px; background: rgba(255,255,255,.7); }
+.modal-body input[type="text"] { width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 14px; outline: none; margin-top: 4px; background: rgba(255,255,255,.06); }
 .modal-body input:focus { border-color: var(--accent); }
 .modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
 .alert-info { padding: 10px; border-radius: 8px; background: var(--accent-soft); text-align: left; font-size: 12.5px; }
@@ -392,15 +392,19 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .export-opt:hover { color: var(--accent); }
 .export-opt input { margin-right: 6px; width: 15px; height: 15px; vertical-align: -2px; accent-color: var(--accent); cursor: pointer; }
+/* ---- v3.88: 真实图片品牌图标 ---- */
+.brand-img { width: 26px; height: 26px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 12px rgba(199,165,107,.25); }
+.home-logo-img { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; box-shadow: 0 8px 22px rgba(199,165,107,.35); }
+
 </style>
 </head>
 <body>
   <!-- ===== 顶部导航 ===== -->
   <header class="topbar">
     <div class="brand" id="btnHome" title="返回首页">
-      <span class="logo-dot"></span>
+      <img src="/assets/simplelang-logo.jpg" class="brand-img" alt="Simple" />
       <span class="brand-name">Simple</span>
-      <span class="ver" id="verTag">S1.01 · 电脑端</span>
+      <span class="ver" id="verTag">v3.88 · 电脑端</span>
     </div>
     <div class="crumb" id="crumb" title="当前文件">—</div>
     <div class="actions">
@@ -531,9 +535,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
             </div>
             <div class="console-output" id="consoleOutput">
               <div class="console-welcome">
-                <span class="cw-logo">H</span>
+                <span class="cw-logo">S</span>
                 <div class="cw-text">
-                  <span class="cw-title">Simple · SIMPLE 本地开发环境 S1.01X（X·全能版）</span>
+                  <span class="cw-title">Simple · SIMPLE 本地开发环境 v3.88R（R·标准版）</span>
                   <span class="cw-sub">SIMPLE 引擎已就绪 · 正在加载编辑器…</span>
                 </div>
               </div>
@@ -580,7 +584,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- ===== 首页引导 ===== -->
   <div id="home" class="home hidden">
     <div class="home-card">
-      <div class="home-logo"><span class="logo-dot lg"></span></div>
+      <div class="home-logo"><img src="/assets/simplelang-logo.jpg" class="home-logo-img" alt="Simple" /></div>
       <h1>Simple <span class="dim">· SIMPLE 语言在线开发</span></h1>
       <p class="home-sub">自研 SIMPLE 语言一键转译为 HTML，零基础也能搭建网页项目。</p>
       <div class="home-sub small">v3.01：新增<b>原生 HTML 块</b>（<code>html:( … )end</code>，括号内直接写 HTML，SIMPLE 不会编译、而是按声明顺序原样放入最终导出）——在色块之外，让你能自由嵌入任意网页元素；并保留 v2.00 的触发区域色块（<code>cf 名 … cf 名 stop</code>，点击/长按触发）、URL 图片、可下载文件（<code>it 名 app</code> + <code>名 in d</code>）、Python 标准库导入（<code>use os, sys, math, json, sqlite3…</code>）；兼容 for 循环、{变量} 插值、中文变量名、实时转译与任意页面导出。</p>
@@ -614,7 +618,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 <script>
 /* ============================================================
- * SimpleLang v1.00 —— 数据层 store.js
+ * SimpleLang v3.88 —— 数据层 store.js
  * 职责：
  *   1) 项目 / 页面 CRUD，localStorage 本地持久化
  *   2) 首次零项目引导判定（hasAnyProject / lastActive）
@@ -638,7 +642,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   "use strict";
 
   const KEY = "SIMPLE_DATA";
-  const STORE_VERSION = "S1.01";
+  const STORE_VERSION = "v3.88";
 
   function uuid() {
     return "h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -896,12 +900,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 })(typeof self !== 'undefined' ? self : null, function () {
   "use strict";
 
-  const APP = { version: "S1.01", name: "Simple", lang: "SIMPLE" };
+  const APP = { version: "v3.88", name: "Simple", lang: "SIMPLE" };
   // 当前发布形态：r=标准(+py) / m=轻量(仅hic) / x=全能(+py+cpp)。
   // 导出的 HTML 会在 head 写入 window.SIMPLE_EDITION，由内建编译器宿主据此决定编译哪些语言。
   let EDITION = "x"; // 源码/网页在线版默认全能(X)；离线单文件按 R/M/X 各自注入。可用 SimpleLang.setEdition() 覆盖。
   function setEdition(e) { EDITION = String(e || "").toLowerCase()[0] === "r" ? "r" : String(e || "").toLowerCase()[0] === "m" ? "m" : "x"; }
-  // S1.01 三版发布：R(标准,+py) / M(轻量,仅hic) / X(全能,+py+cpp)。
+  // v3.88 三版发布：R(标准,+py) / M(轻量,仅hic) / X(全能,+py+cpp)。
   // 引擎统一解析全部语言块，具体版本决定「哪些语言可被 SIMPLE 编译进 HTML」以及打包形态。
   // 块语法：html:(…)end（原样 HTML）、py:(…)end（SIMPLE 编译 Python→HTML）、cpp:(…)end（SIMPLE 编译 C++→HTML）
   const BLOCK_LANG = { html: "html", py: "py", py3: "py", cpp: "cpp", cxx: "cpp" };
@@ -965,7 +969,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       if (FULLWIDTH_OPS[c]) { out.push({ t: FULLWIDTH_OPS[c], v: FULLWIDTH_OPS[c] }); i++; continue; }
       if (c === "(") { out.push({ t: "(", v: c }); i++; continue; }
       if (c === ")") { out.push({ t: ")", v: c }); i++; continue; }
-      /* ---- S1.01 扩展：列表/字典字面量 token ---- */
+      /* ---- v3.88 扩展：列表/字典字面量 token ---- */
       if (c === "[") { out.push({ t: "[", v: c }); i++; continue; }
       if (c === "]") { out.push({ t: "]", v: c }); i++; continue; }
       if (c === "{") { out.push({ t: "{", v: c }); i++; continue; }
@@ -1005,7 +1009,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     const sL = String(l), sR = String(r);
     if (op === "==") return numL && numR ? l === r : sL === sR;
     if (op === "!=") return numL && numR ? l !== r : sL !== sR;
-    /* ---- S1.01 扩展：列表/字典 in 操作符 ---- */
+    /* ---- v3.88 扩展：列表/字典 in 操作符 ---- */
     if (op === "in") {
       if (Array.isArray(r)) return r.indexOf(l) >= 0;
       if (r && typeof r === "object") return l in r;
@@ -1020,7 +1024,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     return false;
   }
 
-  /* ---- S1.01 扩展：evalExpr 内置函数库 ---- */
+  /* ---- v3.88 扩展：evalExpr 内置函数库 ---- */
   const BUILTINS = {
     len: function (x) {
       if (x == null) return 0;
@@ -1054,9 +1058,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     },
     abs: function (x) { return Math.abs(Number(x)); },
     round: function (x) { return Math.round(Number(x)); },
-    int: function (x) { return parseInt(x, 10); },
+    int: function (v) { var n = Number(v); return isNaN(n) ? v : Math.trunc(n); },
+    double: function (v) { return Number(v); },
     float: function (x) { return parseFloat(x); },
-    str: function (x) { return String(x == null ? "" : x); },
+    str: function (v) { return String(v); },
     type: function (x) {
       if (x === true || x === false) return "bool";
       if (Array.isArray(x)) return "list";
@@ -1083,7 +1088,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       if (typeof v === "number") return v !== 0;
       return String(v).length > 0;
     }
-    /* ---- S1.01 扩展：primary 处理列表、字典、内置函数调用 ---- */
+    /* ---- v3.88 扩展：primary 处理列表、字典、内置函数调用 ---- */
     function primary() {
       const t = next();
       if (!t) return "";
@@ -1160,7 +1165,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       }
       return v;
     }
-    /* ---- S1.01 扩展：字符串拼接（+ 操作数含字符串时用 String() 拼接）---- */
+    /* ---- v3.88 扩展：字符串拼接（+ 操作数含字符串时用 String() 拼接）---- */
     function addSub() {
       let v = mulDiv();
       while (peek() && (peek().t === "+" || peek().t === "-")) {
@@ -1253,14 +1258,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     // for 循环头：for 变量 in 迭代源:
     const form = line.match(/^for\s+([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s+in\s+(.+?)\s*:\s*$/i);
     if (form) return { kind: "for", var: form[1], iter: form[2].trim() };
-    /* ---- S1.01 扩展：新语句分类（while / break / continue / set / let / opset / say）---- */
+    /* ---- v3.88 扩展：新语句分类（while / break / continue / set / let / opset / say）---- */
     // while 条件: 循环头
     const whileM = line.match(/^while\s+(.+?)\s*:\s*$/i);
     if (whileM) return { kind: "while", cond: whileM[1].replace(/:\s*$/, "").trim() };
     // break / continue
     if (/^break\s*$/.test(line)) return { kind: "break" };
     if (/^continue\s*$/.test(line)) return { kind: "continue" };
-    /* ---- S1.01 扩展：fn 定义 / fn end / call / return / raise ---- */
+    /* ---- v3.88 扩展：fn 定义 / fn end / call / return / raise ---- */
     const fnStart = line.match(/^fn\s+([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s*\(([^)]*)\)\s*:\s*$/i);
     if (fnStart) {
       const params = fnStart[2].split(",").map(function (s) { return s.trim(); }).filter(Boolean);
@@ -1275,6 +1280,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     }
     const raiseM = line.match(/^raise\s+(.+)$/i);
     if (raiseM) return { kind: "raise", msg: raiseM[1].trim() };
+    // ---- v3.88 新增：sru 输入语句 ----
+    // 格式: sru(100),y,t=a   或简写 sru=xxx  sru(80)=xxx
+    const sruM = line.match(/^sru\s*\(\s*(\d+)\s*\)\s*,\s*([tfTF])\s*,\s*([yfYF])\s*=\s*([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s*$/i);
+    if (sruM) return { kind: "sru", scale: parseInt(sruM[1], 10), confirm: sruM[2].toLowerCase() === "t", rounded: sruM[3].toLowerCase() === "y", target: sruM[4] };
+    const sruS = line.match(/^sru\s*(?:\((\d+)?\))?\s*=\s*([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s*$/i);
+    if (sruS) return { kind: "sru", scale: sruS[1] ? parseInt(sruS[1], 10) : 100, confirm: false, rounded: true, target: sruS[2] };
     // set 名 = 表达式 — 运行时赋值
     const setM = line.match(/^set\s+([A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*)\s*=\s*(.+?)\s*$/);
     if (setM) return { kind: "set", name: setM[1], expr: setM[2] };
@@ -1346,7 +1357,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     for (let li = 0; li < rawLines.length; li++) {
       const raw = rawLines[li];
       const mt = raw.match(/^[ \t]*/)[0];
-      /* ---- S1.01 扩展：// 多行注释 ---- */
+      /* ---- v3.88 扩展：// 多行注释 ---- */
       const lt = raw.replace(/(^|[ \t])\/\/.*$/, "").replace(/(^|[ \t])#.*$/, "").trim();
       if (/^(html|py|py3|cpp|cxx)\s*:\s*\(\s*$/i.test(lt)) {
         const lang = mapLang(lt.match(/^([a-z0-9]+)\s*:/i)[1]);
@@ -1404,14 +1415,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
           const bodyEndFor = collectUntil(i, end, indentGoal);
           out.push({ kind: "for", var: st.var, iter: st.iter, body: build(i, bodyEndFor, minIndent(i, bodyEndFor)) });
           i = bodyEndFor;
-        /* ---- S1.01 扩展：while 块收集 ---- */
+        /* ---- v3.88 扩展：while 块收集 ---- */
         } else if (st.kind === "while") {
           if (pendingIf) { out.push(pendingIf); pendingIf = null; }
           i++;
           const bodyEndW = collectUntil(i, end, indentGoal);
           out.push({ kind: "while", cond: st.cond, body: build(i, bodyEndW, minIndent(i, bodyEndW)) });
           i = bodyEndW;
-        /* ---- S1.01 扩展：fn 块收集 ---- */
+        /* ---- v3.88 扩展：fn 块收集 ---- */
         } else if (st.kind === "fnStart") {
           if (pendingIf) { out.push(pendingIf); pendingIf = null; }
           const fnName = st.name; const fnParams = st.params;
@@ -1500,7 +1511,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         collectVars(n.body, vars);
         n.chains.forEach(function (c) { collectVars(c.body, vars); });
         if (n.orphan) { /* orphan body already collected */ }
-      /* ---- S1.01 扩展：fnStart 跳过 body（编译期内联时才处理）---- */
+      /* ---- v3.88 扩展：fnStart 跳过 body（编译期内联时才处理）---- */
       } else if (n.kind === "while") {
         collectVars(n.body, vars);
       } else if (n.kind === "fnStart") {
@@ -1533,6 +1544,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         else vars[n.name].value = val;
       } else if (n.kind === "say" || n.kind === "break" || n.kind === "continue") {
         // 不产生变量
+      } else if (n.kind === "sru") {
+        // sru 声明目标变量，初始值空（运行时输入后注入）
+        vars[n.target] = { type: "ordinary", value: "", isImg: false, isInput: true };
       }
     });
     return vars;
@@ -1604,7 +1618,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     return 0;
   }
 
-  /* ---- S1.01 扩展：函数表收集（编译期内联用）---- */
+  /* ---- v3.88 扩展：函数表收集（编译期内联用）---- */
   function collectFns(nodes, out) {
     const o = out || {};
     // 简化：仅收集顶层 fn，不进 fn body 内部（不支持嵌套高阶函数）
@@ -1622,7 +1636,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
   function renderNodes(nodes, vars, ctx, out) {
     nodes.forEach(function (n) {
-      /* ---- S1.01 扩展：break/continue/return/raise 传播 ---- */
+      /* ---- v3.88 扩展：break/continue/return/raise 传播 ---- */
       if (ctx && (ctx.breakFlag || ctx.continueFlag || ctx.returnFlag || ctx.raiseFlag)) return;
       if (n.kind === "it") {
         out.push(n); // 声明保留（供变量面板）
@@ -1644,7 +1658,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         // 逐个取值渲染循环体，循环变量按普通变量注入
         const vals = iterVals(n.iter, vars);
         vals.forEach(function (val) {
-          /* ---- S1.01 扩展：循环内 break/continue/return/raise 传播 ---- */
+          /* ---- v3.88 扩展：循环内 break/continue/return/raise 传播 ---- */
           if (ctx && (ctx.breakFlag || ctx.returnFlag || ctx.raiseFlag)) { ctx.breakFlag = false; return; }
           const prev = vars[n.var];
           vars[n.var] = { type: "ordinary", value: val, isImg: false };
@@ -1681,7 +1695,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         out.push({ kind: "cppBlock", lang: "cpp", code: n.code });
       } else if (n.kind === "textline") {
         out.push({ kind: "textline", text: n.text });
-      /* ---- S1.01 扩展：break / continue / while / set / let / opset / say / fn / call / return / raise ---- */
+      /* ---- v3.88 扩展：break / continue / while / set / let / opset / say / fn / call / return / raise ---- */
       } else if (n.kind === "break") {
         if (ctx) ctx.breakFlag = true;
         return;
@@ -1724,7 +1738,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         // 编译期 while 展开：条件动态求值，最多 50 次（安全上限，不是语言限制）
         let safety = 0;
         while (safety++ < 50) {
-          /* ---- S1.01 扩展：while 内 break/return/raise 传播 ---- */
+          /* ---- v3.88 扩展：while 内 break/return/raise 传播 ---- */
           if (ctx && (ctx.breakFlag || ctx.returnFlag || ctx.raiseFlag)) { ctx.breakFlag = false; break; }
           let condVal = false;
           try { condVal = evalExpr(n.cond, vars); } catch (e) {}
@@ -1760,6 +1774,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       } else if (n.kind === "say") {
         const text = interpolate(n.text, vars);
         out.push({ kind: "say", text: text });
+      } else if (n.kind === "sru") {
+        // sru 不产生静态变量值，只输出 input item
+        out.push({ kind: "sru", scale: n.scale, confirm: n.confirm, rounded: n.rounded, target: n.target });
       }
     });
     return out;
@@ -1784,7 +1801,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         v.value = (f && f.dataURL) || "";
       }
     });
-    /* ---- S1.01 扩展：收集函数表并传入 renderNodes ---- */
+    /* ---- v3.88 扩展：收集函数表并传入 renderNodes ---- */
     const FN_TABLE = collectFns(nodes, {});
     const items = renderNodes(nodes, vars, { fnTable: FN_TABLE }, []);
     return { vars, items };
@@ -1838,9 +1855,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     ".hic-ext-out{margin-top:8px;padding:12px 16px;border-radius:12px;background:rgba(217,174,107,.08);border:1px dashed rgba(217,174,107,.35);}",
     ".hic-ext-state{font-size:12.5px;color:#8d7f63;}",
     ".hic-ext-run{margin:0;padding-top:6px;font:13px/1.6 ui-monospace,Consolas,Menlo,monospace;color:#d9ae6b;white-space:pre-wrap;word-break:break-word;}",
-    /* ---- S1.01 扩展：raise 样式 ---- */
+    /* ---- v3.88 扩展：raise 样式 ---- */
     ".hic-raise{color:#c05a5a;font-weight:700;}",
-    "@media(max-width:700px){.hic-text{font-size:32px;}}"
+    "@media(max-width:700px){.hic-text{font-size:32px;}}",
+    "/* ---- v3.88 新增：sru 输入框样式 ---- */",
+    ".hic-input-wrap{margin:12px 0;display:flex;align-items:center;gap:8px;}",
+    ".hic-input{flex:1;padding:10px 14px;font-size:14px;font-family:inherit;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#ffffff;outline:none;transition:all .18s;}",
+    ".hic-input:focus{border-color:#c7a56b;background:rgba(255,255,255,.10);box-shadow:0 0 0 3px rgba(199,165,107,.2);}",
+    ".hic-input-btn{padding:8px 18px;font-size:13px;font-family:inherit;border:none;cursor:pointer;background:linear-gradient(140deg,#e8c48a,#b38545);color:#171309;border-radius:8px;font-weight:700;}",
+    ".hic-input-btn:hover{filter:brightness(1.1);}"
   ].join("\n");
 
   function pageSlug(p) { return (p && p.name) ? p.name : "page"; }
@@ -1920,12 +1943,26 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       if (it.kind === "textline") {
         return '<p class="hic-item hic-body">' + esc(it.text) + "</p>";
       }
-      /* ---- S1.01 扩展：say / raise 输出 ---- */
+      /* ---- v3.88 扩展：say / raise 输出 ---- */
       if (it.kind === "say") {
         return '<p class="hic-item hic-body">' + esc(it.text) + "</p>";
       }
       if (it.kind === "raise") {
         return '<p class="hic-item hic-body hic-raise">' + esc(it.text) + "</p>";
+      }
+      /* ---- v3.88 新增：sru 输入框 ---- */
+      if (it.kind === "sru") {
+        const w = Math.max(10, Math.min(100, it.scale || 100));
+        const rd = it.rounded ? "border-radius:10px;" : "border-radius:0;";
+        const tgt = esc(it.target);
+        const inputCls = it.confirm ? "hic-input-confirm" : "hic-input-live";
+        const submitBtn = it.confirm
+          ? '<button class="hic-input-btn" data-input="' + tgt + '">确定</button>'
+          : '';
+        return '<div class="hic-input-wrap" data-input-wrap="' + tgt + '" style="width:' + w + '%;">' +
+          '<input class="hic-input ' + inputCls + '" data-input="' + tgt + '" placeholder="输入到 ' + tgt + '" style="' + rd + '" />' +
+          submitBtn +
+          '</div>';
       }
       return "";
     }).join("\n");
@@ -2009,6 +2046,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   // 全程离线可达，仅在导出页存在 .hic-ext 时激活，纯 SIMPLE 页面不引入任何运行时代码。
   function extJsBlock() {
     const js = [
+      /* ---- v3.88 新增：sru 运行时容器 ---- */
+      "var SIMPLE_INPUTS=window.SIMPLE_INPUTS||{};",
       "(function(){var ex=document.querySelectorAll('.hic-ext');if(!ex.length)return;",
       "var E=(window.SIMPLE_EDITION||'').toLowerCase();",
       "var hasPy=(E===''||E==='r'||E==='x');var hasCpp=(E===''||E==='x');",
@@ -2102,7 +2141,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       "var txt=_outH.replace(/\\n+$/,'');o.textContent=txt||'(程序无输出)';st(el,'✓ 已编译为 HTML 输出');}",
       "catch(e){st(el,'编译失败：'+e.message);o.textContent=e.message;o.classList.add('hic-fail');}}",
       "ex.forEach(function(el){var L=el.getAttribute('data-lang');if(L==='py')runPy(el);else if(L==='cpp')runCpp(el);});",
-      "})();"
+      "})();",
+      /* ---- v3.88 新增：sru 输入运行时 ---- */
+      "(function(){var sruInputs=document.querySelectorAll('.hic-input');sruInputs.forEach(function(inp){var tgt=inp.getAttribute('data-input');if(inp.classList.contains('hic-input-live')){inp.addEventListener('input',function(){SIMPLE_INPUTS[tgt]=inp.value;});}if(inp.classList.contains('hic-input-confirm')){var btn=inp.parentElement.querySelector('.hic-input-btn');if(btn)btn.addEventListener('click',function(){SIMPLE_INPUTS[tgt]=inp.value;});}});})();"
     ].join("\n");
     return js;
   }
@@ -2345,7 +2386,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 </script>
 <script>
 /* ============================================================
- * SimpleLang v1.00 —— 轻量代码编辑器 editor.js
+ * SimpleLang v3.88 —— 轻量代码编辑器 editor.js
  * 在原生 <textarea> 之上叠加「语法高亮层 + 行号栏」，保留原生编辑
  * 体验（光标/选中/撤销/粘贴），仅额外提供：
  *   1) 语法高亮  2) 行号  3) 回车自动缩进  4) 括号/引号自动补全
@@ -2518,12 +2559,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     }
     // 行内错误/警告标记：diags = [{line,col,msg,level}]
     function setDiagnostics(diags) {
+      return; // v3.88 移除行内红线/黄虚线下划线
       mark.innerHTML = "";
       if (!diags || !diags.length) return;
       const lh = parseFloat(getComputedStyle(textarea).lineHeight) || 23;
       const gw = gutter.offsetWidth || 0;
       const fd = document.createDocumentFragment();
       diags.forEach(function (d) {
+      return; // v3.88 移除行内红线/黄虚线下划线
         const elm = document.createElement("div");
         elm.className = "ed-diag ed-diag-" + (d.level === "error" ? "err" : "warn");
         elm.title = "第 " + d.line + " 行：" + (d.msg || "");
@@ -2552,7 +2595,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 </script>
 <script>
 /* ============================================================
- * SimpleLang v1.00 在线 IDE —— 界面逻辑 app.js
+ * SimpleLang v3.88 在线 IDE —— 界面逻辑 app.js
  * 依赖：Store (store.js) + SimpleLang (hic.js)
  * 职责：首页引导、项目/页面 CRUD、代码编辑、实时转译预览、
  *       变量面板（含 p 图片上传）、图形化画布定位、导出菜单。
@@ -2682,7 +2725,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     if (typeof SimpleLang !== "undefined" && SimpleLang.setEdition) SimpleLang.setEdition(ed);
     try { window.SIMPLE_EDITION = ed; } catch (e) {}
     const VT = document.getElementById("verTag");
-    if (VT) VT.textContent = "S1.01 · " + ED_NAME[ed];
+    if (VT) VT.textContent = "v3.88 · " + ED_NAME[ed];
     if (el.edSwitch) Array.prototype.forEach.call(el.edSwitch.querySelectorAll(".ed-btn"), function (b) {
       b.classList.toggle("on", b.getAttribute("data-ed") === ed);
     });

@@ -232,6 +232,21 @@ main { max-width: 1080px; margin: 0 auto; padding: 26px 22px 60px; }
 #view-search .favs { margin-top: 34px; }
 .foot { text-align: center; color: #aab0c0; font-size: 12px; padding: 20px 0 40px; }
 
+/* 通用隐藏类（用于登录区/对话区/提示条切换） */
+.hidden { display: none !important; }
+
+/* 未检测到扩展时的提示条 */
+.banner {
+  background: #eef4ff; border: 1px solid #cfe0ff; color: #274690;
+  border-radius: 12px; padding: 12px 14px; font-size: 13px;
+  margin-bottom: 18px; line-height: 1.6;
+}
+
+/* 扩展安装引导 */
+.guide-list { color: var(--muted); font-size: 13px; line-height: 1.9; padding-left: 20px; margin: 8px 0 0; }
+.guide-list code, .modal-card code { background: #f3f5fb; padding: 1px 5px; border-radius: 5px; font-size: 12px; }
+#guide .state { margin: 4px 0 12px; }
+
 @media (max-width: 680px) {
   .brand-sub { display: none; }
   .hero-title { font-size: 30px; }

@@ -19,14 +19,18 @@
     </nav>
     <div class="conn">
       <span id="connDot" class="dot off"></span>
-      <span id="connText">未连接本机服务</span>
-      <button id="settingsBtn" class="ghost" title="设置本机服务地址">设置</button>
+      <span id="connText">检测扩展中...</span>
+      <button id="settingsBtn" class="ghost" title="扩展安装说明">设置</button>
     </div>
   </header>
 
   <main>
     <!-- 搜索视图 -->
     <section id="view-search" class="view active">
+      <div id="bridgeBanner" class="banner hidden">
+        未检测到 bro bridge 扩展。搜索与 AI 功能依赖该扩展提供浏览器原生特权接口（不依赖任何外部运行时）。点右上角「设置」查看安装步骤。
+      </div>
+
       <div class="hero">
         <h1 class="hero-title">搜索</h1>
         <form id="searchForm" class="searchbar">
@@ -45,7 +49,7 @@
           </div>
           <button type="submit" class="search-submit">搜索</button>
         </form>
-        <div class="hero-hint">结果由本机服务静默抓取后返回，点击结果才会跳转到目标网页。</div>
+        <div class="hero-hint">结果由扩展在后台静默抓取后返回，点击结果才会跳转到目标网页。</div>
       </div>
 
       <div id="searchStatus" class="status"></div>
@@ -60,22 +64,29 @@
   </main>
 
   <footer class="foot">
-    <span>本地运行，不经过任何远程服务器；登录信息仅用于本机向目标站点登录。</span>
+    <span>纯浏览器原生运行：不含任何外部服务，所有请求都通过已安装的扩展在你的浏览器内完成。</span>
   </footer>
 
-  <!-- 设置弹层 -->
+  <!-- 扩展说明弹层 -->
   <div id="settingsModal" class="modal hidden">
-    <div class="modal-card">
-      <h3>本机服务地址</h3>
-      <p class="muted">默认 <code>http://127.0.0.1:8787</code>，如修改过端口请在此同步。</p>
-      <input id="baseInput" class="text" type="text" placeholder="http://127.0.0.1:8787" />
+    <div class="modal-card" id="guide">
+      <h3>bro bridge 扩展</h3>
+      <p class="muted state"></p>
+      <p class="muted">安装步骤：</p>
+      <ol class="guide-list">
+        <li>打开浏览器扩展管理页（Chrome / Edge 地址栏输入 <code>chrome://extensions</code>）</li>
+        <li>打开右上角「开发者模式」</li>
+        <li>点「加载已解压的扩展程序」，选择本仓库中的 <code>bro/extension</code> 目录</li>
+        <li>回到本页刷新，右上角状态应变为「扩展已连接」</li>
+      </ol>
       <div class="modal-actions">
-        <button id="baseCancel" class="ghost">取消</button>
-        <button id="baseSave" class="primary">保存</button>
+        <button id="baseCancel" class="ghost">关闭</button>
+        <button id="baseSave" class="primary">我已安装，重新检测</button>
       </div>
     </div>
   </div>
 
+  <script src="js/engines.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

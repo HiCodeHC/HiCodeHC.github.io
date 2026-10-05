@@ -1,12 +1,13 @@
-/* bro 前端逻辑
+/* bro 前端逻辑（纯浏览器原生）
  * ---------------------------------------------------------------------------
- * 页面本身不做任何跨域请求，所有“静默访问目标站点”的动作都交给运行在本机的服务，
- * 前端只与本机服务通信。这样即使浏览器限制了直接访问目标站点，本机服务仍可访问。
+ * 页面自身不发任何跨域请求。所有“静默访问目标站点”的动作都通过 window.postMessage
+ * 交给浏览器扩展（bro bridge）完成，扩展用其特权接口抓取并回传内容。
+ * 因此不依赖 Node / npm / Chromium 等任何外部运行时。
  */
 (() => {
   'use strict';
 
-  const DEFAULT_BASE = 'http://127.0.0.1:8787';
+  const CHANNEL = 'bro-bridge-v1';
 
   /* ----------------------------- 基础工具 ----------------------------- */
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -26,55 +27,59 @@
     return node;
   }
 
-  // 本机服务地址：优先已保存的地址，其次同源地址，最后回落到常见本机地址。
-  // 依次探测，取第一个可达的作为 BASE，避免因跨域/端口差异导致 “Failed to fetch”。
-  let BASE = localStorage.getItem('bro.base')?.replace(/\/$/, '') || DEFAULT_BASE;
+  /* --------------------------- 与扩展的通信桥 --------------------------- */
+  let bridgeReady = false;
+  let seq = 0;
+  const pending = new Map();
 
-  function candidateBases() {
-    const list = [];
-    const saved = localStorage.getItem('bro.base')?.replace(/\/$/, '');
-    if (saved) list.push(saved);
-    if (location.protocol.startsWith('http')) list.push(location.origin);
-    [DEFAULT_BASE, 'http://localhost:8787'].forEach((b) => {
-      if (!list.includes(b)) list.push(b);
+  window.addEventListener('message', (ev) => {
+    if (ev.source !== window) return;
+    const msg = ev.data;
+    if (!msg || msg.channel !== CHANNEL) return;
+
+    if (msg.dir === 'ready') { bridgeReady = true; setConn(true); return; }
+    if (msg.dir !== 'res' || !pending.has(msg.id)) return;
+
+    const p = pending.get(msg.id);
+    pending.delete(msg.id);
+    if (msg.ok) p.resolve(msg.data);
+    else p.reject(new Error(msg.error || '扩展返回错误'));
+  });
+
+  function bridgeCall(method, params = {}, timeout = 30000) {
+    const id = ++seq;
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        pending.delete(id);
+        reject(new Error('扩展未响应，请确认已安装并启用 bro bridge 扩展'));
+      }, timeout);
+      pending.set(id, {
+        resolve: (v) => { clearTimeout(timer); resolve(v); },
+        reject: (e) => { clearTimeout(timer); reject(e); },
+      });
+      window.postMessage({ channel: CHANNEL, dir: 'req', id, method, params }, location.origin);
     });
-    return list;
   }
 
-  async function api(path, options = {}) {
-    const res = await fetch(BASE + path, {
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store',
-      ...options,
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || `请求失败（${res.status}）`);
-    return data;
-  }
-
-  // 依次探测候选地址，返回第一个可用的；都不可用则返回 false
-  async function ping() {
+  function setConn(ok) {
     const dot = $('#connDot');
     const text = $('#connText');
-    for (const base of candidateBases()) {
-      try {
-        const res = await fetch(base + '/api/health', { method: 'GET', cache: 'no-store' });
-        if (!res.ok) continue;
-        const data = await res.json();
-        if (!data?.ok) continue;
-        BASE = base;
-        dot.classList.add('on');
-        dot.classList.remove('off');
-        text.textContent = '已连接本机服务';
-        return true;
-      } catch {
-        /* 该地址不可达，继续尝试下一个 */
-      }
+    dot.classList.toggle('on', ok);
+    dot.classList.toggle('off', !ok);
+    text.textContent = ok ? '扩展已连接' : '未检测到扩展';
+    const banner = $('#bridgeBanner');
+    if (banner) banner.classList.toggle('hidden', ok);
+  }
+
+  async function checkBridge() {
+    try {
+      await bridgeCall('ping', {}, 2500);
+      bridgeReady = true;
+      setConn(true);
+    } catch {
+      bridgeReady = false;
+      setConn(false);
     }
-    dot.classList.add('off');
-    dot.classList.remove('on');
-    text.textContent = '未连接本机服务（请在 bro/server 下执行 node server.js）';
-    return false;
   }
 
   /* ------------------------------- 视图切换 ------------------------------- */
@@ -89,55 +94,29 @@
 
   /* ------------------------------- 设置弹层 ------------------------------- */
   $('#settingsBtn').addEventListener('click', () => {
-    $('#baseInput').value = BASE;
+    $('#guide .state').textContent = bridgeReady ? '扩展已连接，功能可用。' : '尚未检测到扩展。';
     $('#settingsModal').classList.remove('hidden');
   });
   $('#baseCancel').addEventListener('click', () => $('#settingsModal').classList.add('hidden'));
   $('#baseSave').addEventListener('click', async () => {
-    BASE = ($('#baseInput').value || DEFAULT_BASE).trim().replace(/\/$/, '');
-    localStorage.setItem('bro.base', BASE);
     $('#settingsModal').classList.add('hidden');
-    await ping();
-    loadEngines();
+    await checkBridge();
   });
 
   /* ------------------------------- 搜索引擎 ------------------------------- */
-  const FALLBACK_ENGINES = [
-    { id: 'bing', label: 'Bing', supportsWeb: true, supportsImage: true },
-    { id: 'baidu', label: '百度', supportsWeb: true, supportsImage: true },
-    { id: 'sogou', label: '搜狗', supportsWeb: true, supportsImage: false },
-    { id: 'google', label: 'Google', supportsWeb: true, supportsImage: false },
-    { id: 'duckduckgo', label: 'DuckDuckGo', supportsWeb: true, supportsImage: false },
-  ];
-  let engines = FALLBACK_ENGINES;
+  let engines = window.BRO_ENGINES.list();
   let engine = localStorage.getItem('bro.engine') || 'bing';
   let mode = localStorage.getItem('bro.mode') || 'web';
 
-  const engineIconUrl = (id) => {
-    const hosts = { bing: 'bing.com', baidu: 'baidu.com', sogou: 'sogou.com', google: 'google.com', duckduckgo: 'duckduckgo.com' };
-    return hosts[id] ? `https://${hosts[id]}/favicon.ico` : '';
-  };
+  const engineHost = { bing: 'bing.com', baidu: 'baidu.com', sogou: 'sogou.com', google: 'google.com', duckduckgo: 'duckduckgo.com' };
 
-  async function loadEngines() {
-    try {
-      const data = await api('/api/engines');
-      if (data.engines?.length) engines = data.engines;
-    } catch {
-      engines = FALLBACK_ENGINES;
-    }
-    renderEngineMenu();
-    renderEngineButton();
-  }
-
-  function currentEngine() {
-    return engines.find((e) => e.id === engine) || engines[0];
-  }
+  const currentEngine = () => engines.find((e) => e.id === engine) || engines[0];
 
   function renderEngineButton() {
     const e = currentEngine();
     $('#engineLabel').textContent = e?.label || engine;
     const icon = $('#engineIcon');
-    icon.src = engineIconUrl(e?.id);
+    icon.src = engineHost[e?.id] ? `https://${engineHost[e.id]}/favicon.ico` : '';
     icon.onerror = () => { icon.style.visibility = 'hidden'; };
   }
 
@@ -157,7 +136,7 @@
             localStorage.setItem('bro.engine', engine);
             renderEngineButton();
             renderEngineMenu();
-            $('#engineMenu').classList.remove('open');
+            menu.classList.remove('open');
           },
         }, [
           el('span', { text: e.label }),
@@ -188,7 +167,6 @@
   });
 
   /* ------------------------------- 收藏夹 ------------------------------- */
-  // 说明：使用 localStorage 保存（比 cookie 容量更大、不会随请求自动发送）；本质同样是“保存在本地”。
   const FAV_KEY = 'bro.favorites';
   const loadFavs = () => { try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { return []; } };
   const saveFavs = (list) => localStorage.setItem(FAV_KEY, JSON.stringify(list));
@@ -210,18 +188,19 @@
     grid.innerHTML = '';
     loadFavs().forEach((fav, idx) => {
       const host = (() => { try { return new URL(fav.url).host; } catch { return ''; } })();
-      const letter = el('span', { class: 'letter', text: (fav.name || host || '?')[0].toUpperCase() });
       const img = host ? el('img', { src: `https://${host}/favicon.ico`, alt: '' }) : null;
-      if (img) img.onerror = () => { img.remove(); };
-      const node = el('a', { class: 'fav', href: fav.url, target: '_blank', rel: 'noopener' }, [
-        ...(img ? [img] : []), letter,
-        el('span', { class: 'name', text: fav.name || host || fav.url }),
-        el('button', {
-          class: 'del', type: 'button', text: '×', title: '删除',
-          onclick: (ev) => { ev.preventDefault(); ev.stopPropagation(); const l = loadFavs(); l.splice(idx, 1); saveFavs(l); renderFavs(); },
-        }),
-      ]);
-      grid.appendChild(node);
+      if (img) img.onerror = () => img.remove();
+      grid.appendChild(
+        el('a', { class: 'fav', href: fav.url, target: '_blank', rel: 'noopener' }, [
+          ...(img ? [img] : []),
+          el('span', { class: 'letter', text: (fav.name || host || '?')[0].toUpperCase() }),
+          el('span', { class: 'name', text: fav.name || host || fav.url }),
+          el('button', {
+            class: 'del', type: 'button', text: '×', title: '删除',
+            onclick: (ev) => { ev.preventDefault(); ev.stopPropagation(); const l = loadFavs(); l.splice(idx, 1); saveFavs(l); renderFavs(); },
+          }),
+        ])
+      );
     });
     grid.appendChild(
       el('button', { class: 'fav add', type: 'button', onclick: addFav }, [
@@ -243,42 +222,38 @@
 
   /* ------------------------------- 搜索 ------------------------------- */
   let lastQuery = '';
-  let lastPage = 1;
+  const LAST_KEY = 'bro.lastResults';
 
   $('#searchForm').addEventListener('submit', (ev) => {
     ev.preventDefault();
-    lastPage = 1;
     doSearch($('#searchInput').value.trim(), 1);
   });
 
   async function doSearch(query, page) {
     const status = $('#searchStatus');
     const results = $('#results');
-    const pager = $('#pager');
     if (!query) { status.textContent = '请输入搜索内容'; return; }
     lastQuery = query;
 
-    status.textContent = `正在通过本机服务访问「${currentEngine()?.label}」...`;
+    status.textContent = `正在通过扩展静默访问「${currentEngine()?.label}」...`;
     results.innerHTML = '';
-    pager.innerHTML = '';
+    $('#pager').innerHTML = '';
 
     try {
-      const data = await api(`/api/search?engine=${encodeURIComponent(engine)}&type=${mode}&q=${encodeURIComponent(query)}&page=${page}`);
-      if (!data.results?.length) {
-        status.textContent = `没有解析到结果（${currentEngine()?.label}）。可能是目标站点改版或被临时限制，可换一个引擎再试。`;
+      const url = window.BRO_ENGINES.url(engine, query, mode, page);
+      const data = await bridgeCall('fetch', { url });
+      const list = window.BRO_ENGINES.parse(engine, mode, data.text);
+      if (!list.length) {
+        status.textContent = `没有解析到结果（${currentEngine()?.label}）。目标站点可能改版或被限制，换一个引擎再试。`;
         return;
       }
-      status.textContent = `来自「${currentEngine()?.label}」的 ${data.count} 条结果（本机静默抓取）`;
-      renderResults(data.results, mode);
+      status.textContent = `来自「${currentEngine()?.label}」的 ${list.length} 条结果（扩展静默抓取）`;
+      renderResults(list, mode);
       renderPager(page);
+      // 记住最后一次结果，便于从其它视图返回时恢复
+      try { sessionStorage.setItem(LAST_KEY, JSON.stringify({ query, page, mode, engine, list })); } catch {}
     } catch (err) {
-      // 先判断是不是“前端连不上本机服务”，还是“本机服务抓不到目标站点”
-      const online = await ping();
-      if (!online) {
-        status.textContent = '抓取失败：前端无法连接本机服务。请在 bro/server 目录执行 node server.js（默认 http://127.0.0.1:8787），或点右上角「设置」确认地址。';
-        return;
-      }
-      status.textContent = `${err.message} 该引擎在当前网络下可能不可达或已改版，换一个引擎再试。`;
+      status.textContent = `${err.message} 若持续失败：确认扩展已启用，或更换引擎。`;
     }
   }
 
@@ -319,139 +294,152 @@
 
   /* ------------------------------- AI 面板 ------------------------------- */
   const SITES = {
-    kimi: { label: 'Kimi', path: '/api/kimi', model: 'K2.6 普通（不推理）' },
-    deepseek: { label: 'DeepSeek', path: '/api/deepseek', model: 'DeepSeek 默认模型' },
+    kimi: { label: 'Kimi', model: 'K2.6 普通（不推理）' },
+    deepseek: { label: 'DeepSeek', model: 'DeepSeek 默认模型' },
   };
 
   const AI = {};
 
-  function buildPanel(site) {
+  function buildPanel(site, ref) {
     const cfg = SITES[site];
     const view = $(`#view-${site}`);
     view.innerHTML = '';
 
-    const panel = el('div', { class: 'panel' });
-    const head = el('div', { class: 'panel-head' }, [
-      el('h2', { text: cfg.label }),
-      el('span', { class: 'badge', text: cfg.model }),
-      el('div', { class: 'right' }, [
-        el('button', { class: 'icon-btn', type: 'button', text: '打开登录', onclick: () => ctrl.start() }),
-        el('button', { class: 'icon-btn', type: 'button', text: '断开', onclick: () => ctrl.reset() }),
-      ]),
-    ]);
-    const notice = el('div', { class: 'notice', text:
-      `${cfg.label} 由本机服务在后台静默访问；本站不显示官方页面，登录信息只在本机使用。若目标站点近期改版，需要在 server/ai 中调整选择器。` });
-
-    // 登录区
-    const loginBox = el('div', { class: 'login-box' });
+    const loginMsg = el('div', { class: 'muted' });
     const uInput = el('input', { type: 'text', placeholder: '账号 / 手机号 / 邮箱' });
-    const pInput = el('input', { type: 'password', placeholder: '密码（如站点要求短信验证码，可填在此处）' });
+    const pInput = el('input', { type: 'password', placeholder: '密码（如仅需短信验证码，可填在验证码栏）' });
     const cInput = el('input', { type: 'text', placeholder: '验证码（如有）' });
     const captchaImg = el('img', { alt: '验证码', title: '点击刷新验证码' });
     captchaImg.style.display = 'none';
-    const loginMsg = el('div', { class: 'muted' });
-    const loginBtn = el('button', { class: 'primary', type: 'button', text: '登录', onclick: () => ctrl.login(uInput.value, pInput.value, cInput.value) });
-    loginBox.append(
+    const loginBtn = el('button', { class: 'primary', type: 'button', text: '登录', onclick: () => ref.ctrl.login(uInput.value, pInput.value, cInput.value) });
+    loginBtn.disabled = true;
+    const loginBox = el('div', { class: 'login-box' }, [
       el('div', { class: 'form-row' }, [el('label', { text: '账号' }), uInput]),
       el('div', { class: 'form-row' }, [el('label', { text: '密码' }), pInput]),
       el('div', { class: 'form-row' }, [el('label', { text: '验证码' }), el('div', { class: 'captcha-row' }, [cInput, captchaImg])]),
       el('div', { class: 'form-row' }, [el('label', {}), loginBtn]),
-      loginMsg
-    );
-    captchaImg.addEventListener('click', () => ctrl.refresh());
+      loginMsg,
+    ]);
+    captchaImg.addEventListener('click', () => ref.ctrl.refresh());
 
-    // 对话区
     const chatLog = el('div', { class: 'chat-log' });
     const attached = el('div', { class: 'attached' });
     const fileInput = el('input', { type: 'file', accept: 'image/*', multiple: 'multiple' });
     fileInput.style.display = 'none';
     const textInput = el('textarea', { placeholder: '输入提问，Enter 发送，Shift+Enter 换行' });
-    const sendBtn = el('button', { class: 'primary', type: 'button', text: '发送', onclick: () => ctrl.send() });
+    const sendBtn = el('button', { class: 'primary', type: 'button', text: '发送', onclick: () => ref.ctrl.send() });
     const chatBox = el('div', { class: 'chat hidden' }, [
       chatLog,
       el('div', { class: 'chat-input' }, [
         attached,
         el('div', { class: 'chat-bar' }, [
           el('button', { class: 'icon-btn', type: 'button', text: '图片', onclick: () => fileInput.click() }),
-          fileInput,
-          textInput,
-          sendBtn,
+          fileInput, textInput, sendBtn,
         ]),
       ]),
     ]);
 
-    panel.append(head, notice, loginBox, chatBox);
+    const panel = el('div', { class: 'panel' }, [
+      el('div', { class: 'panel-head' }, [
+        el('h2', { text: cfg.label }),
+        el('span', { class: 'badge', text: cfg.model }),
+        el('div', { class: 'right' }, [
+          el('button', { class: 'icon-btn', type: 'button', text: '打开登录', onclick: () => ref.ctrl.start() }),
+          el('button', { class: 'icon-btn', type: 'button', text: '断开', onclick: () => ref.ctrl.reset() }),
+        ]),
+      ]),
+      el('div', { class: 'notice', text:
+        `${cfg.label} 由扩展在后台标签页中静默访问；页面本身不显示官方登录界面。登录信息只在你的浏览器内、通过扩展填入目标站点，不会发往任何第三方服务器。若站点近期改版，需调整 extension/site-agent.js 中的选择器。` }),
+      loginBox, chatBox,
+    ]);
     view.appendChild(panel);
 
-    let pending = [];
-    fileInput.addEventListener('change', () => { pending = pending.concat(Array.from(fileInput.files || [])); fileInput.value = ''; renderAttached(); });
+    let pendingImgs = [];
+    fileInput.addEventListener('change', () => { pendingImgs = pendingImgs.concat(Array.from(fileInput.files || [])); fileInput.value = ''; renderAttached(); });
     function renderAttached() {
       attached.innerHTML = '';
-      pending.forEach((f, i) => {
-        const url = URL.createObjectURL(f);
+      pendingImgs.forEach((f, i) => {
         attached.appendChild(el('div', { class: 'thumb' }, [
-          el('img', { src: url }),
-          el('button', { class: 'x', type: 'button', text: '×', onclick: () => { pending.splice(i, 1); renderAttached(); } }),
+          el('img', { src: URL.createObjectURL(f) }),
+          el('button', { class: 'x', type: 'button', text: '×', onclick: () => { pendingImgs.splice(i, 1); renderAttached(); } }),
         ]));
       });
     }
     textInput.addEventListener('keydown', (ev) => {
-      if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); ctrl.send(); }
+      if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); ref.ctrl.send(); }
     });
 
-    return { panel, loginBox, chatBox, loginMsg, captchaImg, uInput, pInput, cInput, chatLog, textInput, sendBtn, loginBtn,
-      getPending: () => pending, clearPending: () => { pending = []; renderAttached(); } };
+    return { loginBox, chatBox, loginMsg, captchaImg, uInput, pInput, cInput, chatLog, textInput, sendBtn, loginBtn,
+      getPending: () => pendingImgs, clearPending: () => { pendingImgs = []; renderAttached(); } };
   }
 
-  function fileToDataUrl(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+  const fileToDataUrl = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+  function addMessage(dom, role, text, images = []) {
+    const bubble = el('div', { class: `msg ${role}` });
+    if (images.length) {
+      const box = el('div', { class: 'imgs' });
+      images.forEach((src) => box.appendChild(el('img', { src })));
+      bubble.appendChild(box);
+    }
+    const span = el('span', { text: text || '' });
+    bubble.appendChild(span);
+    dom.chatLog.appendChild(bubble);
+    dom.chatLog.scrollTop = dom.chatLog.scrollHeight;
+    return span;
   }
 
   ['kimi', 'deepseek'].forEach((site) => {
     const cfg = SITES[site];
-    const dom = buildPanel(site);
+    const ref = {};
+    const dom = buildPanel(site, ref);
     let entered = false;
 
+    function applyState(st) {
+      if (!st || st.error) {
+        dom.loginMsg.textContent = st?.error ? `状态读取失败：${st.error}` : '点击右上角「打开登录」，由扩展在后台静默打开目标站点。';
+        return;
+      }
+      dom.loginBtn.disabled = false;
+      if (st.loggedIn) {
+        dom.loginBox.classList.add('hidden');
+        dom.chatBox.classList.remove('hidden');
+        return;
+      }
+      dom.chatBox.classList.add('hidden');
+      dom.loginBox.classList.remove('hidden');
+      dom.loginMsg.textContent = '请输入账号信息完成登录（验证码由扩展从目标站点读取后显示在下方）。';
+      if (st.captcha) { dom.captchaImg.src = st.captcha; dom.captchaImg.style.display = 'block'; }
+      else dom.captchaImg.style.display = 'none';
+    }
+
     const ctrl = {
-      async onEnter() { if (!entered) { entered = true; await ping(); } await this.refresh(); },
+      async onEnter() {
+        if (!entered) { entered = true; await checkBridge(); }
+        if (bridgeReady) this.refresh();
+        else dom.loginMsg.textContent = '未检测到 bro bridge 扩展，请先安装并启用（点右上角「设置」查看说明）。';
+      },
       async refresh() {
-        try {
-          applyState(await api(`${cfg.path}/state`));
-          return;
-        } catch {
-          /* 可能是本机地址尚未探测，重试一次 */
-        }
-        if (await ping()) {
-          try {
-            applyState(await api(`${cfg.path}/state`));
-            return;
-          } catch {
-            /* 仍然失败则给出提示，但保留登录表单 */
-          }
-        }
-        dom.loginMsg.textContent = '未连接本机服务，请在 bro/server 下执行 node server.js。';
+        try { applyState(await bridgeCall('ai.state', { site }, 30000)); }
+        catch (err) { dom.loginMsg.textContent = `无法读取状态：${err.message}`; }
       },
       async start() {
-        dom.loginMsg.textContent = '正在通过本机服务打开目标站点...';
-        try {
-          const st = await api(`${cfg.path}/start`, { method: 'POST', body: '{}' });
-          applyState(st);
-        } catch (err) {
-          dom.loginMsg.textContent = `打开失败：${err.message}（若尚未安装 puppeteer，请先在 server 目录执行 npm install）`;
-        }
+        dom.loginMsg.textContent = '正在通过扩展打开目标站点...';
+        try { applyState(await bridgeCall('ai.open', { site }, 60000)); }
+        catch (err) { dom.loginMsg.textContent = `打开失败：${err.message}`; }
       },
       async login(username, password, captcha) {
         dom.loginMsg.textContent = '正在提交登录...';
         dom.loginBtn.disabled = true;
         try {
-          const st = await api(`${cfg.path}/login`, { method: 'POST', body: JSON.stringify({ username, password, captcha }) });
+          const st = await bridgeCall('ai.login', { site, username, password, captcha }, 90000);
           applyState(st);
-          if (!st.loggedIn) dom.loginMsg.textContent = '仍未登录成功，可能需要短信验证码或验证码有误，请重试。';
+          if (st && !st.loggedIn) dom.loginMsg.textContent = '仍未登录成功：可能需要短信验证码或验证码错误，请重试。';
         } catch (err) {
           dom.loginMsg.textContent = `登录失败：${err.message}`;
         } finally {
@@ -459,7 +447,7 @@
         }
       },
       async reset() {
-        await api(`${cfg.path}/reset`, { method: 'POST', body: '{}' }).catch(() => {});
+        await bridgeCall('ai.reset', { site }).catch(() => {});
         dom.chatBox.classList.add('hidden');
         dom.loginBox.classList.remove('hidden');
         dom.loginMsg.textContent = '已断开本机会话。';
@@ -469,14 +457,14 @@
         const files = dom.getPending();
         if (!text && !files.length) return;
         const dataUrls = await Promise.all(files.map(fileToDataUrl));
-        addMessage('user', text, dataUrls);
+        addMessage(dom, 'user', text, dataUrls);
         dom.textInput.value = '';
         dom.clearPending();
-        const bot = addMessage('bot', '正在等待回复...');
+        const bot = addMessage(dom, 'bot', '正在等待回复...');
         dom.sendBtn.disabled = true;
         try {
-          const data = await api(`${cfg.path}/chat`, { method: 'POST', body: JSON.stringify({ text, images: dataUrls }) });
-          bot.textContent = data.reply || '（未读取到回复内容，可能站点结构已变化）';
+          const data = await bridgeCall('ai.chat', { site, text, images: dataUrls }, 180000);
+          bot.textContent = data?.reply || '（未读取到回复内容，可能站点结构已变化）';
         } catch (err) {
           bot.textContent = `发送失败：${err.message}`;
         } finally {
@@ -485,51 +473,14 @@
       },
     };
 
-    function addMessage(role, text, images = []) {
-      const bubble = el('div', { class: `msg ${role}` });
-      if (images.length) {
-        const box = el('div', { class: 'imgs' });
-        images.forEach((src) => box.appendChild(el('img', { src })));
-        bubble.appendChild(box);
-      }
-      bubble.appendChild(el('span', { text: text || '' }));
-      dom.chatLog.appendChild(bubble);
-      dom.chatLog.scrollTop = dom.chatLog.scrollHeight;
-      return bubble.querySelector('span');
-    }
-
-    function applyState(st) {
-      if (!st.ready) {
-        dom.chatBox.classList.add('hidden');
-        dom.loginBox.classList.remove('hidden');
-        dom.loginMsg.textContent = '点击右上角「打开登录」，由本机服务静默打开目标站点。';
-        return;
-      }
-      if (st.loggedIn) {
-        dom.loginBox.classList.add('hidden');
-        dom.chatBox.classList.remove('hidden');
-        return;
-      }
-      dom.chatBox.classList.add('hidden');
-      dom.loginBox.classList.remove('hidden');
-      dom.loginMsg.textContent = '请输入账号信息完成登录（验证码由本机服务读取后显示在下方）。';
-      if (st.captcha) {
-        dom.captchaImg.src = st.captcha;
-        dom.captchaImg.style.display = 'block';
-      } else {
-        dom.captchaImg.style.display = 'none';
-      }
-    }
-
+    ref.ctrl = ctrl;
     AI[site] = ctrl;
   });
 
   /* ------------------------------- 初始化 ------------------------------- */
-  // 恢复上次的引擎与模式
   $$('.mode-btn').forEach((b) => b.classList.toggle('active', b.dataset.mode === mode));
   renderFavs();
-  (async () => {
-    await ping();
-    await loadEngines();
-  })();
+  renderEngineButton();
+  renderEngineMenu();
+  (async () => { await checkBridge(); })();
 })();

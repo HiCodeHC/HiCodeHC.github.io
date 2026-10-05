@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "bro bridge",
+  "version": "1.0.0",
+  "description": "为 bro 搜索页提供浏览器原生特权接口：静默访问搜索引擎与 Kimi/DeepSeek，无需任何外部运行时。",
+  "permissions": ["tabs", "scripting", "storage"],
+  "host_permissions": [
+    "https://*.bing.com/*",
+    "https://www.baidu.com/*",
+    "https://image.baidu.com/*",
+    "https://www.sogou.com/*",
+    "https://www.google.com/*",
+    "https://duckduckgo.com/*",
+    "https://html.duckduckgo.com/*",
+    "https://www.kimi.com/*",
+    "https://kimi.com/*",
+    "https://*.moonshot.cn/*",
+    "https://chat.deepseek.com/*",
+    "https://*.deepseek.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://hicodehc.github.io/bro/*",
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "file:///*"
+      ],
+      "js": ["bridge.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://www.kimi.com/*",
+        "https://kimi.com/*",
+        "https://*.moonshot.cn/*",
+        "https://chat.deepseek.com/*"
+      ],
+      "js": ["site-agent.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}

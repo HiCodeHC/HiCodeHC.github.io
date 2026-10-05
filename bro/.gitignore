@@ -1,0 +1,6 @@
+# 依赖与本机运行产物（不要提交）
+node_modules/
+server/node_modules/
+server/ai/profiles/
+npm-debug.log*
+.DS_Store

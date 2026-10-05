@@ -26,19 +26,25 @@
     return node;
   }
 
-  // 本机服务地址：由本机服务托管时用同源地址，否则用默认/已保存的地址
-  function resolveBase() {
-    const saved = localStorage.getItem('bro.base');
-    if (saved) return saved.replace(/\/$/, '');
-    const { origin, protocol } = location;
-    if (protocol.startsWith('http') && /(127\.0\.0\.1|localhost)/.test(origin)) return origin;
-    return DEFAULT_BASE;
+  // 本机服务地址：优先已保存的地址，其次同源地址，最后回落到常见本机地址。
+  // 依次探测，取第一个可达的作为 BASE，避免因跨域/端口差异导致 “Failed to fetch”。
+  let BASE = localStorage.getItem('bro.base')?.replace(/\/$/, '') || DEFAULT_BASE;
+
+  function candidateBases() {
+    const list = [];
+    const saved = localStorage.getItem('bro.base')?.replace(/\/$/, '');
+    if (saved) list.push(saved);
+    if (location.protocol.startsWith('http')) list.push(location.origin);
+    [DEFAULT_BASE, 'http://localhost:8787'].forEach((b) => {
+      if (!list.includes(b)) list.push(b);
+    });
+    return list;
   }
-  let BASE = resolveBase();
 
   async function api(path, options = {}) {
     const res = await fetch(BASE + path, {
       headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
       ...options,
     });
     const data = await res.json().catch(() => ({}));
@@ -46,21 +52,29 @@
     return data;
   }
 
+  // 依次探测候选地址，返回第一个可用的；都不可用则返回 false
   async function ping() {
     const dot = $('#connDot');
     const text = $('#connText');
-    try {
-      await api('/api/health', { method: 'GET' });
-      dot.classList.add('on');
-      dot.classList.remove('off');
-      text.textContent = '已连接本机服务';
-      return true;
-    } catch {
-      dot.classList.add('off');
-      dot.classList.remove('on');
-      text.textContent = '未连接本机服务';
-      return false;
+    for (const base of candidateBases()) {
+      try {
+        const res = await fetch(base + '/api/health', { method: 'GET', cache: 'no-store' });
+        if (!res.ok) continue;
+        const data = await res.json();
+        if (!data?.ok) continue;
+        BASE = base;
+        dot.classList.add('on');
+        dot.classList.remove('off');
+        text.textContent = '已连接本机服务';
+        return true;
+      } catch {
+        /* 该地址不可达，继续尝试下一个 */
+      }
     }
+    dot.classList.add('off');
+    dot.classList.remove('on');
+    text.textContent = '未连接本机服务（请在 bro/server 下执行 node server.js）';
+    return false;
   }
 
   /* ------------------------------- 视图切换 ------------------------------- */
@@ -258,7 +272,13 @@
       renderResults(data.results, mode);
       renderPager(page);
     } catch (err) {
-      status.textContent = `抓取失败：${err.message}。请确认本机服务已启动，或更换引擎。`;
+      // 先判断是不是“前端连不上本机服务”，还是“本机服务抓不到目标站点”
+      const online = await ping();
+      if (!online) {
+        status.textContent = '抓取失败：前端无法连接本机服务。请在 bro/server 目录执行 node server.js（默认 http://127.0.0.1:8787），或点右上角「设置」确认地址。';
+        return;
+      }
+      status.textContent = `${err.message} 该引擎在当前网络下可能不可达或已改版，换一个引擎再试。`;
     }
   }
 
@@ -401,12 +421,20 @@
       async onEnter() { if (!entered) { entered = true; await ping(); } await this.refresh(); },
       async refresh() {
         try {
-          const st = await api(`${cfg.path}/state`);
-          applyState(st);
+          applyState(await api(`${cfg.path}/state`));
+          return;
         } catch {
-          dom.loginBox.innerHTML = '';
-          dom.loginBox.appendChild(el('div', { class: 'muted', text: '未连接本机服务，请先启动 server 并确认地址。' }));
+          /* 可能是本机地址尚未探测，重试一次 */
         }
+        if (await ping()) {
+          try {
+            applyState(await api(`${cfg.path}/state`));
+            return;
+          } catch {
+            /* 仍然失败则给出提示，但保留登录表单 */
+          }
+        }
+        dom.loginMsg.textContent = '未连接本机服务，请在 bro/server 下执行 node server.js。';
       },
       async start() {
         dom.loginMsg.textContent = '正在通过本机服务打开目标站点...';

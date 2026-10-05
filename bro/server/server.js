@@ -19,7 +19,21 @@ const PORT = Number(process.env.BRO_PORT || 8787);
 const HOST = process.env.BRO_HOST || '127.0.0.1';
 
 const app = express();
-app.use(cors());                                   // 允许 GitHub Pages 页面跨域访问本机服务
+
+// 允许“公网页面（如 GitHub Pages）-> 本机地址”的跨域请求。
+// Chrome 的 Private Network Access 要求此类预检请求返回 Access-Control-Allow-Private-Network，
+// 否则浏览器会直接拦截，前端表现为 “Failed to fetch”（即抓取失败）。
+app.use((_req, res, next) => {
+  res.setHeader('Access-Control-Allow-Private-Network', 'true');
+  next();
+});
+const corsOptions = {
+  origin: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));               // 显式响应预检请求
 app.use(express.json({ limit: '30mb' }));          // 图片以 dataURL 传输
 
 // 本机服务同时也直接托管前端页面：浏览器打开 http://127.0.0.1:8787/ 即可使用

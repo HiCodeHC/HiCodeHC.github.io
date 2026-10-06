@@ -3,7 +3,7 @@
   "name": "bro bridge",
   "version": "1.0.0",
   "description": "为 bro 搜索页提供浏览器原生特权接口：静默访问搜索引擎与 Kimi/DeepSeek，无需任何外部运行时。",
-  "permissions": ["tabs", "scripting", "storage"],
+  "permissions": ["tabs", "scripting", "storage", "offscreen"],
   "host_permissions": [
     "https://*.bing.com/*",
     "https://www.baidu.com/*",

@@ -28,7 +28,9 @@
     <!-- 搜索视图 -->
     <section id="view-search" class="view active">
       <div id="bridgeBanner" class="banner hidden">
-        未检测到 bro bridge 扩展。搜索与 AI 功能依赖该扩展提供浏览器原生特权接口（不依赖任何外部运行时）。点右上角「设置」查看安装步骤。
+        <span>未检测到 bro bridge 扩展。搜索与 AI 功能依赖该扩展提供浏览器原生特权接口（不依赖任何外部运行时）。</span>
+        <a class="banner-link" href="bro-bridge.zip" download="bro-bridge.zip">下载扩展 .zip</a>
+        <span>解压后在扩展管理页「加载已解压的扩展程序」中选择解压目录即可。点右上角「设置」查看完整步骤。</span>
       </div>
 
       <div class="hero">
@@ -72,11 +74,19 @@
     <div class="modal-card" id="guide">
       <h3>bro bridge 扩展</h3>
       <p class="muted state"></p>
+
+      <div class="download-row">
+        <a id="downloadZip" class="primary" href="bro-bridge.zip" download="bro-bridge.zip">下载扩展 .zip</a>
+        <span class="muted">无需前往仓库，点击即可直接下载。</span>
+      </div>
+
       <p class="muted">安装步骤：</p>
       <ol class="guide-list">
+        <li>点击上方「下载扩展 .zip」，把 <code>bro-bridge.zip</code> 下载到本地</li>
+        <li>解压该压缩包，得到一个包含 <code>manifest.json</code> 的文件夹</li>
         <li>打开浏览器扩展管理页（Chrome / Edge 地址栏输入 <code>chrome://extensions</code>）</li>
         <li>打开右上角「开发者模式」</li>
-        <li>点「加载已解压的扩展程序」，选择本仓库中的 <code>bro/extension</code> 目录</li>
+        <li>点「加载已解压的扩展程序」，选择第 2 步解压出的文件夹</li>
         <li>回到本页刷新，右上角状态应变为「扩展已连接」</li>
       </ol>
       <div class="modal-actions">

@@ -241,10 +241,15 @@
 
     try {
       const url = window.BRO_ENGINES.url(engine, query, mode, page);
-      const data = await bridgeCall('fetch', { url });
+      // 用后台标签页真实加载目标结果页，避免裸 fetch 被搜索引擎防爬校验拦截
+      const data = await bridgeCall('fetchPage', { url }, 45000);
       const list = window.BRO_ENGINES.parse(engine, mode, data.text);
       if (!list.length) {
-        status.textContent = `没有解析到结果（${currentEngine()?.label}）。目标站点可能改版或被限制，换一个引擎再试。`;
+        if (/wappass\.baidu|安全验证|请输入验证码|verify|unusual traffic/i.test(data.text || '')) {
+          status.textContent = `「${currentEngine()?.label}」返回了安全验证页。请先在浏览器中正常打开一次该引擎并完成验证后重试，或更换其它引擎。`;
+        } else {
+          status.textContent = `没有解析到结果（${currentEngine()?.label}）。目标站点可能改版或被限制，换一个引擎再试。`;
+        }
         return;
       }
       status.textContent = `来自「${currentEngine()?.label}」的 ${list.length} 条结果（扩展静默抓取）`;

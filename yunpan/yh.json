@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-28T14:39:20.718Z",
+  "updated": "2026-10-28T15:03:15.149Z",
   "users": [
     {
       "name": "tester1",
@@ -28,6 +28,15 @@
       "n": "f9oE6Q394l7ceBIu",
       "c": "H67pt57tcDuMOzP6Fst66PQyn8xpfVYeVSmgWsW2iEEfHZE12Gb1uaqvhKwuX5ZANtMeTDmgMCE=",
       "createdAt": "2026-10-28T14:39:19.430Z"
+    },
+    {
+      "name": "zztester9",
+      "role": "user",
+      "it": 210000,
+      "s": "xE9HpFYX2tJNkcBN3oH0tw==",
+      "n": "/gIj+/dRtU7Wl52F",
+      "c": "8owSKrRg5PwR/uyZAbkjvz+HYU6uCJZXhNYWN0otBJeQuwRjPG+6ajw3CLSdeRXjpive1MyPg1Y=",
+      "createdAt": "2026-10-28T15:03:14.441Z"
     }
   ]
 }

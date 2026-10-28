@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "updated": "2026-10-28T22:50:00.000Z",
+  "files": [
+    {
+      "kind": "local",
+      "name": "26.10.28.zip",
+      "stored": "26.10.28.zip.zip",
+      "path": "yunpan/cyrcyrgo/26.10.28.zip.zip",
+      "folder": "",
+      "size": 7699673,
+      "zipSize": 7699947,
+      "enc": "AES-256",
+      "at": "2026-10-28T09:51:41.052Z"
+    },
+    {
+      "kind": "local",
+      "name": "26.10.28课程总结.txt",
+      "stored": "26.10.28课程总结.txt.zip",
+      "path": "yunpan/cyrcyrgo/26.10.28课程总结.txt.zip",
+      "folder": "",
+      "size": 2688,
+      "zipSize": 1557,
+      "enc": "AES-256",
+      "at": "2026-10-28T09:45:46.949Z"
+    },
+    {
+      "kind": "local",
+      "name": "earth.jpg",
+      "stored": "earth.jpg.zip",
+      "path": "yunpan/cyrcyrgo/earth.jpg.zip",
+      "folder": "",
+      "size": 360056,
+      "zipSize": 360324,
+      "enc": "AES-256",
+      "at": "2026-10-28T09:22:55.303Z"
+    },
+    {
+      "kind": "local",
+      "name": "学习资料.URL",
+      "stored": "学习资料.URL.zip",
+      "path": "yunpan/cyrcyrgo/学习资料.URL.zip",
+      "folder": "",
+      "size": 5,
+      "zipSize": 287,
+      "enc": "AES-256",
+      "at": "2026-10-28T09:31:17.232Z"
+    },
+    {
+      "kind": "local",
+      "name": "中国航天事业.doc",
+      "stored": "中国航天事业.doc.zip",
+      "path": "yunpan/cyrcyrgo/中国航天事业.doc.zip",
+      "folder": "",
+      "size": 178688,
+      "zipSize": 178982,
+      "enc": "AES-256",
+      "at": "2026-10-28T09:07:29.973Z"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-28T15:00:00.244Z",
+  "updated": "2026-10-28T22:34:39.844Z",
   "files": [
     {
       "kind": "local",
@@ -56,6 +56,17 @@
       "zipSize": 178982,
       "enc": "AES-256",
       "at": "2026-10-28T09:07:29.973Z"
+    },
+    {
+      "kind": "link",
+      "id": "mvsozfxgg45woo",
+      "name": "26.10.28.zip",
+      "path": "yunpan/cyrcyrgo/26.10.28.zip.zip",
+      "url": "https://hicodehc.github.io/yunpan/cyrcyrgo/26.10.28.zip.zip",
+      "folder": "",
+      "size": 7699947,
+      "zip": 1,
+      "at": "2026-10-28T22:34:39.844Z"
     }
   ]
 }

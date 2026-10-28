@@ -1,5 +1,14 @@
 {
   "version": 1,
-  "updated": "2026-10-28T05:45:00.000Z",
-  "files": []
+  "updated": "2026-10-28T05:55:41.602Z",
+  "files": [
+    {
+      "name": "decrypt-test-20261028.txt",
+      "zip": "decrypt-test-20261028.txt.zip",
+      "size": 28,
+      "zipSize": 330,
+      "enc": "AES-256",
+      "at": "2026-10-28T05:55:40.937Z"
+    }
+  ]
 }

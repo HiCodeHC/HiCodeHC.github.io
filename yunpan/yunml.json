@@ -1,5 +1,14 @@
 {
   "version": 1,
-  "updated": "2026-10-28T06:15:00.000Z",
-  "files": []
+  "updated": "2026-10-28T06:15:35.854Z",
+  "files": [
+    {
+      "name": "roundtrip-test-20261028.txt",
+      "zip": "roundtrip-test-20261028.txt.zip",
+      "size": 21,
+      "zipSize": 327,
+      "enc": "AES-256",
+      "at": "2026-10-28T06:15:35.155Z"
+    }
+  ]
 }

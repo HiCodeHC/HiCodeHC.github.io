@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-29T04:58:07.220Z",
+  "updated": "2026-10-29T04:58:33.458Z",
   "files": [
     {
       "kind": "local",
@@ -100,17 +100,6 @@
       "zipSize": 532018,
       "enc": "AES-256",
       "at": "2026-10-28T22:36:21.320Z"
-    },
-    {
-      "kind": "local",
-      "name": "wx_camera_1792647209977.jpg",
-      "stored": "wx_camera_1792647209977.jpg.zip",
-      "path": "yunpan/cyrcyrgo/lishi/wx_camera_1792647209977.jpg.zip",
-      "folder": "lishi",
-      "size": 743759,
-      "zipSize": 743949,
-      "enc": "AES-256",
-      "at": "2026-10-29T04:29:49.489Z"
     },
     {
       "kind": "local",

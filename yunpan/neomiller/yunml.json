@@ -3,9 +3,9 @@
   "files": [
     {
       "kind": "local",
-      "name": "学习资料.url",
-      "stored": "学习资料.url.zip",
-      "path": "yunpan/neomiller/学习资料.url.zip",
+      "name": "学习资料.md",
+      "stored": "学习资料.md.zip",
+      "path": "yunpan/neomiller/学习资料.md.zip",
       "folder": "",
       "size": 133,
       "zipSize": 415,
@@ -14,5 +14,5 @@
     }
   ],
   "createdAt": "2026-10-29T01:19:13.514Z",
-  "updated": "2026-10-29T01:22:04.810Z"
+  "updated": "2026-10-29T05:37:57.422Z"
 }

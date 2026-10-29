@@ -11,8 +11,19 @@
       "zipSize": 415,
       "enc": "AES-256",
       "at": "2026-10-29T01:22:04.810Z"
+    },
+    {
+      "kind": "local",
+      "name": "shizuku-v13.6.0.r1086.2650830c-release.apk",
+      "stored": "shizuku-v13.6.0.r1086.2650830c-release.apk.zip",
+      "path": "yunpan/neomiller/shizuku-v13.6.0.r1086.2650830c-release.apk.zip",
+      "folder": "",
+      "size": 2571773,
+      "zipSize": 1762944,
+      "enc": "AES-256",
+      "at": "2026-10-29T05:38:36.201Z"
     }
   ],
   "createdAt": "2026-10-29T01:19:13.514Z",
-  "updated": "2026-10-29T05:37:57.422Z"
+  "updated": "2026-10-29T05:38:36.201Z"
 }

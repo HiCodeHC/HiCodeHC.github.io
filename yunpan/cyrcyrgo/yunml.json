@@ -1,6 +1,5 @@
 {
   "version": 1,
-  "updated": "2026-10-29T04:58:53.784Z",
   "files": [
     {
       "kind": "local",
@@ -111,30 +110,6 @@
       "zipSize": 2965,
       "enc": "none",
       "at": "2026-10-29T04:48:20.327Z"
-    },
-    {
-      "kind": "link",
-      "id": "mvt2lw8jzif1fr",
-      "name": "typescript.png",
-      "path": "",
-      "url": "https://raw.githubusercontent.com/github/explore/main/topics/typescript/typescript.png",
-      "folder": "测试B",
-      "size": 5730,
-      "zip": 0,
-      "external": 1,
-      "at": "2026-10-29T04:56:02.419Z"
-    },
-    {
-      "kind": "link",
-      "id": "mvt2mpj9bhe4q8",
-      "name": "typescript - 副本.png",
-      "path": "",
-      "url": "https://raw.githubusercontent.com/github/explore/main/topics/typescript/typescript.png",
-      "folder": "测试B",
-      "size": 5730,
-      "zip": 0,
-      "external": 1,
-      "at": "2026-10-29T04:56:40.389Z"
     }
   ]
 }

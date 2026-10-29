@@ -1,5 +1,18 @@
 {
   "version": 1,
-  "files": [],
-  "createdAt": "2026-10-29T01:19:13.514Z"
+  "files": [
+    {
+      "kind": "local",
+      "name": "学习资料.url",
+      "stored": "学习资料.url.zip",
+      "path": "yunpan/neomiller/学习资料.url.zip",
+      "folder": "",
+      "size": 133,
+      "zipSize": 415,
+      "enc": "AES-256",
+      "at": "2026-10-29T01:22:04.810Z"
+    }
+  ],
+  "createdAt": "2026-10-29T01:19:13.514Z",
+  "updated": "2026-10-29T01:22:04.810Z"
 }

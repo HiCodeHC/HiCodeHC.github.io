@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-29T01:19:11.998Z",
+  "updated": "2026-10-31T09:26:00.499Z",
   "users": [
     {
       "name": "tester1",
@@ -42,10 +42,11 @@
       "name": "neomiller",
       "role": "user",
       "it": 210000,
-      "s": "1LDYQdhsDsUtL6d8wrNqBg==",
-      "n": "Q8/wXIHRdPbk4HJo",
-      "c": "MaDu6DmEw9cEngjW9+fyoxWyCBeyJ3E7uWXvdGHPQPEOMR97bY5IBYQKaC8jX1xHYBnFQAbB24M=",
-      "createdAt": "2026-10-29T01:19:10.264Z"
+      "s": "FCv9AqYn6wDQ51NX3PKT8A==",
+      "n": "yWHwjJFyiFGpq3te",
+      "c": "Nqgz7f6IFXfU0NWh8AeJa/Waux4ZWF6Fwy30pbMN6x82w5oh8Gc7GcxY4MHU6VCF9rWJBbqnA1M=",
+      "createdAt": "2026-10-29T01:19:10.264Z",
+      "updatedAt": "2026-10-31T09:26:00.499Z"
     }
   ]
 }

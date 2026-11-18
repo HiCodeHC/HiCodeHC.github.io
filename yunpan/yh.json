@@ -1,16 +1,7 @@
 {
   "version": 1,
-  "updated": "2026-11-18T09:37:04.140Z",
+  "updated": "2026-11-18T09:37:09.677Z",
   "users": [
-    {
-      "name": "hicode",
-      "role": "user",
-      "it": 210000,
-      "s": "FecrOOdqRYV1CD2vl4RW/w==",
-      "n": "CB9UU8xFw8glBrj0",
-      "c": "drh7Zi/xhNPrhl7mEWIzDNpMEcQCQrG9qv7LpP+HKV4cbUyCtAR+9aZcVb0AL3lEA8MT4PMomdo=",
-      "createdAt": "2026-10-28T22:37:23.922Z"
-    },
     {
       "name": "neomiller",
       "role": "user",

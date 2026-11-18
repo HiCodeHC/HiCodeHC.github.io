@@ -1,16 +1,7 @@
 {
   "version": 1,
-  "updated": "2026-11-18T09:36:48.049Z",
+  "updated": "2026-11-18T09:36:58.425Z",
   "users": [
-    {
-      "name": "tester1",
-      "role": "user",
-      "it": 210000,
-      "s": "G+yjlBqXOT9biMP06uEOJQ==",
-      "n": "jpOyQCUhCp4OCtTG",
-      "c": "U40/hPsso8A6PcfrJLOQboUS2d4TQEbl8QxtxW0+aOlrGm4MysIJHjZnQByUTlIC51F2wxGqwP8=",
-      "createdAt": "2026-10-28T14:33:50.914Z"
-    },
     {
       "name": "mzm",
       "role": "user",

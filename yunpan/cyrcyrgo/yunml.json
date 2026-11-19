@@ -200,7 +200,18 @@
       "zip": 0,
       "external": 1,
       "at": "2026-11-19T05:41:50.369Z"
+    },
+    {
+      "kind": "local",
+      "name": "sc-main",
+      "stored": "sc-main.zip",
+      "path": "yunpan/cyrcyrgo/sc-main.zip",
+      "folder": "",
+      "size": 10940820,
+      "zipSize": 10941807,
+      "enc": "AES-256",
+      "at": "2026-11-19T06:07:02.453Z"
     }
   ],
-  "updated": "2026-11-19T05:41:50.373Z"
+  "updated": "2026-11-19T06:07:02.455Z"
 }

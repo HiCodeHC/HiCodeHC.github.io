@@ -177,7 +177,18 @@
       "zipSize": 6136,
       "enc": "none",
       "at": "2026-11-12T02:00:30.088Z"
+    },
+    {
+      "kind": "local",
+      "name": "陈运然-泸州介绍手册素材库.rar",
+      "stored": "陈运然-泸州介绍手册素材库.rar.zip",
+      "path": "yunpan/cyrcyrgo/陈运然-泸州介绍手册素材库.rar.zip",
+      "folder": "",
+      "size": 6926405,
+      "zipSize": 6926635,
+      "enc": "AES-256",
+      "at": "2026-11-19T01:57:58.745Z"
     }
   ],
-  "updated": "2026-11-12T02:00:30.088Z"
+  "updated": "2026-11-19T01:57:58.745Z"
 }

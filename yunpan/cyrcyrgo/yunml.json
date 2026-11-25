@@ -136,17 +136,6 @@
     },
     {
       "kind": "local",
-      "name": "gesp一级-八级_problems.xlsx",
-      "stored": "gesp一级-八级_problems.xlsx.zip",
-      "path": "yunpan/cyrcyrgo/我的C++/gesp一级-八级_problems.xlsx.zip",
-      "folder": "我的C++",
-      "size": 32359,
-      "zipSize": 32569,
-      "enc": "AES-256",
-      "at": "2026-11-11T08:48:28.596Z"
-    },
-    {
-      "kind": "local",
       "name": "Documents.rar",
       "stored": "Documents.rar.zip",
       "path": "yunpan/cyrcyrgo/我的C++/Documents.rar.zip",
@@ -213,5 +202,5 @@
       "at": "2026-11-19T06:07:02.453Z"
     }
   ],
-  "updated": "2026-11-19T06:07:02.455Z"
+  "updated": "2026-11-25T08:56:32.290Z"
 }

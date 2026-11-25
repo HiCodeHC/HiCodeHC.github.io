@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-11-18T09:37:09.677Z",
+  "updated": "2026-11-25T08:29:25.577Z",
   "users": [
     {
       "name": "neomiller",
@@ -20,6 +20,15 @@
       "n": "eQM8v4lnb0u5Amuy",
       "c": "fJT7UGa2VYM5NcLYDcS+RoLG/8cau1O0mGr5dhye+D/hswdBSHifegpsQxdZhjdeJuP9DIvYsPw=",
       "createdAt": "2026-11-18T09:35:16.806Z"
+    },
+    {
+      "name": "neo",
+      "role": "user",
+      "it": 210000,
+      "s": "6DskT9e8KSx1Td/uEsTxGw==",
+      "n": "pAzeEbtMP6MPuhIV",
+      "c": "oarY//CcO+Vo6gS/SQDPUzzJT0gpdjj/N3fsVx88DokxKKLAiKlryzw9huwXWJVp9KNa3u5sy7c=",
+      "createdAt": "2026-11-25T08:29:23.020Z"
     }
   ]
 }

@@ -245,7 +245,18 @@
       "zipSize": 264,
       "enc": "AES-256",
       "at": "2026-11-25T09:00:37.430Z"
+    },
+    {
+      "kind": "local",
+      "name": "Luzhou-Flavor-Offline",
+      "stored": "Luzhou-Flavor-Offline.zip",
+      "path": "yunpan/cyrcyrgo/泸州介绍手册/Luzhou-Flavor-Offline.zip",
+      "folder": "泸州介绍手册",
+      "size": 10937763,
+      "zipSize": 10937961,
+      "enc": "AES-256",
+      "at": "2026-11-25T09:06:05.761Z"
     }
   ],
-  "updated": "2026-11-25T09:00:37.430Z"
+  "updated": "2026-11-25T09:06:05.761Z"
 }
